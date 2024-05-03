@@ -1,4 +1,4 @@
-package com.example.classhubproject.data;
+package com.example.classhubproject.data.sample;
 
 import lombok.Data;
 

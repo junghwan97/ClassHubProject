@@ -1,7 +1,7 @@
 package com.example.classhubproject.controller;
 
-import com.example.classhubproject.data.SampleDto;
-import com.example.classhubproject.mapper.SampleMapper;
+import com.example.classhubproject.data.sample.SampleDto;
+import com.example.classhubproject.mapper.sample.SampleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
