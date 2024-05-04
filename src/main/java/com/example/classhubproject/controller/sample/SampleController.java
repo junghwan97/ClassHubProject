@@ -23,7 +23,7 @@ public class SampleController {
         this.mapper = mapper;
     }
 
-    @Operation(summary = "샘플 조회", description = "샘플을 조회할 수 있습니다.",
+    @Operation(summary = "샘플 조회", description = "샘플 데이터를 조회할 수 있습니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "샘플 조회 성공", content = @Content(schema = @Schema(implementation = SampleDto.class))),
                     @ApiResponse(responseCode = "400", description = "샘플 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))

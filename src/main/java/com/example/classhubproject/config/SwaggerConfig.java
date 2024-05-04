@@ -14,7 +14,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("LMS API")
-                        .description("LMS 샘플입니다.")
+                        .description("LMS 프로젝트 샘플입니다.")
                         .version("1.0"));
     }
 
