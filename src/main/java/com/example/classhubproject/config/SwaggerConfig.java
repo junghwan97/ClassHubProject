@@ -26,4 +26,31 @@ public class SwaggerConfig {
                 .packagesToScan("com.example.classhubproject.controller.sample")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi community() {
+        return GroupedOpenApi.builder()
+                .group("게시판 기능")
+                .pathsToMatch("/order/*")
+                .packagesToScan("com.example.classhubproject.controller.community")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi comment() {
+        return GroupedOpenApi.builder()
+                .group("댓글 기능")
+                .pathsToMatch("/order/*")
+                .packagesToScan("com.example.classhubproject.controller.comment")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi favorite() {
+        return GroupedOpenApi.builder()
+                .group("좋아요 기능")
+                .pathsToMatch("/order/*")
+                .packagesToScan("com.example.classhubproject.controller.favorite")
+                .build();
+    }
 }
