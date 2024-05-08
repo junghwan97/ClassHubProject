@@ -13,3 +13,17 @@ CREATE TABLE `User` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='사용자 정보';
 
+--
+CREATE TABLE `Instructors` (
+  `instructors_id` int NOT NULL AUTO_INCREMENT COMMENT '강사/멘토 ID',
+  `user_id` int DEFAULT NULL COMMENT '회원 ID',
+  `name` varchar(50) COLLATE utf8mb4_general_ci NOT NULL COMMENT '이름/사업체명',
+  `field` char(15) COLLATE utf8mb4_general_ci NOT NULL COMMENT '희망분야(카테고리명)',
+  `text` varchar(1000) COLLATE utf8mb4_general_ci NOT NULL COMMENT '신청 내용',
+  `user_type` char(1) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '권한타입(강사/멘토)',
+  `request_status` char(1) COLLATE utf8mb4_general_ci DEFAULT '1' COMMENT '신청 상황',
+  `regdate` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '신청일자',
+  PRIMARY KEY (`instructors_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `Instructors_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='강사/멘토';
