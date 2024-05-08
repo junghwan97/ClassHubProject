@@ -22,8 +22,12 @@ public class LectureService {
     }
 
     public LectureUploadedResponse upload(LectureUploadedRequest request) {
-        var result = new LectureUploadedResponse();
-        result.uploaded = false;
+
+        //System.out.println(request.);
+//        Map<String, Object> result = new HashMap<>();
+//        result.put("favoriteCommunity", false);
+        LectureUploadedResponse result  = new LectureUploadedResponse();
+        result.uploaded = true;
 
         return result;
     }

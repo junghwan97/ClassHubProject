@@ -1,6 +1,5 @@
 package com.example.classhubproject.controller.lecture;
 
-import com.example.classhubproject.data.favorite.FavoriteDto;
 import com.example.classhubproject.data.lecture.LectureUploadedRequest;
 import com.example.classhubproject.data.lecture.LectureUploadedResponse;
 import com.example.classhubproject.service.lecture.LectureService;
@@ -31,7 +30,7 @@ public class LectureController {
     // 강의 업로드
     @Operation(summary = "강의 업로드", description = "강의를 업로드.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = FavoriteDto.class))),
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureUploadedResponse.class))),
                     @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
