@@ -4,10 +4,10 @@ import lombok.Data;
 
 @Data
 public class LectureUploadedRequest {
-    Integer     user_id;
-    String      name;
-    String      field;
-    String      text;
-    Character   user_type;
-    Character   request_status;
+    public Integer     user_id;
+    public String      name;
+    public String      field;
+    public String      text;
+    public String   user_type;
+    public String   request_status;
 }
