@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.classhubproject.mapper.community.CommunityMapper">
+
+    <insert id="posting" parameterType="com.example.classhubproject.data.community.CommunityRegDto">
+        <selectKey keyProperty="communityId" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID() AS community_id
+        </selectKey>
+        INSERT INTO Community(user_id, community_type, title, text)
+        VALUES (#{userId}, #{communityType}, #{title}, #{text});
+    </insert>
+
+
+    <insert id="insertImage" parameterType="com.example.classhubproject.data.community.CommunityRegDto">
+        INSERT INTO Community_Image(community_id, image)
+        VALUES (#{communityId}, #{image});
+    </insert>
+
+    <select id="selectAllQuestions" resultType="com.example.classhubproject.data.community.CommunityDto">
+        SELECT c.community_id,
+               c.user_id,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
+        FROM Community c
+                 LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+--                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        WHERE c.community_type = '1'
+        ORDER BY c.community_id DESC
+    </select>
+
+
+    <select id="selectAllStudies" resultType="com.example.classhubproject.data.community.CommunityDto">
+        SELECT c.community_id,
+               c.user_id,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
+        FROM Community c
+                 LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+--                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        WHERE c.community_type = '2'
+        ORDER BY c.community_id DESC
+    </select>
+
+    <select id="selectQuestion" resultType="com.example.classhubproject.data.community.CommunityDto">
+        SELECT c.community_id,
+               c.user_id,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
+        FROM Community c
+                 LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+--                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        WHERE c.community_type = '1'
+          AND c.community_id = #{id}
+    </select>
+
+    <select id="selectStudy" resultType="com.example.classhubproject.data.community.CommunityDto">
+        SELECT c.community_id,
+               c.user_id,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count
+        FROM Community c
+                 LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+        WHERE c.community_type = '2'
+          AND c.community_id = #{id}
+    </select>
+
+    <update id="modifyCommunity" parameterType="com.example.classhubproject.data.community.CommunityModifyDto">
+        UPDATE Community
+        SET user_id        = #{communityModifyDto.userId},
+            community_type = #{communityModifyDto.communityType},
+            title          = #{communityModifyDto.title},
+            text           = #{communityModifyDto.text},
+            edit_date      = now()
+        WHERE community_id = #{communityId}
+    </update>
+
+
+</mapper>
