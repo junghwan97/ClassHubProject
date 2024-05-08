@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.classhubproject.mapper.comment.CommentMapper">
+
+    <insert id="commentPost" parameterType="com.example.classhubproject.data.comment.CommentPostDto">
+        INSERT INTO Comment(user_id, text, community_id)
+        VALUES (#{user_id}, #{text}, #{community_id});
+    </insert>
+
+
+    <select id="selectAllByCommunityId" resultType="com.example.classhubproject.data.comment.CommentDto">
+        select *
+        from Comment
+        where community_id = #{communityId};
+    </select>
+
+
+    <delete id="commentDelete" parameterType="com.example.classhubproject.data.comment.CommentDto">
+        DELETE
+        FROM Comment
+        WHERE comment_id = #{commentId};
+    </delete>
+
+    <select id="getCommentById" resultType="com.example.classhubproject.data.comment.CommentDto">
+        select *
+        from Comment
+        where comment_id = #{commentId};
+    </select>
+
+    <update id="commentModify" parameterType="com.example.classhubproject.data.comment.CommentModifyDto">
+        UPDATE Comment
+        SET text  = #{commentModifyDto.text},
+            edit_date  = NOW()
+        WHERE comment_id = #{commentId}
+    </update>
+
+</mapper>
