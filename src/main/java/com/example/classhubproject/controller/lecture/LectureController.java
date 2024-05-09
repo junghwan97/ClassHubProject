@@ -1,5 +1,7 @@
 package com.example.classhubproject.controller.lecture;
 
+import com.example.classhubproject.data.lecture.LectureEditedRequest;
+import com.example.classhubproject.data.lecture.LectureEditedResponse;
 import com.example.classhubproject.data.lecture.LectureUploadedRequest;
 import com.example.classhubproject.data.lecture.LectureUploadedResponse;
 import com.example.classhubproject.service.lecture.LectureService;
@@ -37,6 +39,18 @@ public class LectureController {
     @PostMapping("upload")
     public LectureUploadedResponse upload(@RequestBody LectureUploadedRequest request) {
         return lectureService.upload(request);
+    }
+
+    // 강의 수정
+    @Operation(summary = "강의 수정", description = "강의를 수정.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureUploadedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("edit")
+    public LectureEditedResponse edit(@RequestBody LectureEditedRequest request) {
+        return lectureService.edit(request);
     }
 
 }
