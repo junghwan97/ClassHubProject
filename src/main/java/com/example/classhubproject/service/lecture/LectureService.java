@@ -26,6 +26,8 @@ public class LectureService {
         //System.out.println(request.);
 //        Map<String, Object> result = new HashMap<>();
 //        result.put("favoriteCommunity", false);
+
+        //int upload = lectureMapper.upload(request);
         LectureUploadedResponse result  = new LectureUploadedResponse();
         result.uploaded = true;
 
