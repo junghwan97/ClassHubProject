@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.classhubproject.mapper.cart.CartMapper">
+
+    <resultMap id="CartWithClassResultMap" type="cartResponse">
+        <id property="cartId" column="cart_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="classId" column="class_id"/>
+        <result property="regdate" column="regdate"/>
+        <result property="orderStatus" column="order_status"/>
+
+        <association property="classDto" javaType="classResponse">
+            <result property="instructorsId" column="instructors_id"/>
+            <result property="className" column="class_name"/>
+            <result property="description" column="description"/>
+            <result property="summary" column="summary"/>
+            <result property="price" column="price"/>
+            <result property="video" column="video"/>
+            <result property="totalVideoLength" column="total_video_length"/>
+            <result property="regdate" column="regdate"/>
+            <result property="editDate" column="edit_date"/>
+        </association>
+    </resultMap>
+
+    <!-- 특정 회원의 장바구니 상품 조회 -->
+    <select id="getCartList" resultMap="CartWithClassResultMap">
+        SELECT c.*, cl.class_id, cl.class_name, cl.price
+        FROM Cart AS c
+                 JOIN Class AS cl ON c.class_id = cl.class_id
+        WHERE c.user_id = #{userId}
+          AND c.order_status = 2
+        ORDER BY c.regdate DESC
+    </select>
+
+    <!-- 중복 상품 체크 -->
+    <select id="checkDuplicate" resultType="boolean">
+        SELECT EXISTS (SELECT 1
+                       FROM Cart AS c
+                       WHERE c.user_id = #{userId}
+                         AND c.class_id = #{classId}
+                         AND c.order_status = 2)
+    </select>
+
+    <!-- 장바구니 담기 -->
+    <insert id="addCart" parameterType="cartRequest">
+        INSERT INTO Cart (user_id, class_id)
+        VALUES (#{userId}, #{classId})
+    </insert>
+
+    <!-- 장바구니 상품 개별 삭제 -->
+    <delete id="deleteCart" parameterType="cartRequest">
+        DELETE
+        FROM Cart
+        WHERE cart_id = #{cartId}
+    </delete>
+
+    <!-- 장바구니 비우기 -->
+    <delete id="clearCart" parameterType="cartRequest">
+        DELETE
+        FROM Cart
+        WHERE user_id = #{userId}
+          AND order_status = 2
+    </delete>
+
+</mapper>

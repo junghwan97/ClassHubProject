@@ -28,6 +28,15 @@ public class SwaggerConfig {
     }
 
     @Bean
+    public GroupedOpenApi cart() {
+        return GroupedOpenApi.builder()
+                .group("장바구니 기능")
+                .pathsToMatch("/cart/*")
+                .packagesToScan("com.example.classhubproject.controller.cart")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi community() {
         return GroupedOpenApi.builder()
                 .group("게시판 기능")

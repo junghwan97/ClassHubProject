@@ -33,4 +33,3 @@ public class ResponseMessage {
     public static final String FAVORITE_CANCEL_SUCCESS = "좋아요가 취소되었습니다.";
 
 
-}
