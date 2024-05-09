@@ -3,8 +3,8 @@
 <mapper namespace="com.example.classhubproject.mapper.lecture.LectureMapper">
 
     <insert id="upload" parameterType="com.example.classhubproject.data.lecture.LectureUploadedRequest">
-        INSERT INTO Favorite_Community(user_id, favorite_type_id, favorite_type)
-        VALUES (#{user_id}, #{favorite_type_id}, 1);
+        INSERT INTO Instructors(user_id, name, field, `text`, user_type, request_status, regdate)
+        VALUES (#{user_id}, #{name}, #{field},  #{text},  #{user_type},  #{request_status}, NOW());
     </insert>
 
 

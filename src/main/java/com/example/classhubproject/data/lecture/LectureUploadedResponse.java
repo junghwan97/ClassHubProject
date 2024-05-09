@@ -4,5 +4,13 @@ import lombok.Data;
 
 @Data
 public class LectureUploadedResponse {
-    public Boolean uploaded;
+    public Integer getUploaded() {
+        return uploaded;
+    }
+
+    public void setUploaded(Integer uploaded) {
+        this.uploaded = uploaded;
+    }
+
+    Integer uploaded;
 }

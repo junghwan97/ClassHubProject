@@ -23,15 +23,13 @@ public class LectureService {
 
     public LectureUploadedResponse upload(LectureUploadedRequest request) {
 
-        //System.out.println(request.);
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("favoriteCommunity", false);
 
-        //int upload = lectureMapper.upload(request);
-        LectureUploadedResponse result  = new LectureUploadedResponse();
-        result.uploaded = true;
+        int upload = lectureMapper.upload(request);
 
-        return result;
+        LectureUploadedResponse response  = new LectureUploadedResponse();
+        response.setUploaded(upload);
+
+        return response;
     }
 
 }
