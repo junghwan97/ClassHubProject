@@ -6,9 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class LectureService {
@@ -19,21 +16,21 @@ public class LectureService {
         this.lectureMapper = lectureMapper;
     }
 
-    public LectureUploadedResponse upload(LectureUploadedRequest request) {
+    public LectureInstructorAddedResponse addInstructor(LectureInstructorAddedRequest request) {
 
         int upload = lectureMapper.upload(request);
 
-        LectureUploadedResponse response  = new LectureUploadedResponse();
+        LectureInstructorAddedResponse response  = new LectureInstructorAddedResponse();
         response.setUploaded(upload);
 
         return response;
     }
 
-    public LectureEditedResponse edit(LectureEditedRequest request) {
+    public LectureInstructorEditedResponse editInstructor(LectureInstructorEditedRequest request) {
 
         int edited = lectureMapper.edit(request);
 
-        LectureEditedResponse response  = new LectureEditedResponse();
+        LectureInstructorEditedResponse response  = new LectureInstructorEditedResponse();
         response.setEdited(edited);
 
         return response;

@@ -3,7 +3,7 @@ package com.example.classhubproject.data.lecture;
 import lombok.Data;
 
 @Data
-public class LectureEditedResponse {
+public class LectureInstructorEditedResponse {
     public Integer getEdited() {
         return edited;
     }
