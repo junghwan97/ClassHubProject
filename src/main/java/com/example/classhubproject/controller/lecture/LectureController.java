@@ -1,9 +1,6 @@
 package com.example.classhubproject.controller.lecture;
 
-import com.example.classhubproject.data.lecture.LectureEditedRequest;
-import com.example.classhubproject.data.lecture.LectureEditedResponse;
-import com.example.classhubproject.data.lecture.LectureUploadedRequest;
-import com.example.classhubproject.data.lecture.LectureUploadedResponse;
+import com.example.classhubproject.data.lecture.*;
 import com.example.classhubproject.service.lecture.LectureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -51,6 +48,29 @@ public class LectureController {
     @PostMapping("edit")
     public LectureEditedResponse edit(@RequestBody LectureEditedRequest request) {
         return lectureService.edit(request);
+    }
+
+    // 강의 자료 업로드
+    @Operation(summary = "강의 자료 업로드", description = "강의자료 를 업로드.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureMaterialUploadedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("uploadMaterial")
+    public LectureMaterialUploadedResponse uploadMaterial(@RequestBody LectureMaterialUploadedRequest request) {
+        return lectureService.uploadMaterial(request);
+    }
+
+    @Operation(summary = "강의 자료 수정", description = "강의 자료 수정.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureUploadedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("editMaterial")
+    public LectureMaterialEditedResponse editMaterial(@RequestBody LectureMaterialEditedRequest request) {
+        return lectureService.editMaterial(request);
     }
 
 }

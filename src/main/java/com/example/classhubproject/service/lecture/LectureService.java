@@ -39,4 +39,24 @@ public class LectureService {
         return response;
     }
 
+    public LectureMaterialUploadedResponse uploadMaterial(LectureMaterialUploadedRequest request) {
+
+        int upload = lectureMapper.uploadMaterial(request);
+
+        LectureMaterialUploadedResponse response  = new LectureMaterialUploadedResponse();
+        response.setUpload(upload);
+
+        return response;
+    }
+
+    public LectureMaterialEditedResponse editMaterial(LectureMaterialEditedRequest request) {
+
+        int edited = lectureMapper.editMaterial(request);
+
+        LectureMaterialEditedResponse response  = new LectureMaterialEditedResponse();
+        response.setEdited(edited);
+
+        return response;
+    }
+
 }

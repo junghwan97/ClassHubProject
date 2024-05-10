@@ -8,9 +8,20 @@
     </insert>
 
     <insert id="edit" parameterType="com.example.classhubproject.data.lecture.LectureEditedRequest">
-        UPDATE Classhub.Instructors
+        UPDATE Instructors
         SET user_id=#{user_id}, name=#{name}, field=#{field}, `text`=#{text}, user_type=#{user_type}, request_status=#{request_status}
         WHERE instructors_id=#{instructors_id};
+    </insert>
+
+    <insert id="uploadMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialUploadedRequest">
+        INSERT INTO Resource(class_detail_id, resource)
+        VALUES (#{class_detail_id}, #{resource});
+    </insert>
+
+    <insert id="editMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialEditedRequest">
+        UPDATE Resource
+        SET class_detail_id=#{class_detail_id}, resource=#{resource}
+        WHERE resource_id=#{resource_id};
     </insert>
 
 
