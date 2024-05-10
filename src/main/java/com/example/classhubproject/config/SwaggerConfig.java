@@ -28,6 +28,42 @@ public class SwaggerConfig {
     }
 
     @Bean
+    public GroupedOpenApi community() {
+        return GroupedOpenApi.builder()
+                .group("게시판 기능")
+                .pathsToMatch("/order/*")
+                .packagesToScan("com.example.classhubproject.controller.community")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi comment() {
+        return GroupedOpenApi.builder()
+                .group("댓글 기능")
+                .pathsToMatch("/order/*")
+                .packagesToScan("com.example.classhubproject.controller.comment")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi favorite() {
+        return GroupedOpenApi.builder()
+                .group("좋아요 기능")
+                .pathsToMatch("/order/*")
+                .packagesToScan("com.example.classhubproject.controller.favorite")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi lecture() {
+        return GroupedOpenApi.builder()
+                .group("강의 관련")
+                .pathsToMatch("/order/*")
+                .packagesToScan("com.example.classhubproject.controller.lecture")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi cart() {
         return GroupedOpenApi.builder()
                 .group("장바구니 기능")

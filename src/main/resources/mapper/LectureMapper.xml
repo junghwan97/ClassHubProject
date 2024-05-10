@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.classhubproject.mapper.lecture.LectureMapper">
+
+    <insert id="upload" parameterType="com.example.classhubproject.data.lecture.LectureUploadedRequest">
+        INSERT INTO Instructors(user_id, name, field, `text`, user_type, request_status, regdate)
+        VALUES (#{user_id}, #{name}, #{field},  #{text},  #{user_type},  #{request_status}, NOW());
+    </insert>
+
+    <insert id="edit" parameterType="com.example.classhubproject.data.lecture.LectureEditedRequest">
+        UPDATE Classhub.Instructors
+        SET user_id=#{user_id}, name=#{name}, field=#{field}, `text`=#{text}, user_type=#{user_type}, request_status=#{request_status}
+        WHERE instructors_id=#{instructors_id};
+    </insert>
+
+
+</mapper>
