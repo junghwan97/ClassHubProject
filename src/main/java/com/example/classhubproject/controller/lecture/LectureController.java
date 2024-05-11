@@ -23,7 +23,6 @@ public class LectureController {
         this.lectureService = lectureService;
     }
 
-
     // 강사 업로드
     @Operation(summary = "강사 추가", description = "강사 추가.",
             responses = {
@@ -39,7 +38,7 @@ public class LectureController {
     // 강사 수정
     @Operation(summary = "강사 수정", description = "강사 수정.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorAddedResponse.class))),
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
                     @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
@@ -48,7 +47,7 @@ public class LectureController {
         return lectureService.editInstructor(request);
     }
 
-    // 강의 자료 업로드
+    // 강의 자료 업로드 / 수정
     @Operation(summary = "강의 자료 업로드", description = "강의자료 를 업로드.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureMaterialUploadedResponse.class))),
@@ -69,6 +68,29 @@ public class LectureController {
     @PostMapping("editMaterial")
     public LectureMaterialEditedResponse editMaterial(@RequestBody LectureMaterialEditedRequest request) {
         return lectureService.editMaterial(request);
+    }
+
+    // 강의 업로드 / 수정
+    @Operation(summary = "강의 업로드", description = "강의 업로드.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureClassUploadedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("uploadClass")
+    public LectureClassUploadedResponse uploadClass(@RequestBody LectureClassUploadedRequest request) {
+        return lectureService.uploadClass(request);
+    }
+
+    @Operation(summary = "강의 수정", description = "강의 수정.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureClassEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("editClass")
+    public LectureClassEditedResponse editClass(@RequestBody LectureClassEditedRequest request) {
+        return lectureService.editClass(request);
     }
 
 }

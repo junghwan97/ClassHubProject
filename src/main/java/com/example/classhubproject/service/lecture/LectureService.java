@@ -18,7 +18,7 @@ public class LectureService {
 
     public LectureInstructorAddedResponse addInstructor(LectureInstructorAddedRequest request) {
 
-        int upload = lectureMapper.upload(request);
+        int upload = lectureMapper.addInstructor(request);
 
         LectureInstructorAddedResponse response  = new LectureInstructorAddedResponse();
         response.setUploaded(upload);
@@ -28,7 +28,7 @@ public class LectureService {
 
     public LectureInstructorEditedResponse editInstructor(LectureInstructorEditedRequest request) {
 
-        int edited = lectureMapper.edit(request);
+        int edited = lectureMapper.editInstructor(request);
 
         LectureInstructorEditedResponse response  = new LectureInstructorEditedResponse();
         response.setEdited(edited);
@@ -51,6 +51,27 @@ public class LectureService {
         int edited = lectureMapper.editMaterial(request);
 
         LectureMaterialEditedResponse response  = new LectureMaterialEditedResponse();
+        response.setEdited(edited);
+
+        return response;
+    }
+
+    // 강의 추가/ 수정
+    public LectureClassUploadedResponse uploadClass(LectureClassUploadedRequest request) {
+
+        int upload = 0;//;lectureMapper.uploadClass(request);
+
+        LectureClassUploadedResponse response  = new LectureClassUploadedResponse();
+        response.setUpload(upload);
+
+        return response;
+    }
+
+    public LectureClassEditedResponse editClass(LectureClassEditedRequest request) {
+
+        int edited = 0;//lectureMapper.editClass(request);
+
+        LectureClassEditedResponse response  = new LectureClassEditedResponse();
         response.setEdited(edited);
 
         return response;
