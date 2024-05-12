@@ -1,15 +1,15 @@
 package com.example.classhubproject.mapper.favorite;
 
-import com.example.classhubproject.data.favorite.FavoriteDto;
+import com.example.classhubproject.data.favorite.FavoriteRequestDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface FavoriteMapper {
-    int favoriteCommunity(FavoriteDto favorite);
+    int favoriteCommunity(FavoriteRequestDTO favorite);
 
-    int favoriteComment(FavoriteDto favorite);
+    int favoriteComment(FavoriteRequestDTO favorite);
 
-    int deleteFavoriteCommunity(FavoriteDto favorite);
+    int deleteFavoriteCommunity(FavoriteRequestDTO favorite);
 
-    int deleteFavoriteComment(FavoriteDto favoriteDto);
+    int deleteFavoriteComment(FavoriteRequestDTO favoriteRequestDTO);
 }
