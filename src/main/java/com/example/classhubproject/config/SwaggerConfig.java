@@ -53,4 +53,24 @@ public class SwaggerConfig {
                 .packagesToScan("com.example.classhubproject.controller.favorite")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi lecture() {
+        return GroupedOpenApi.builder()
+                .group("강의 관련")
+                .pathsToMatch("/order/*")
+                .packagesToScan("com.example.classhubproject.controller.lecture")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi cart() {
+        return GroupedOpenApi.builder()
+                .group("장바구니 기능")
+                .pathsToMatch("/cart/*")
+                .packagesToScan("com.example.classhubproject.controller.cart")
+                .build();
+    }
+
+
 }
