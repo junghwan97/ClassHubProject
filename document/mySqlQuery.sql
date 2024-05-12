@@ -1,3 +1,4 @@
+
 -- 사용자 정보 테이블 생성
 CREATE TABLE `User`
 (
@@ -197,7 +198,6 @@ CREATE TABLE Community
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci COMMENT ='커뮤니티 게시글';
-
 
 -- 커뮤니티 댓글 테이블 생성
 CREATE TABLE Comment

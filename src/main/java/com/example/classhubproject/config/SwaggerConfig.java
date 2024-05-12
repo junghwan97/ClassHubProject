@@ -71,4 +71,15 @@ public class SwaggerConfig {
                 .packagesToScan("com.example.classhubproject.controller.lecture")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi cart() {
+        return GroupedOpenApi.builder()
+                .group("장바구니 기능")
+                .pathsToMatch("/cart/*")
+                .packagesToScan("com.example.classhubproject.controller.cart")
+                .build();
+    }
+
+
 }
