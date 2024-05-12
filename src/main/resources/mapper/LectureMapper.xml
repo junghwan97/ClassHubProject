@@ -2,16 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.classhubproject.mapper.lecture.LectureMapper">
 
-    <insert id="upload" parameterType="com.example.classhubproject.data.lecture.LectureUploadedRequest">
+    <insert id="addInstructor" parameterType="com.example.classhubproject.data.lecture.LectureInstructorAddedRequest">
         INSERT INTO Instructors(user_id, name, field, `text`, user_type, request_status, regdate)
         VALUES (#{user_id}, #{name}, #{field},  #{text},  #{user_type},  #{request_status}, NOW());
     </insert>
 
-    <insert id="edit" parameterType="com.example.classhubproject.data.lecture.LectureEditedRequest">
-        UPDATE Classhub.Instructors
+    <insert id="editInstructor" parameterType="com.example.classhubproject.data.lecture.LectureInstructorEditedRequest">
+        UPDATE Instructors
         SET user_id=#{user_id}, name=#{name}, field=#{field}, `text`=#{text}, user_type=#{user_type}, request_status=#{request_status}
         WHERE instructors_id=#{instructors_id};
     </insert>
+
+    <insert id="uploadMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialUploadedRequest">
+        INSERT INTO Resource(class_detail_id, resource)
+        VALUES (#{class_detail_id}, #{resource});
+    </insert>
+
+    <insert id="editMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialEditedRequest">
+        UPDATE Resource
+        SET class_detail_id=#{class_detail_id}, resource=#{resource}
+        WHERE resource_id=#{resource_id};
+    </insert>
+
+<!--    <insert id="uploadClass" parameterType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest">-->
+<!--        INSERT INTO Class-->
+<!--        (instructors_id, category_id, class_name, description, summary, price, video, total_video_length, regdate, edit_date)-->
+<!--        VALUES(#{instructors_id}, #{category_id}, #{class_name}, #{description}, #{summary}, #{price}, #{video}, #{total_video_length}, CURRENT_TIMESTAMP, '');-->
+<!--    </insert>-->
+
+<!--    <insert id="editClass" parameterType="com.example.classhubproject.data.lecture.LectureClassEditedRequest">-->
+<!--        UPDATE Class-->
+<!--        SET instructors_id=#{instructors_id}, category_id=#{category_id}, class_name=#{class_name}, description=#{description}, summary=#{summary}, price=#{price}, video=#{video}, total_video_length=#{total_video_length}, edit_date=CURRENT_TIMESTAMP-->
+<!--        WHERE class_id=#{class_id};-->
+<!--    </insert>-->
 
 
 </mapper>

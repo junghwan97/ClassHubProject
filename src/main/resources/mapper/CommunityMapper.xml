@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.classhubproject.mapper.community.CommunityMapper">
 
-    <insert id="posting" parameterType="com.example.classhubproject.data.community.CommunityRegDto">
+    <insert id="posting" parameterType="communityRequest">
         <selectKey keyProperty="communityId" resultType="int" order="AFTER">
             SELECT LAST_INSERT_ID() AS community_id
         </selectKey>
@@ -11,12 +11,12 @@
     </insert>
 
 
-    <insert id="insertImage" parameterType="com.example.classhubproject.data.community.CommunityRegDto">
+    <insert id="insertImage" parameterType="communityRequest">
         INSERT INTO Community_Image(community_id, image)
         VALUES (#{communityId}, #{image});
     </insert>
 
-    <select id="selectAllQuestions" resultType="com.example.classhubproject.data.community.CommunityDto">
+    <select id="selectAllRecentQuestions" resultType="communityResponse">
         SELECT c.community_id,
                c.user_id,
                c.community_type,
@@ -24,16 +24,15 @@
                c.text,
                c.regdate,
                (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
-               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
         FROM Community c
-                 LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+--                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
 --                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
         WHERE c.community_type = '1'
         ORDER BY c.community_id DESC
     </select>
 
-
-    <select id="selectAllStudies" resultType="com.example.classhubproject.data.community.CommunityDto">
+    <select id="selectAllQuestionsByFavorite" resultType="communityResponse">
         SELECT c.community_id,
                c.user_id,
                c.community_type,
@@ -41,15 +40,47 @@
                c.text,
                c.regdate,
                (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
-               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
         FROM Community c
-                 LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+--                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
 --                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
-        WHERE c.community_type = '2'
+        WHERE c.community_type = '1'
+        ORDER BY favorite_count DESC
+    </select>
+
+    <select id="selectAllQuestionsByComment" resultType="communityResponse">
+        SELECT c.community_id,
+               c.user_id,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        FROM Community c
+--                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+--                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        WHERE c.community_type = '1'
+        ORDER BY comment_count DESC
+    </select>
+
+    <select id="selectAllRecentStudies" resultType="communityResponse">
+        SELECT c.community_id,
+               c.user_id,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        FROM Community c
+--                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+--                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        WHERE c.community_type = '2' OR c.community_type = '3'
         ORDER BY c.community_id DESC
     </select>
 
-    <select id="selectQuestion" resultType="com.example.classhubproject.data.community.CommunityDto">
+    <select id="selectAllStudiesByFavorite" resultType="communityResponse">
         SELECT c.community_id,
                c.user_id,
                c.community_type,
@@ -57,37 +88,120 @@
                c.text,
                c.regdate,
                (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
-               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        FROM Community c
+--                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+--                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        WHERE c.community_type = '2' OR c.community_type = '3'
+        ORDER BY favorite_count DESC
+    </select>
+
+    <select id="selectAllStudiesByComment" resultType="communityResponse">
+        SELECT c.community_id,
+               c.user_id,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        FROM Community c
+--                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+--                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        WHERE c.community_type = '2' OR c.community_type = '3'
+        ORDER BY comment_count DESC
+    </select>
+
+    <select id="selectStudiesByStatus" resultType="communityResponse">
+        SELECT c.community_id,
+               c.user_id,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
         FROM Community c
                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
 --                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        WHERE c.community_type = #{status}
+        ORDER BY c.community_id DESC
+    </select>
+
+    <resultMap type="communityResponse" id="communityResultMap">
+        <id column="community_id" property="communityId"/>
+        <result column="user_id" property="userId"/>
+        <result column="community_type" property="communityType"/>
+        <result column="title" property="title"/>
+        <result column="text" property="text"/>
+        <result column="regdate" property="regDate"/>
+        <result column="favorite_count" property="favoriteCount"/>
+        <result column="comment_count" property="commentCount"/>
+        <result column="edit_date" property="editDate"/>
+        <collection property="image" ofType="string">
+            <result column="image"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectQuestion" resultType="communityResponse"
+            resultMap="communityResultMap">
+        SELECT c.community_id,
+               c.user_id,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count,
+               ci.image,
+               c.edit_date
+        FROM Community c
+                 LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+                 LEFT JOIN Community_Image ci ON c.community_id = ci.community_id
         WHERE c.community_type = '1'
           AND c.community_id = #{id}
     </select>
 
-    <select id="selectStudy" resultType="com.example.classhubproject.data.community.CommunityDto">
+    <select id="selectStudy" resultType="communityResponse"
+            resultMap="communityResultMap">
         SELECT c.community_id,
                c.user_id,
                c.community_type,
                c.title,
                c.text,
                c.regdate,
-               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count,
+               ci.image,
+               c.edit_date
         FROM Community c
                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+                 LEFT JOIN Community_Image ci ON c.community_id = ci.community_id
         WHERE c.community_type = '2'
           AND c.community_id = #{id}
     </select>
 
-    <update id="modifyCommunity" parameterType="com.example.classhubproject.data.community.CommunityModifyDto">
+    <update id="modifyCommunity" parameterType="communityRequest">
         UPDATE Community
-        SET user_id        = #{communityModifyDto.userId},
-            community_type = #{communityModifyDto.communityType},
-            title          = #{communityModifyDto.title},
-            text           = #{communityModifyDto.text},
+        SET user_id        = #{communityDto.userId},
+            community_type = #{communityDto.communityType},
+            title          = #{communityDto.title},
+            text           = #{communityDto.text},
             edit_date      = now()
         WHERE community_id = #{communityId}
     </update>
 
+    <delete id="removeImage" parameterType="communityRequest">
+        DELETE
+        FROM Community_Image
+        WHERE community_id = #{communityId}
+          AND image = #{fileName};
+    </delete>
+
+    <select id="countAll" resultType="Integer">
+        SELECT count(*)
+        FROM Community
+        WHERE community_type = '1'
+    </select>
 
 </mapper>

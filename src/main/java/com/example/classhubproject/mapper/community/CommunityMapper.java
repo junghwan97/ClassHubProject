@@ -1,8 +1,7 @@
 package com.example.classhubproject.mapper.community;
 
-import com.example.classhubproject.data.community.CommunityDto;
-import com.example.classhubproject.data.community.CommunityModifyDto;
-import com.example.classhubproject.data.community.CommunityRegDto;
+import com.example.classhubproject.data.community.CommunityResponseDTO;
+import com.example.classhubproject.data.community.CommunityRequestDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,16 +9,30 @@ import java.util.List;
 
 @Mapper
 public interface CommunityMapper {
-    int posting(CommunityRegDto communityRegDto);
-    Integer insertImage(Integer community_id, String image);
-    List<CommunityDto> selectAllQuestions();
+    int posting(CommunityRequestDTO communityRequestDTO);
 
-    List<CommunityDto> selectAllStudies();
+    Integer insertImage(@Param("communityId") Integer communityId, @Param("image") String image);
 
-    CommunityDto selectQuestion(Integer id);
+    List<CommunityResponseDTO> selectAllRecentQuestions();
 
-    CommunityDto selectStudy(Integer id);
+    List<CommunityResponseDTO> selectAllQuestionsByFavorite();
 
-    Integer modifyCommunity(@Param("communityId") Integer communityId, @Param("communityModifyDto") CommunityModifyDto communityModifyDto);
+    List<CommunityResponseDTO> selectAllQuestionsByComment();
 
+    List<CommunityResponseDTO> selectAllRecentStudies();
+    List<CommunityResponseDTO> selectAllStudiesByFavorite();
+
+    List<CommunityResponseDTO> selectAllStudiesByComment();
+
+    CommunityResponseDTO selectQuestion(Integer id);
+
+    CommunityResponseDTO selectStudy(Integer id);
+
+    Integer modifyCommunity(@Param("communityId") Integer communityId, @Param("communityDto") CommunityRequestDTO communityDto);
+
+    void removeImage(@Param("communityId") Integer communityId, @Param("fileName") String fileName);
+
+    List<CommunityResponseDTO> selectStudiesByStatus(int status);
+
+    Integer countAll();
 }

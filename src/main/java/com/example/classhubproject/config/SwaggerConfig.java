@@ -28,10 +28,19 @@ public class SwaggerConfig {
     }
 
     @Bean
+    public GroupedOpenApi cart() {
+        return GroupedOpenApi.builder()
+                .group("장바구니 기능")
+                .pathsToMatch("/cart/*")
+                .packagesToScan("com.example.classhubproject.controller.cart")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi community() {
         return GroupedOpenApi.builder()
                 .group("게시판 기능")
-                .pathsToMatch("/order/*")
+                .pathsToMatch("/community/*")
                 .packagesToScan("com.example.classhubproject.controller.community")
                 .build();
     }
@@ -40,7 +49,7 @@ public class SwaggerConfig {
     public GroupedOpenApi comment() {
         return GroupedOpenApi.builder()
                 .group("댓글 기능")
-                .pathsToMatch("/order/*")
+                .pathsToMatch("/comment/*")
                 .packagesToScan("com.example.classhubproject.controller.comment")
                 .build();
     }
@@ -49,7 +58,7 @@ public class SwaggerConfig {
     public GroupedOpenApi favorite() {
         return GroupedOpenApi.builder()
                 .group("좋아요 기능")
-                .pathsToMatch("/order/*")
+                .pathsToMatch("/favorite/*")
                 .packagesToScan("com.example.classhubproject.controller.favorite")
                 .build();
     }
@@ -62,15 +71,4 @@ public class SwaggerConfig {
                 .packagesToScan("com.example.classhubproject.controller.lecture")
                 .build();
     }
-
-    @Bean
-    public GroupedOpenApi cart() {
-        return GroupedOpenApi.builder()
-                .group("장바구니 기능")
-                .pathsToMatch("/cart/*")
-                .packagesToScan("com.example.classhubproject.controller.cart")
-                .build();
-    }
-
-
 }

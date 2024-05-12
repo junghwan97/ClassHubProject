@@ -12,6 +12,11 @@
     </settings>
 
     <typeAliases>
+        <typeAlias type="com.example.classhubproject.data.community.CommunityRequestDTO" alias="communityRequest"/>
+        <typeAlias type="com.example.classhubproject.data.community.CommunityResponseDTO" alias="communityResponse"/>
+        <typeAlias type="com.example.classhubproject.data.comment.CommentRequestDTO" alias="commentRequest"/>
+        <typeAlias type="com.example.classhubproject.data.comment.CommentResponseDTO" alias="commentResponse"/>
+        <typeAlias type="com.example.classhubproject.data.favorite.FavoriteRequestDTO" alias="favoriteRequest"/>
         <typeAlias type="com.example.classhubproject.data.cart.CartRequestDTO" alias="cartRequest"/>
         <typeAlias type="com.example.classhubproject.data.cart.CartResponseDTO" alias="cartResponse"/>
         <typeAlias type="com.example.classhubproject.data.lecture.ClassResponseDTO" alias="classResponse"/>
