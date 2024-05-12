@@ -2,35 +2,50 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.classhubproject.mapper.comment.CommentMapper">
 
-    <insert id="commentPost" parameterType="com.example.classhubproject.data.comment.CommentPostDto">
+    <insert id="commentPost" parameterType="commentRequest">
         INSERT INTO Comment(user_id, text, community_id)
-        VALUES (#{user_id}, #{text}, #{community_id});
+        VALUES (#{userId}, #{text}, #{communityId});
     </insert>
 
 
-    <select id="selectAllByCommunityId" resultType="com.example.classhubproject.data.comment.CommentDto">
-        select *
-        from Comment
+    <select id="selectAllByCommunityId" resultType="commentResponse">
+        select c.comment_id,
+               c.user_id,
+               c.community_id,
+               c.text,
+               c.regdate,
+               c.edit_date,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = comment_id) AS favoriteCount
+        from Comment c
+                 LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '2'
         where community_id = #{communityId};
     </select>
 
 
-    <delete id="commentDelete" parameterType="com.example.classhubproject.data.comment.CommentDto">
+    <delete id="commentDelete" parameterType="commentResponse">
         DELETE
         FROM Comment
         WHERE comment_id = #{commentId};
     </delete>
 
-    <select id="getCommentById" resultType="com.example.classhubproject.data.comment.CommentDto">
-        select *
+    <select id="getCommentById" resultType="commentResponse">
+        select comment_id,
+               user_id,
+               community_id,
+               text,
+               regdate,
+               edit_date,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = comment_id) AS favoriteCount
         from Comment
         where comment_id = #{commentId};
     </select>
 
-    <update id="commentModify" parameterType="com.example.classhubproject.data.comment.CommentModifyDto">
+    <update id="commentModify" parameterType="commentRequest">
         UPDATE Comment
-        SET text  = #{commentModifyDto.text},
-            edit_date  = NOW()
+        SET community_id = #{commentModify.communityId},
+            user_id      = #{commentModify.userId},
+            text         = #{commentModify.text},
+            edit_date    = NOW()
         WHERE comment_id = #{commentId}
     </update>
 

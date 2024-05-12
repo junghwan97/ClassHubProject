@@ -1,8 +1,7 @@
 package com.example.classhubproject.service.comment;
 
-import com.example.classhubproject.data.comment.CommentDto;
-import com.example.classhubproject.data.comment.CommentModifyDto;
-import com.example.classhubproject.data.comment.CommentPostDto;
+import com.example.classhubproject.data.comment.CommentResponseDTO;
+import com.example.classhubproject.data.comment.CommentRequestDTO;
 import com.example.classhubproject.mapper.comment.CommentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,24 +20,23 @@ public class CommentService {
         this.commentMapper = commentMapper;
     }
 
-    public List<CommentDto> commentList(Integer communityId) {
+    public List<CommentResponseDTO> commentList(Integer communityId) {
         return commentMapper.selectAllByCommunityId(communityId);
     }
 
-    public Integer commentPost(CommentPostDto commentPostDto) {
-        return commentMapper.commentPost(commentPostDto);
+    public Integer commentPost(CommentRequestDTO commentRequestDTO) {
+        return commentMapper.commentPost(commentRequestDTO);
     }
 
     public Integer commentDelete(int commentId) {
         return commentMapper.commentDelete(commentId);
     }
 
-    public CommentDto getComment(int commentId) {
+    public CommentResponseDTO getComment(int commentId) {
         return commentMapper.getCommentById(commentId);
     }
 
-    public Integer commentModify(int commentId, CommentModifyDto commentModifyDto) {
-        System.out.println(commentModifyDto.getText());
-        return commentMapper.commentModify(commentId, commentModifyDto);
+    public Integer commentModify(int commentId, CommentRequestDTO commentRequestDTO) {
+        return commentMapper.commentModify(commentId, commentRequestDTO);
     }
 }
