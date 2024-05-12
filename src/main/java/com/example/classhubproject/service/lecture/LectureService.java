@@ -59,7 +59,7 @@ public class LectureService {
     // 강의 추가/ 수정
     public LectureClassUploadedResponse uploadClass(LectureClassUploadedRequest request) {
 
-        int upload = 0;//;lectureMapper.uploadClass(request);
+        int upload = lectureMapper.uploadClass(request);
 
         LectureClassUploadedResponse response  = new LectureClassUploadedResponse();
         response.setUpload(upload);
@@ -69,7 +69,7 @@ public class LectureService {
 
     public LectureClassEditedResponse editClass(LectureClassEditedRequest request) {
 
-        int edited = 0;//lectureMapper.editClass(request);
+        int edited = lectureMapper.editClass(request);
 
         LectureClassEditedResponse response  = new LectureClassEditedResponse();
         response.setEdited(edited);
