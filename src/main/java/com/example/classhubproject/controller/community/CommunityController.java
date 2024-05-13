@@ -4,6 +4,7 @@ import com.example.classhubproject.data.common.ResponseData;
 import com.example.classhubproject.data.common.ResponseMessage;
 import com.example.classhubproject.data.community.CommunityRequestDTO;
 import com.example.classhubproject.data.community.CommunityResponseDTO;
+import com.example.classhubproject.data.community.PagingDTO;
 import com.example.classhubproject.service.community.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -60,11 +61,11 @@ public class CommunityController {
             }
     )
     @GetMapping("questions")
-    public ResponseEntity<ResponseData<List<CommunityResponseDTO>>> selectRecentList() {
-        // 수정일자가 있으면 날짜에 작성날짜 대신 수정날짜 입력
-        // +++++++++++++++++++++++++++++++++++++++++++++++
+    public ResponseEntity<ResponseData<PagingDTO<List<CommunityResponseDTO>>>> selectRecentList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                                                                @RequestParam(value = "search", defaultValue = "") String search,
+                                                                                                @RequestParam(value = "type", required = false) String type) {
 
-        List<CommunityResponseDTO> questions = communityService.questionsRecentList();
+        PagingDTO<List<CommunityResponseDTO>> questions = communityService.questionsRecentList(page, search, type);
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.QUESTION_LIST_SUCCESS, questions));
     }
 
@@ -76,11 +77,11 @@ public class CommunityController {
             }
     )
     @GetMapping("questions/orderByFavorite")
-    public ResponseEntity<ResponseData<List<CommunityResponseDTO>>> selectQuestionsListByFavorite( ) {
-        // 수정일자가 있으면 날짜에 작성날짜 대신 수정날짜 입력
-        // +++++++++++++++++++++++++++++++++++++++++++++++
+    public ResponseEntity<ResponseData<PagingDTO<List<CommunityResponseDTO>>>> selectQuestionsListByFavorite(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                                                                  @RequestParam(value = "search", defaultValue = "") String search,
+                                                                                                  @RequestParam(value = "type", required = false) String type) {
 
-        List<CommunityResponseDTO> questions = communityService.questionsFavoriteList();
+        PagingDTO<List<CommunityResponseDTO>> questions = communityService.questionsFavoriteList(page, search, type);
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.QUESTION_LIST_SUCCESS, questions));
     }
 
@@ -92,11 +93,11 @@ public class CommunityController {
             }
     )
     @GetMapping("questions/orderByComment")
-    public ResponseEntity<ResponseData<List<CommunityResponseDTO>>> selectListByComment() {
-        // 수정일자가 있으면 날짜에 작성날짜 대신 수정날짜 입력
-        // +++++++++++++++++++++++++++++++++++++++++++++++
+    public ResponseEntity<ResponseData<PagingDTO<List<CommunityResponseDTO>>>> selectListByComment(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                                                        @RequestParam(value = "search", defaultValue = "") String search,
+                                                                                        @RequestParam(value = "type", required = false) String type) {
 
-        List<CommunityResponseDTO> questions = communityService.questionsCommentList();
+        PagingDTO<List<CommunityResponseDTO>> questions = communityService.questionsCommentList(page, search, type);
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.QUESTION_LIST_SUCCESS, questions));
     }
 
@@ -108,11 +109,11 @@ public class CommunityController {
             }
     )
     @GetMapping("studies")
-    public ResponseEntity<ResponseData<List<CommunityResponseDTO>>> selectStudiesRecentList() {
-        // 수정일자가 있으면 날짜에 작성날짜 대신 수정날짜 입력
-        // +++++++++++++++++++++++++++++++++++++++++++++++
+    public ResponseEntity<ResponseData<PagingDTO<List<CommunityResponseDTO>>>> selectStudiesRecentList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                                                            @RequestParam(value = "search", defaultValue = "") String search,
+                                                                                            @RequestParam(value = "type", required = false) String type) {
 
-        List<CommunityResponseDTO> studies = communityService.studiesRecentList();
+        PagingDTO<List<CommunityResponseDTO>> studies = communityService.studiesRecentList(page, search, type);
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.STUDY_LIST_SUCCESS, studies));
     }
 
@@ -124,11 +125,11 @@ public class CommunityController {
             }
     )
     @GetMapping("studies/orderByFavorite")
-    public ResponseEntity<ResponseData<List<CommunityResponseDTO>>> selectStudiesListByFavorite() {
-        // 수정일자가 있으면 날짜에 작성날짜 대신 수정날짜 입력
-        // +++++++++++++++++++++++++++++++++++++++++++++++
+    public ResponseEntity<ResponseData<PagingDTO<List<CommunityResponseDTO>>>> selectStudiesListByFavorite(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                                                                @RequestParam(value = "search", defaultValue = "") String search,
+                                                                                                @RequestParam(value = "type", required = false) String type) {
 
-        List<CommunityResponseDTO> studies = communityService.studiesFavoriteList();
+        PagingDTO<List<CommunityResponseDTO>> studies = communityService.studiesFavoriteList(page, search, type);
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.STUDY_LIST_SUCCESS, studies));
     }
 
@@ -140,11 +141,11 @@ public class CommunityController {
             }
     )
     @GetMapping("studies/orderByComment")
-    public ResponseEntity<ResponseData<List<CommunityResponseDTO>>> selectStudiesListByComment() {
-        // 수정일자가 있으면 날짜에 작성날짜 대신 수정날짜 입력
-        // +++++++++++++++++++++++++++++++++++++++++++++++
+    public ResponseEntity<ResponseData<PagingDTO<List<CommunityResponseDTO>>>> selectStudiesListByComment(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                                                               @RequestParam(value = "search", defaultValue = "") String search,
+                                                                                               @RequestParam(value = "type", required = false) String type) {
 
-        List<CommunityResponseDTO> studies = communityService.studiesCommentList();
+        PagingDTO<List<CommunityResponseDTO>> studies = communityService.studiesCommentList(page, search, type);
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.STUDY_LIST_SUCCESS, studies));
     }
 
