@@ -36,5 +36,11 @@
 <!--        WHERE class_id=#{class_id};-->
 <!--    </insert>-->
 
+    <!-- class_id로 가격조회 -->
+    <select id="getClassPrice" resultType="int">
+        SELECT price
+        FROM Class
+        WHERE class_id = #{classId}
+    </select>
 
 </mapper>
