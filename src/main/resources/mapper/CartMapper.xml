@@ -9,7 +9,7 @@
         <result property="regdate" column="regdate"/>
         <result property="orderStatus" column="order_status"/>
 
-        <association property="classDto" javaType="classResponse">
+        <association property="classResponseDTO" javaType="classResponse">
             <result property="instructorsId" column="instructors_id"/>
             <result property="className" column="class_name"/>
             <result property="description" column="description"/>
@@ -61,5 +61,29 @@
         WHERE user_id = #{userId}
           AND order_status = 2
     </delete>
+
+    <!-- 특정 회원의 classId 에 해당하는 cartId 조회 -->
+    <select id="getCartIdByClassId" resultType="int">
+        SELECT cart_id
+        FROM Cart
+        WHERE class_id = #{classId}
+          AND user_id = #{userId}
+    </select>
+
+    <!-- 주문하려는 상품이 장바구니에 있는지 체크 -->
+    <select id="checkCartByClassId" resultType="boolean">
+        SELECT EXISTS(SELECT 1
+                      FROM Cart
+                      WHERE class_id = #{classId}
+                        AND user_id = #{userId}
+                        AND order_status = 2)
+    </select>
+
+    <!-- 주문 완료 시 order_status 1(=주문완료) 업데이트 -->
+    <update id="updateOrderStatus" parameterType="cartRequest">
+        UPDATE Cart
+        SET order_status = 1
+        WHERE cart_id = #{cartId} AND order_status = 2
+    </update>
 
 </mapper>

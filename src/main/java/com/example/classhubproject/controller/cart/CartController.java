@@ -49,8 +49,8 @@ public class CartController {
                     @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CartResponseDTO.class)))
             }
     )
-    @GetMapping("/list")
-    public ResponseEntity<ResponseData<List<CartResponseDTO>>> cartList(@RequestParam int userId) {
+    @GetMapping("/list/{userId}")
+    public ResponseEntity<ResponseData<List<CartResponseDTO>>> cartList(@PathVariable("userId") int userId) {
         List<CartResponseDTO> cartList = cartService.getCartList(userId);
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.CART_LIST_SUCCESS, cartList));
     }

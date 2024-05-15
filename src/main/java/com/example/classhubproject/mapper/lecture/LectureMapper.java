@@ -15,4 +15,8 @@ public interface LectureMapper {
     // 강의 추가/수정
     int uploadClass(LectureClassUploadedRequest request);
     int editClass(LectureClassEditedRequest request);
+
+    // 강의 가격
+    int getClassPrice(int classId);
+
 }
