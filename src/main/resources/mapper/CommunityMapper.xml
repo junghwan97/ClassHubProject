@@ -18,18 +18,31 @@
 
     <select id="selectAllRecentQuestions" resultType="communityResponse">
         SELECT c.community_id,
-               c.user_id,
-               c.community_type,
-               c.title,
-               c.text,
-               c.regdate,
-               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
-               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        c.user_id,
+        c.community_type,
+        c.title,
+        c.text,
+        c.regdate,
+        (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+        (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
         FROM Community c
---                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
---                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        -- LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+        -- LEFT JOIN Comment cm ON c.community_id = cm.community_id
         WHERE c.community_type = '1'
+        <if test="type != null">
+            <if test="type == 'all'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'title'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'content'">
+                AND c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </if>
         ORDER BY c.community_id DESC
+        LIMIT #{startIndex}, #{rowPerPage}
     </select>
 
     <select id="selectAllQuestionsByFavorite" resultType="communityResponse">
@@ -45,7 +58,20 @@
 --                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
 --                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
         WHERE c.community_type = '1'
+        <if test="type != null">
+            <if test="type == 'all'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'title'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'content'">
+                AND c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </if>
         ORDER BY favorite_count DESC
+        LIMIT #{startIndex}, #{rowPerPage}
     </select>
 
     <select id="selectAllQuestionsByComment" resultType="communityResponse">
@@ -61,7 +87,20 @@
 --                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
 --                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
         WHERE c.community_type = '1'
+        <if test="type != null">
+            <if test="type == 'all'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'title'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'content'">
+                AND c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </if>
         ORDER BY comment_count DESC
+        LIMIT #{startIndex}, #{rowPerPage}
     </select>
 
     <select id="selectAllRecentStudies" resultType="communityResponse">
@@ -76,8 +115,22 @@
         FROM Community c
 --                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
 --                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
-        WHERE c.community_type = '2' OR c.community_type = '3'
+        WHERE (c.community_type = '2'
+           OR c.community_type = '3')
+        <if test="type != null">
+            <if test="type == 'all'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'title'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'content'">
+                AND c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </if>
         ORDER BY c.community_id DESC
+        LIMIT #{startIndex}, #{rowPerPage}
     </select>
 
     <select id="selectAllStudiesByFavorite" resultType="communityResponse">
@@ -92,8 +145,22 @@
         FROM Community c
 --                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
 --                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
-        WHERE c.community_type = '2' OR c.community_type = '3'
+        WHERE (c.community_type = '2'
+           OR c.community_type = '3')
+        <if test="type != null">
+            <if test="type == 'all'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'title'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'content'">
+                AND c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </if>
         ORDER BY favorite_count DESC
+        LIMIT #{startIndex}, #{rowPerPage}
     </select>
 
     <select id="selectAllStudiesByComment" resultType="communityResponse">
@@ -108,8 +175,22 @@
         FROM Community c
 --                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
 --                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
-        WHERE c.community_type = '2' OR c.community_type = '3'
+        WHERE (c.community_type = '2'
+           OR c.community_type = '3')
+        <if test="type != null">
+            <if test="type == 'all'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'title'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'content'">
+                AND c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </if>
         ORDER BY comment_count DESC
+        LIMIT #{startIndex}, #{rowPerPage}
     </select>
 
     <select id="selectStudiesByStatus" resultType="communityResponse">
@@ -202,6 +283,18 @@
         SELECT count(*)
         FROM Community
         WHERE community_type = '1'
+        <if test="type != null">
+            <if test="type == 'all'">
+                AND title LIKE CONCAT('%', #{search}, '%')
+                OR text LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'title'">
+                AND title LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'content'">
+                AND text LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </if>
     </select>
 
 </mapper>

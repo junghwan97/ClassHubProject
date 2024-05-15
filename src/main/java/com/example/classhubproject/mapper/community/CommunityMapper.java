@@ -13,16 +13,34 @@ public interface CommunityMapper {
 
     Integer insertImage(@Param("communityId") Integer communityId, @Param("image") String image);
 
-    List<CommunityResponseDTO> selectAllRecentQuestions();
+    List<CommunityResponseDTO> selectAllRecentQuestions(@Param("startIndex")Integer startIndex,
+                                                        @Param("rowPerPage") Integer rowPerPage,
+                                                        @Param("search") String search,
+                                                        @Param(("type")) String type);
 
-    List<CommunityResponseDTO> selectAllQuestionsByFavorite();
+    List<CommunityResponseDTO> selectAllQuestionsByFavorite(@Param("startIndex")Integer startIndex,
+                                                            @Param("rowPerPage") Integer rowPerPage,
+                                                            @Param("search") String search,
+                                                            @Param(("type")) String type);
 
-    List<CommunityResponseDTO> selectAllQuestionsByComment();
+    List<CommunityResponseDTO> selectAllQuestionsByComment(@Param("startIndex")Integer startIndex,
+                                                           @Param("rowPerPage") Integer rowPerPage,
+                                                           @Param("search") String search,
+                                                           @Param(("type")) String type);
 
-    List<CommunityResponseDTO> selectAllRecentStudies();
-    List<CommunityResponseDTO> selectAllStudiesByFavorite();
+    List<CommunityResponseDTO> selectAllRecentStudies(@Param("startIndex")Integer startIndex,
+                                                      @Param("rowPerPage") Integer rowPerPage,
+                                                      @Param("search") String search,
+                                                      @Param(("type")) String type);
+    List<CommunityResponseDTO> selectAllStudiesByFavorite(@Param("startIndex")Integer startIndex,
+                                                          @Param("rowPerPage") Integer rowPerPage,
+                                                          @Param("search") String search,
+                                                          @Param(("type")) String type);
 
-    List<CommunityResponseDTO> selectAllStudiesByComment();
+    List<CommunityResponseDTO> selectAllStudiesByComment(@Param("startIndex")Integer startIndex,
+                                                         @Param("rowPerPage") Integer rowPerPage,
+                                                         @Param("search") String search,
+                                                         @Param(("type")) String type);
 
     CommunityResponseDTO selectQuestion(Integer id);
 
@@ -34,5 +52,5 @@ public interface CommunityMapper {
 
     List<CommunityResponseDTO> selectStudiesByStatus(int status);
 
-    Integer countAll();
+    Integer countAll(@Param("search") String search, @Param("type") String type);
 }

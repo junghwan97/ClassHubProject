@@ -3,6 +3,7 @@ package com.example.classhubproject.service.community;
 
 import com.example.classhubproject.data.community.CommunityResponseDTO;
 import com.example.classhubproject.data.community.CommunityRequestDTO;
+import com.example.classhubproject.data.community.PagingDTO;
 import com.example.classhubproject.mapper.community.CommunityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,28 +52,155 @@ public class CommunityService {
         return cnt;
     }
 
-    public List<CommunityResponseDTO> questionsRecentList() {
+    public PagingDTO<List<CommunityResponseDTO>> questionsRecentList(Integer page, String search, String type) {
+        // 한페이지 당 게시물 수
+        Integer rowPerPage = 5;
 
-        return communityMapper.selectAllRecentQuestions();
+        // 쿼리 LIMIT절에 사용할 시작 인덱스
+        int startIndex = (page - 1) * rowPerPage;
+
+        // 페이지네이션에 필요한 정보
+        // 전체 레코드 수
+        int numOfRecords = communityMapper.countAll(search, type);
+        // 마지막 페이지 번호
+        int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
+        //페이지네이션 왼쪽 번호
+        int leftPageNum = page - 5;
+        leftPageNum = Math.max(leftPageNum, 1);
+        //페이지네이션 오른쪽 번호
+        int rightPageNum = leftPageNum + 9;
+        rightPageNum = Math.min(rightPageNum, lastPageNum);
+        int currentPageNum = page;
+
+        // 게시물 목록
+        List<CommunityResponseDTO> list = communityMapper.selectAllRecentQuestions(startIndex, rowPerPage, search, type);
+        PagingDTO pagingList = new PagingDTO(list, currentPageNum, lastPageNum, leftPageNum, rightPageNum);
+        return pagingList;
     }
 
-    public List<CommunityResponseDTO> questionsFavoriteList() {
-        return communityMapper.selectAllQuestionsByFavorite();
+    public PagingDTO<List<CommunityResponseDTO>> questionsFavoriteList(Integer page, String search, String type) {
+        // 한페이지 당 게시물 수
+        Integer rowPerPage = 5;
+
+        // 쿼리 LIMIT절에 사용할 시작 인덱스
+        int startIndex = (page - 1) * rowPerPage;
+
+        // 페이지네이션에 필요한 정보
+        // 전체 레코드 수
+        int numOfRecords = communityMapper.countAll(search, type);
+        // 마지막 페이지 번호
+        int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
+        //페이지네이션 왼쪽 번호
+        int leftPageNum = page - 5;
+        leftPageNum = Math.max(leftPageNum, 1);
+        //페이지네이션 오른쪽 번호
+        int rightPageNum = leftPageNum + 9;
+        rightPageNum = Math.min(rightPageNum, lastPageNum);
+        int currentPageNum = page;
+
+        List<CommunityResponseDTO> list = communityMapper.selectAllQuestionsByFavorite(startIndex, rowPerPage, search, type);
+        PagingDTO pagingList = new PagingDTO(list, currentPageNum, lastPageNum, leftPageNum, rightPageNum);
+        return pagingList;
     }
 
-    public List<CommunityResponseDTO> questionsCommentList() {
-        return communityMapper.selectAllQuestionsByComment();
+    public PagingDTO<List<CommunityResponseDTO>> questionsCommentList(Integer page, String search, String type) {
+        // 한페이지 당 게시물 수
+        Integer rowPerPage = 5;
+
+        // 쿼리 LIMIT절에 사용할 시작 인덱스
+        int startIndex = (page - 1) * rowPerPage;
+
+        // 페이지네이션에 필요한 정보
+        // 전체 레코드 수
+        int numOfRecords = communityMapper.countAll(search, type);
+        // 마지막 페이지 번호
+        int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
+        //페이지네이션 왼쪽 번호
+        int leftPageNum = page - 5;
+        leftPageNum = Math.max(leftPageNum, 1);
+        //페이지네이션 오른쪽 번호
+        int rightPageNum = leftPageNum + 9;
+        rightPageNum = Math.min(rightPageNum, lastPageNum);
+        int currentPageNum = page;
+
+        List<CommunityResponseDTO> list = communityMapper.selectAllQuestionsByComment(startIndex, rowPerPage, search, type);
+        PagingDTO pagingList = new PagingDTO(list, currentPageNum, lastPageNum, leftPageNum, rightPageNum);
+        return pagingList;
     }
 
-    public List<CommunityResponseDTO> studiesRecentList() {
-        return communityMapper.selectAllRecentStudies();
-    }
-    public List<CommunityResponseDTO> studiesFavoriteList() {
-        return communityMapper.selectAllStudiesByFavorite();
+    public PagingDTO<List<CommunityResponseDTO>> studiesRecentList(Integer page, String search, String type) {
+        // 한페이지 당 게시물 수
+        Integer rowPerPage = 5;
+
+        // 쿼리 LIMIT절에 사용할 시작 인덱스
+        int startIndex = (page - 1) * rowPerPage;
+
+        // 페이지네이션에 필요한 정보
+        // 전체 레코드 수
+        int numOfRecords = communityMapper.countAll(search, type);
+        // 마지막 페이지 번호
+        int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
+        //페이지네이션 왼쪽 번호
+        int leftPageNum = page - 5;
+        leftPageNum = Math.max(leftPageNum, 1);
+        //페이지네이션 오른쪽 번호
+        int rightPageNum = leftPageNum + 9;
+        rightPageNum = Math.min(rightPageNum, lastPageNum);
+        int currentPageNum = page;
+
+        List<CommunityResponseDTO> list = communityMapper.selectAllRecentStudies(startIndex, rowPerPage, search, type);
+        PagingDTO pagingList = new PagingDTO(list, currentPageNum, lastPageNum, leftPageNum, rightPageNum);
+        return pagingList;
     }
 
-    public List<CommunityResponseDTO> studiesCommentList() {
-        return communityMapper.selectAllStudiesByComment();
+    public PagingDTO<List<CommunityResponseDTO>> studiesFavoriteList(Integer page, String search, String type) {
+        // 한페이지 당 게시물 수
+        Integer rowPerPage = 5;
+
+        // 쿼리 LIMIT절에 사용할 시작 인덱스
+        int startIndex = (page - 1) * rowPerPage;
+
+        // 페이지네이션에 필요한 정보
+        // 전체 레코드 수
+        int numOfRecords = communityMapper.countAll(search, type);
+        // 마지막 페이지 번호
+        int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
+        //페이지네이션 왼쪽 번호
+        int leftPageNum = page - 5;
+        leftPageNum = Math.max(leftPageNum, 1);
+        //페이지네이션 오른쪽 번호
+        int rightPageNum = leftPageNum + 9;
+        rightPageNum = Math.min(rightPageNum, lastPageNum);
+        int currentPageNum = page;
+
+        List<CommunityResponseDTO> list = communityMapper.selectAllStudiesByFavorite(startIndex, rowPerPage, search, type);
+        PagingDTO pagingList = new PagingDTO(list, currentPageNum, lastPageNum, leftPageNum, rightPageNum);
+        return pagingList;
+    }
+
+    public PagingDTO<List<CommunityResponseDTO>> studiesCommentList(Integer page, String search, String type) {
+        // 한페이지 당 게시물 수
+        Integer rowPerPage = 5;
+
+        // 쿼리 LIMIT절에 사용할 시작 인덱스
+        int startIndex = (page - 1) * rowPerPage;
+
+        // 페이지네이션에 필요한 정보
+        // 전체 레코드 수
+        int numOfRecords = communityMapper.countAll(search, type);
+        // 마지막 페이지 번호
+        int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
+        //페이지네이션 왼쪽 번호
+        int leftPageNum = page - 5;
+        leftPageNum = Math.max(leftPageNum, 1);
+        //페이지네이션 오른쪽 번호
+        int rightPageNum = leftPageNum + 9;
+        rightPageNum = Math.min(rightPageNum, lastPageNum);
+        int currentPageNum = page;
+
+        List<CommunityResponseDTO> list = communityMapper.selectAllStudiesByComment(startIndex, rowPerPage, search, type);
+        PagingDTO pagingList = new PagingDTO(list, currentPageNum, lastPageNum, leftPageNum, rightPageNum);
+        return pagingList;
     }
 
     public CommunityResponseDTO selectQuestion(Integer id) {
