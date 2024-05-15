@@ -34,5 +34,6 @@ public class ResponseMessage {
     // 게판 ResponseMessage
     public static final String FAVORITE_INSERT_SUCCESS = "좋아요가 등록되었습니다.";
     public static final String FAVORITE_CANCEL_SUCCESS = "좋아요가 취소되었습니다.";
+
 }
 

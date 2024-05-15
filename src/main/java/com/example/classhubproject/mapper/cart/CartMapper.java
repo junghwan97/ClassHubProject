@@ -1,7 +1,6 @@
 package com.example.classhubproject.mapper.cart;
 
-import com.example.classhubproject.data.cart.CartRequestDTO;
-import com.example.classhubproject.data.cart.CartResponseDTO;
+import com.example.classhubproject.data.cart.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.*;
@@ -18,4 +17,11 @@ public interface CartMapper {
     void deleteCart(int cartId);
 
     void clearCart(int userId);
+
+    void updateOrderStatus(int cartId);
+
+    boolean checkCartByClassId(int classId, int userId);
+
+    int getCartIdByClassId(int classId, int userId);
+
 }
