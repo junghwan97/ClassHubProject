@@ -1,4 +1,5 @@
 
+
 -- 사용자 정보 테이블 생성
 CREATE TABLE `User`
 (
@@ -247,6 +248,7 @@ CREATE TABLE Orders
     orders_id   INT AUTO_INCREMENT PRIMARY KEY COMMENT '주문 번호 ID',
     user_id     INT COMMENT '회원 ID',
     total_price INT NOT NULL COMMENT '총 주문 금액',
+    final_order_status CHAR(1) DEFAULT '1' COMMENT '최종 주문 상태',
     regdate     DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '주문 일자',
     FOREIGN KEY (user_id) REFERENCES User (user_id)
 ) ENGINE = InnoDB

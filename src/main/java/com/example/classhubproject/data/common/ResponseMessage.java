@@ -34,6 +34,13 @@ public class ResponseMessage {
     // 게판 ResponseMessage
     public static final String FAVORITE_INSERT_SUCCESS = "좋아요가 등록되었습니다.";
     public static final String FAVORITE_CANCEL_SUCCESS = "좋아요가 취소되었습니다.";
-
+    // 주문ResponseMessage
+    public static final String ALREADY_OWNED = "이미 보유한 강의가 포함되어 있습니다.";
+    public static final String ORDER_SUCCESS = "주문이 성공적으로 처리되었습니다.";
+    public static final String ORDER_FAILED = "주문 처리 중 오류가 발생했습니다.";
+    public static final String ORDER_LIST_SUCCESS = "주문 목록 조회 성공";
+    public static final String ORDER_DETAIL_LIST_SUCCESS = "주문 상세 목록 조회 성공";
+    public static final String ORDER_CANCEL_SUCCESS = "주문 취소 성공";
+    public static final String ORDER_CANCEL_FAILED = "주문 취소 중 오류가 발생했습니다.";
 }
 

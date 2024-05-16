@@ -54,7 +54,6 @@ public class CartController {
         List<CartResponseDTO> cartList = cartService.getCartList(userId);
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.CART_LIST_SUCCESS, cartList));
     }
-
     // 장바구니 개별 삭제
     @Operation(
             summary = "장바구니 개별 삭제",
