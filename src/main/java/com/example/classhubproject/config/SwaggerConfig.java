@@ -77,4 +77,13 @@ public class SwaggerConfig {
                 .packagesToScan("com.example.classhubproject.controller.lecture")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi order() {
+        return GroupedOpenApi.builder()
+                .group("주문 관련")
+                .pathsToMatch("/order/*")
+                .packagesToScan("com.example.classhubproject.controller.order")
+                .build();
+    }
 }

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.classhubproject.mapper.order.OrderMapper">
+
+    <!-- 주문 정보 추가 -->
+    <insert id="insertOrder" parameterType="orderResponse">
+        INSERT INTO Orders (user_id, total_price)
+        VALUES (#{userId}, #{totalPrice})
+    </insert>
+
+    <!-- 특정 회원의 가장 최근 생성된 orders_id 찾기 -->
+    <select id="getOrdersIdByUserId" resultType="int">
+        SELECT orders_id
+        FROM Orders
+        WHERE user_id = #{userId}
+        ORDER BY regdate DESC LIMIT 1
+    </select>
+
+    <!-- 주문 상세 건수 조회-->
+    <select id="getOrderDetailCountByOrdersId" resultType="int">
+        SELECT COUNT(*)
+        FROM Order_Detail
+        WHERE orders_id = #{ordersId}
+    </select>
+
+    <!-- 주문 상세 추가-->
+    <insert id="insertOrderDetail" parameterType="orderRequest">
+        INSERT INTO Order_Detail (orders_id, class_id)
+        VALUES (#{ordersId}, #{classId})
+    </insert>
+
+    <!-- 주문 목록 -->
+    <select id="getOrderList" resultType="orderResponse">
+        SELECT *
+        FROM Orders
+        WHERE user_id = #{userId}
+    </select>
+
+    <resultMap id="OrderDetailWithClassResultMap" type="orderDetailResponse">
+        <id property="orderDetailId" column="order_detail_id"/>
+        <result property="ordersId" column="orders_id"/>
+        <result property="classId" column="class_id"/>
+
+        <association property="classResponseDTO" javaType="classResponse">
+            <result property="instructorsId" column="instructors_id"/>
+            <result property="className" column="class_name"/>
+            <result property="description" column="description"/>
+            <result property="summary" column="summary"/>
+            <result property="price" column="price"/>
+            <result property="video" column="video"/>
+            <result property="totalVideoLength" column="total_video_length"/>
+            <result property="regdate" column="regdate"/>
+            <result property="editDate" column="edit_date"/>
+        </association>
+    </resultMap>
+
+    <!-- 주문 상세 목록 -->
+    <select id="getOrderDetailList" resultMap="OrderDetailWithClassResultMap">
+        SELECT od.*, c.class_name, c.price
+        FROM Order_Detail od
+                 JOIN Class c ON od.class_id = c.class_id
+        WHERE orders_id = #{ordersId}
+    </select>
+
+    <!-- 주문 번호로 강의명 1건 조회 -->
+    <select id="getClassNameByOrdersId" resultType="String">
+        SELECT c.class_name
+        FROM Order_Detail od
+                 JOIN Class c ON od.class_id = c.class_id
+        WHERE od.orders_id = #{ordersId} LIMIT 1
+    </select>
+
+    <!-- 이미 보유한 강의인지 확인 -->
+    <select id="checkHoldClass" resultType="boolean">
+        SELECT EXISTS(SELECT 1
+                      FROM Orders o
+                               JOIN Order_Detail od ON o.orders_id = od.orders_id
+                      WHERE o.final_order_status = 1
+                        AND od.class_id = #{classId}
+                        AND o.user_id = #{userId})
+    </select>
+
+    <!-- 주문 취소 -->
+    <update id="cancelOrder" parameterType="orderRequest">
+        UPDATE Orders
+        SET final_order_status = 2
+        WHERE orders_id = #{ordersId}
+    </update>
+
+</mapper>
