@@ -31,7 +31,7 @@ public class ClassResponseDTO {
     private int price;
 
     @Schema(description = "강의 영상 미리보기 URL")
-    private String video;
+    private String thumnail;
 
     @Schema(description = "강의 총 영상 길이(재생시간)")
     private int totalVideoLength;

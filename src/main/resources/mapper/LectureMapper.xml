@@ -26,8 +26,8 @@
 
    <insert id="uploadClass" parameterType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest" useGeneratedKeys="true" keyProperty="class_id">
 		INSERT INTO Class
-		(instructors_id, category_id, class_name, description, summary, price, video, total_video_length, regdate)
-		VALUES(#{instructors_id}, #{category_id}, #{class_name}, #{description}, #{summary}, #{price}, #{video}, #{total_video_length}, NOW());
+		(instructors_id, category_id, class_name, description, summary, price, thumnail, total_video_length, regdate)
+		VALUES(#{instructors_id}, #{category_id}, #{class_name}, #{description}, #{summary}, #{price}, #{thumnail}, #{total_video_length}, NOW());
    </insert>
 
 <!--    <insert id="editClass" parameterType="com.example.classhubproject.data.lecture.LectureClassEditedRequest">-->
