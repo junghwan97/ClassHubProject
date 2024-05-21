@@ -13,17 +13,17 @@ public class PagingDTO<T> {
     // 현재 페이지 번호
     int currentPageNum;
     // 마지막 페이지 번호
-    int lastPageNum;
+    int totalNum;
     //페이지네이션 왼쪽 번호
-    int leftPageNum;
+    int leftEndNum;
     //페이지네이션 오른쪽 번호
-    int rightPageNum;
+    int rightEndNum;
 
-    public PagingDTO(List<T> contents, int currentPageNum, int lastPageNum, int leftPageNum, int rightPageNum) {
+    public PagingDTO(List<T> contents, int currentPageNum, int totalNum, int leftEndNum, int rightEndNum) {
         this.contents = contents;
         this.currentPageNum = currentPageNum;
-        this.lastPageNum = lastPageNum;
-        this.leftPageNum = leftPageNum;
-        this.rightPageNum = rightPageNum;
+        this.totalNum = totalNum;
+        this.leftEndNum = leftEndNum;
+        this.rightEndNum = rightEndNum;
     }
 }
