@@ -68,25 +68,17 @@ public class LectureService {
     	SectionDTO sections = obm.readValue(sectionsJson, SectionDTO.class);
     	Integer length = 0;
     	
+    	//전체 길이 등록
     	for(LectureClassDetailDTO video : sections.getVideos()) {   		
     		length = length + video.getVideo_length();
     	}
     	request.setClass_name(sections.getTitle());
     	request.setTotal_video_length(length);
-    	
+    	    	
     	int upload = lectureMapper.uploadClass(request);
     	
     	for(LectureClassDetailDTO video : sections.getVideos()) {
-    		
     		video.setClass_id(request.getClass_id());
-    		
-    		/*비디오이름 매칭 시키는 로직*/
-    		for(MultipartFile f : videos) {
-    			String name = video.getTitle() + "." + StringUtils.getFilenameExtension(f.getOriginalFilename());
-    			if(f.getOriginalFilename().equals(name)) {
-    				video.setVideo(name);
-    			}
-    		}
     		lectureMapper.addClassVideo(video);
     	}
     	/*파일 스토리지 업로드 로직 추가 해야함 */

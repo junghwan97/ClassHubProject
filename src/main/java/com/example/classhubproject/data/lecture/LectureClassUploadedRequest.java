@@ -12,7 +12,7 @@ public class LectureClassUploadedRequest {
     String description;
     String summary;
     Integer price;
-    String video;
+    String thumnail;
     Integer total_video_length;
     Date regdate;
     Date edit_date;
