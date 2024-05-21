@@ -12,24 +12,34 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    Server server = new Server().url("https://devproject.store");
+    //Server server = new Server().url("https://devproject.store");
 
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                .servers(List.of(server))
+                //.servers(List.of(server))
                 .info(new Info()
                         .title("LMS API")
                         .description("LMS 프로젝트 샘플입니다.")
                         .version("1.0"));
     }
 
+  
     @Bean
     public GroupedOpenApi group1() {
         return GroupedOpenApi.builder()
                 .group("샘플 기능")
                 .pathsToMatch("/sample/*")
                 .packagesToScan("com.example.classhubproject.controller.sample")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi cart() {
+        return GroupedOpenApi.builder()
+                .group("장바구니 기능")
+                .pathsToMatch("/cart/*")
+                .packagesToScan("com.example.classhubproject.controller.cart")
                 .build();
     }
 
@@ -64,19 +74,18 @@ public class SwaggerConfig {
     public GroupedOpenApi lecture() {
         return GroupedOpenApi.builder()
                 .group("강의 관련")
-                .pathsToMatch("/order/*")
+                .pathsToMatch("/lecture/*")
                 .packagesToScan("com.example.classhubproject.controller.lecture")
                 .build();
     }
 
     @Bean
-    public GroupedOpenApi cart() {
+    public GroupedOpenApi order() {
         return GroupedOpenApi.builder()
-                .group("장바구니 기능")
-                .pathsToMatch("/cart/*")
-                .packagesToScan("com.example.classhubproject.controller.cart")
+                .group("주문 관련")
+                .pathsToMatch("/order/*")
+                .packagesToScan("com.example.classhubproject.controller.order")
                 .build();
     }
-
 
 }

@@ -2,16 +2,78 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.classhubproject.mapper.lecture.LectureMapper">
 
-    <insert id="upload" parameterType="com.example.classhubproject.data.lecture.LectureUploadedRequest">
+    <insert id="addInstructor" parameterType="com.example.classhubproject.data.lecture.LectureInstructorAddedRequest">
         INSERT INTO Instructors(user_id, name, field, `text`, user_type, request_status, regdate)
         VALUES (#{user_id}, #{name}, #{field},  #{text},  #{user_type},  #{request_status}, NOW());
     </insert>
 
-    <insert id="edit" parameterType="com.example.classhubproject.data.lecture.LectureEditedRequest">
-        UPDATE Classhub.Instructors
+    <update id="editInstructor" parameterType="com.example.classhubproject.data.lecture.LectureInstructorEditedRequest">
+        UPDATE Instructors
         SET user_id=#{user_id}, name=#{name}, field=#{field}, `text`=#{text}, user_type=#{user_type}, request_status=#{request_status}
         WHERE instructors_id=#{instructors_id};
+    </update>
+
+    <insert id="uploadMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialUploadedRequest">
+        INSERT INTO Resource(class_detail_id, resource)
+        VALUES (#{class_detail_id}, #{resource});
     </insert>
 
+    <insert id="editMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialEditedRequest">
+        UPDATE Resource
+        SET class_detail_id=#{class_detail_id}, resource=#{resource}
+        WHERE resource_id=#{resource_id};
+    </insert>
 
+   <insert id="uploadClass" parameterType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest" useGeneratedKeys="true" keyProperty="class_id">
+		INSERT INTO Class
+		(instructors_id, category_id, class_name, description, summary, price, video, total_video_length, regdate)
+		VALUES(#{instructors_id}, #{category_id}, #{class_name}, #{description}, #{summary}, #{price}, #{video}, #{total_video_length}, NOW());
+   </insert>
+
+<!--    <insert id="editClass" parameterType="com.example.classhubproject.data.lecture.LectureClassEditedRequest">-->
+<!--        UPDATE Class-->
+<!--        SET instructors_id=#{instructors_id}, category_id=#{category_id}, class_name=#{class_name}, description=#{description}, summary=#{summary}, price=#{price}, video=#{video}, total_video_length=#{total_video_length}, edit_date=CURRENT_TIMESTAMP-->
+<!--        WHERE class_id=#{class_id};-->
+<!--    </insert>-->
+
+    <!-- class_id로 가격조회 -->
+    <select id="getClassPrice" resultType="int">
+        SELECT price
+        FROM Class
+        WHERE class_id = #{classId}
+    </select>
+    
+    <!-- 영상 등록 -->
+    <insert id="addClassVideo" parameterType="com.example.classhubproject.data.lecture.LectureClassDetailDTO">
+    	INSERT INTO Class_Detail (class_id, title, video, video_length, regdate)
+    	VALUES(#{class_id}, #{title}, #{video}, #{video_length}, NOW());
+    </insert>
+    
+    <!-- 강의 전체 조회 -->
+    <select id="selectAll" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
+    	SELECT * FROM Class;
+    </select>
+    
+    <!-- 강의 키워드 조회 -->
+    <select id="selectByKeyword" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
+    	SELECT c.*, COUNT(fc.favorite_class_id) favorite_count
+
+    	FROM Class c 
+
+    	LEFT JOIN Favorite_Class fc ON c.class_id = fc.class_id
+    	JOIN Instructors i ON c.instructors_id = i.instructors_id
+
+		WHERE name LIKE CONCAT('%', #{keyword}, '%')
+        OR class_name LIKE CONCAT('%', #{keyword}, '%')
+        OR description LIKE CONCAT('%', #{keyword}, '%')
+        OR summary LIKE CONCAT('%', #{keyword}, '%')
+
+		GROUP BY c.class_id
+		ORDER BY favorite_count DESC, c.regdate DESC;
+    </select>
+    
+    <!-- 강의 카테고리별 조회 -->
+    <select id="selectByCategory" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
+    	SELECT * FROM Class WHERE category_id = #{categoryId};
+    </select>
 </mapper>

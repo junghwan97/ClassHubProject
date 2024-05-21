@@ -3,7 +3,9 @@ package com.example.classhubproject.data.lecture;
 import lombok.Data;
 
 @Data
-public class LectureEditedResponse {
+public class LectureMaterialEditedResponse {
+    Integer edited;
+
     public Integer getEdited() {
         return edited;
     }
@@ -11,6 +13,4 @@ public class LectureEditedResponse {
     public void setEdited(Integer edited) {
         this.edited = edited;
     }
-
-    Integer edited;
 }
