@@ -14,6 +14,8 @@
     <typeAliases>
         <typeAlias type="com.example.classhubproject.data.community.CommunityRequestDTO" alias="communityRequest"/>
         <typeAlias type="com.example.classhubproject.data.community.CommunityResponseDTO" alias="communityResponse"/>
+        <typeAlias type="com.example.classhubproject.data.community.CommunityImageRequestDTO" alias="communityImageRequest"/>
+        <typeAlias type="com.example.classhubproject.data.community.CommunityImageUploadRequestDTO" alias="communityImageUploadRequest"/>
         <typeAlias type="com.example.classhubproject.data.comment.CommentRequestDTO" alias="commentRequest"/>
         <typeAlias type="com.example.classhubproject.data.comment.CommentResponseDTO" alias="commentResponse"/>
         <typeAlias type="com.example.classhubproject.data.favorite.FavoriteRequestDTO" alias="favoriteRequest"/>

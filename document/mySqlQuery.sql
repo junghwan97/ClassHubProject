@@ -1,4 +1,3 @@
-
 -- 사용자 정보 테이블 생성
 CREATE TABLE `User`
 (
@@ -232,14 +231,24 @@ CREATE TABLE Favorite_Community
 -- 커뮤니티 사진 테이블 생성
 CREATE TABLE Community_Image
 (
-    community_image_id INT AUTO_INCREMENT PRIMARY KEY COMMENT '커뮤니티 사진 ID',
+    idx INT NOT NULL AUTO_INCREMENT COMMENT '식별자',
     community_id       INT COMMENT '게시글 ID',
-    image              VARCHAR(100) NOT NULL COMMENT '이미지',
-    FOREIGN KEY (community_id) REFERENCES Community (community_id)
+    community_image_id INT COMMENT '커뮤니티 사진 ID',
+    PRIMARY KEY (idx),
+    FOREIGN KEY (community_id) REFERENCES Community (community_id),
+    FOREIGN KEY (community_image_id) REFERENCES Community_Image_Path (community_image_id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci COMMENT ='커뮤니티 사진';
 
+-- 커뮤니티 실물 사진 테이블 생성
+CREATE TABLE Community_Image_Path
+(
+    community_image_id     INT AUTO_INCREMENT PRIMARY KEY COMMENT '게시글 사진 ID',
+    imagePath              VARCHAR(100) NOT NULL COMMENT '이미지 경로',
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci COMMENT ='커뮤니티 실물사진 경로';
 
 -- 주문 테이블 생성
 CREATE TABLE Orders

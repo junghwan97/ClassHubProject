@@ -4,16 +4,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @Schema(description = "커뮤니티 Request DTO")
 public class CommunityRequestDTO {
 
-    @Schema(description = "회원 ID")
-    private Integer userId;
-
     @Schema(description = "게시물 ID")
     private Integer communityId;
+
+    @Schema(description = "회원 ID")
+    private Integer userId;
 
     @Schema(description = "게시판 타입 ID")
     private Character communityType;
@@ -23,4 +25,7 @@ public class CommunityRequestDTO {
 
     @Schema(description = "게시물 본문")
     private String text;
+
+    @Schema(description = "이미지 ID")
+    private List<Integer> communityImageIds;
 }

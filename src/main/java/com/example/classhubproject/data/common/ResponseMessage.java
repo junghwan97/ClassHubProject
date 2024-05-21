@@ -15,6 +15,8 @@ public class ResponseMessage {
     public static final String CLEAR_CART_ERROR = "장바구니 비우기 중 오류가 발생했습니다.";
     // 게시판 ResponseMessage
     public static final String POST_COMMUNITY_SUCCESS = "게시글이 등록되었습니다";
+    public static final String POST_COMMUNITY_IMAGE_SUCCESS = "게시글 이미지가 등록되었습니다";
+    public static final String DELETE_COMMUNITY_IMAGE_SUCCESS = "게시글 이미지가 삭제되었습니다";
     public static final String POST_COMMUNITY_ERROR = "게시글 등록 중 문제가 발생했습니다";
     public static final String QUESTION_LIST_SUCCESS = "질문 게시판 조회 성공";
     public static final String STUDY_LIST_SUCCESS = "스터디 게시판 조회 성공";
