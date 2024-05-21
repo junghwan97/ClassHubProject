@@ -5,16 +5,13 @@ import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -30,7 +27,7 @@ public class LectureService {
     public int addInstructor(LectureInstructorAddedRequest request) {
 
         int upload = lectureMapper.addInstructor(request);
-     
+
         return upload;
     }
 
@@ -86,6 +83,7 @@ public class LectureService {
     	return upload;
     	
     	//파일따로, 정보만 따로 -->json배열안에 파일을 넣을수없음
+
     }
 
     public LectureClassEditedResponse editClass(LectureClassEditedRequest request) {
@@ -97,20 +95,20 @@ public class LectureService {
 
         return response;
     }
-    
+
     public List<ClassResponseDTO> selectAll(){
-    	
-    	return lectureMapper.selectAll();
+
+        return lectureMapper.selectAll();
     }
-    
+
     public List<ClassResponseDTO> selectByKeyword(String keyword){
-    	
-    	return lectureMapper.selectByKeyword(keyword);
+
+        return lectureMapper.selectByKeyword(keyword);
     }
-    
+
     public List<ClassResponseDTO> selectByCategory(Integer categoryId){
-    	
-    	return lectureMapper.selectByCategory(categoryId);
-    } 
+
+        return lectureMapper.selectByCategory(categoryId);
+    }
 
 }

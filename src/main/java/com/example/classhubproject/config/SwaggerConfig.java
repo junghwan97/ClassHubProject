@@ -12,12 +12,12 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    //Server server = new Server().url("https://devproject.store");
+    Server server = new Server().url("https://devproject.store");
 
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                //.servers(List.of(server))
+                .servers(List.of(server))
                 .info(new Info()
                         .title("LMS API")
                         .description("LMS 프로젝트 샘플입니다.")
