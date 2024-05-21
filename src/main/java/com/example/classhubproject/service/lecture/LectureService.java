@@ -60,29 +60,30 @@ public class LectureService {
 
     // 강의 추가/ 수정
     public int uploadClass(LectureClassUploadedRequest request, String sectionsJson, List<MultipartFile> videos) throws JsonMappingException, JsonProcessingException {
+    	
+    	ObjectMapper obm = new ObjectMapper();
+    	SectionDTO sections = obm.readValue(sectionsJson, SectionDTO.class);
+    	Integer length = 0;
+    	
+    	//전체 길이 등록
+    	for(LectureClassDetailDTO video : sections.getVideos()) {   		
+    		length = length + video.getVideo_length();
+    	}
+    	request.setClass_name(sections.getTitle());
+    	request.setTotal_video_length(length);
+    	    	
+    	int upload = lectureMapper.uploadClass(request);
+    	
+    	for(LectureClassDetailDTO video : sections.getVideos()) {
+    		video.setClass_id(request.getClass_id());
+    		lectureMapper.addClassVideo(video);
+    	}
+    	/*파일 스토리지 업로드 로직 추가 해야함 */
+  
+    	return upload;
+    	
+    	//파일따로, 정보만 따로 -->json배열안에 파일을 넣을수없음
 
-        ObjectMapper obm = new ObjectMapper();
-        SectionDTO sections = obm.readValue(sectionsJson, SectionDTO.class);
-        Integer length = 0;
-
-        //전체 길이 등록
-        for(LectureClassDetailDTO video : sections.getVideos()) {
-            length = length + video.getVideo_length();
-        }
-        request.setClass_name(sections.getTitle());
-        request.setTotal_video_length(length);
-
-        int upload = lectureMapper.uploadClass(request);
-
-        for(LectureClassDetailDTO video : sections.getVideos()) {
-            video.setClass_id(request.getClass_id());
-            lectureMapper.addClassVideo(video);
-        }
-        /*파일 스토리지 업로드 로직 추가 해야함 */
-
-        return upload;
-
-        //파일따로, 정보만 따로 -->json배열안에 파일을 넣을수없음
     }
 
     public LectureClassEditedResponse editClass(LectureClassEditedRequest request) {

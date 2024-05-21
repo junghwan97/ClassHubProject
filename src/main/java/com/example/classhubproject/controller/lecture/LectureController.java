@@ -135,7 +135,6 @@ public class LectureController {
     public ResponseEntity<ResponseData<Void>> uploadClass(@RequestPart(name = "request") LectureClassUploadedRequest request,
     													  @RequestPart(name = "sections") String sectionsJson,
     													  @RequestPart(required = false, name = "videos") List<MultipartFile> videos) throws JsonMappingException, JsonProcessingException {
-    	log.info("시작전");
         int res = lectureService.uploadClass(request,sectionsJson, videos);
     	
         if(res > 0) {
