@@ -1,6 +1,9 @@
 package com.example.classhubproject.mapper.lecture;
 
 import com.example.classhubproject.data.lecture.*;
+
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -18,5 +21,17 @@ public interface LectureMapper {
 
     // 강의 가격
     int getClassPrice(int classId);
+    
+    //강의 영상등록
+    int addClassVideo(LectureClassDetailDTO dto);
+    
+    //강의 전체조회
+    List<ClassResponseDTO> selectAll();
+
+    //강의 키워드 조회
+    List<ClassResponseDTO> selectByKeyword(String keyword);
+    
+    //카데고리 조회
+    List<ClassResponseDTO> selectByCategory(Integer categoryId);
 
 }

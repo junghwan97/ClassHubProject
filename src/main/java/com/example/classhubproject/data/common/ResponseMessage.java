@@ -42,5 +42,17 @@ public class ResponseMessage {
     public static final String ORDER_DETAIL_LIST_SUCCESS = "주문 상세 목록 조회 성공";
     public static final String ORDER_CANCEL_SUCCESS = "주문 취소 성공";
     public static final String ORDER_CANCEL_FAILED = "주문 취소 중 오류가 발생했습니다.";
+    // 강의 ResponseMessage
+    public static final String EDITE_INSTRUCTOR_SUCCESS = "강사 정보 수정 성공";
+    public static final String EDITE_INSTRUCTOR_ERROR = "강사 정보 수정 실패";
+    public static final String INSERT_INSTRUCTOR_SUCCESS = "강사 정보 등록 성공";
+    public static final String INSERT_INSTRUCTOR_ERROR = "강사 정보 등록 실패";
+    public static final String LECTURE_INSERT_SUCCESS = "강의 등록 성공";
+    public static final String LECTURE_INSERT_ERROR = "강의 등록 실패";
+    public static final String LECTURE_SUCCESS = "강의 조회 성공";
+    public static final String LECTURE_ERROR = "강의 조회 실패";
+    
+    
+    
 }
 

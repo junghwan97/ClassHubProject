@@ -2,11 +2,22 @@ package com.example.classhubproject.service.lecture;
 
 import com.example.classhubproject.data.lecture.*;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Slf4j
 @Transactional(rollbackFor = Exception.class)
 public class LectureService {
     private final LectureMapper lectureMapper;
@@ -16,24 +27,18 @@ public class LectureService {
         this.lectureMapper = lectureMapper;
     }
 
-    public LectureInstructorAddedResponse addInstructor(LectureInstructorAddedRequest request) {
+    public int addInstructor(LectureInstructorAddedRequest request) {
 
         int upload = lectureMapper.addInstructor(request);
-
-        LectureInstructorAddedResponse response  = new LectureInstructorAddedResponse();
-        response.setUploaded(upload);
-
-        return response;
+     
+        return upload;
     }
 
-    public LectureInstructorEditedResponse editInstructor(LectureInstructorEditedRequest request) {
+    public int editInstructor(LectureInstructorEditedRequest request) {
 
         int edited = lectureMapper.editInstructor(request);
 
-        LectureInstructorEditedResponse response  = new LectureInstructorEditedResponse();
-        response.setEdited(edited);
-
-        return response;
+        return edited;
     }
 
     public LectureMaterialUploadedResponse uploadMaterial(LectureMaterialUploadedRequest request) {
@@ -57,14 +62,38 @@ public class LectureService {
     }
 
     // 강의 추가/ 수정
-    public LectureClassUploadedResponse uploadClass(LectureClassUploadedRequest request) {
-
-        int upload = lectureMapper.uploadClass(request);
-
-        LectureClassUploadedResponse response  = new LectureClassUploadedResponse();
-        response.setUpload(upload);
-
-        return response;
+    public int uploadClass(LectureClassUploadedRequest request, String sectionsJson, List<MultipartFile> videos) throws JsonMappingException, JsonProcessingException {
+    	
+    	ObjectMapper obm = new ObjectMapper();
+    	SectionDTO sections = obm.readValue(sectionsJson, SectionDTO.class);
+    	Integer length = 0;
+    	
+    	for(LectureClassDetailDTO video : sections.getVideos()) {   		
+    		length = length + video.getVideo_length();
+    	}
+    	request.setClass_name(sections.getTitle());
+    	request.setTotal_video_length(length);
+    	
+    	int upload = lectureMapper.uploadClass(request);
+    	
+    	for(LectureClassDetailDTO video : sections.getVideos()) {
+    		
+    		video.setClass_id(request.getClass_id());
+    		
+    		/*비디오이름 매칭 시키는 로직*/
+    		for(MultipartFile f : videos) {
+    			String name = video.getTitle() + "." + StringUtils.getFilenameExtension(f.getOriginalFilename());
+    			if(f.getOriginalFilename().equals(name)) {
+    				video.setVideo(name);
+    			}
+    		}
+    		lectureMapper.addClassVideo(video);
+    	}
+    	/*파일 스토리지 업로드 로직 추가 해야함 */
+  
+    	return upload;
+    	
+    	//파일따로, 정보만 따로 -->json배열안에 파일을 넣을수없음
     }
 
     public LectureClassEditedResponse editClass(LectureClassEditedRequest request) {
@@ -76,5 +105,20 @@ public class LectureService {
 
         return response;
     }
+    
+    public List<ClassResponseDTO> selectAll(){
+    	
+    	return lectureMapper.selectAll();
+    }
+    
+    public List<ClassResponseDTO> selectByKeyword(String keyword){
+    	
+    	return lectureMapper.selectByKeyword(keyword);
+    }
+    
+    public List<ClassResponseDTO> selectByCategory(Integer categoryId){
+    	
+    	return lectureMapper.selectByCategory(categoryId);
+    } 
 
 }

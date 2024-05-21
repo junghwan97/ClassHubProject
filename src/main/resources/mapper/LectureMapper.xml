@@ -7,11 +7,11 @@
         VALUES (#{user_id}, #{name}, #{field},  #{text},  #{user_type},  #{request_status}, NOW());
     </insert>
 
-    <insert id="editInstructor" parameterType="com.example.classhubproject.data.lecture.LectureInstructorEditedRequest">
+    <update id="editInstructor" parameterType="com.example.classhubproject.data.lecture.LectureInstructorEditedRequest">
         UPDATE Instructors
         SET user_id=#{user_id}, name=#{name}, field=#{field}, `text`=#{text}, user_type=#{user_type}, request_status=#{request_status}
         WHERE instructors_id=#{instructors_id};
-    </insert>
+    </update>
 
     <insert id="uploadMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialUploadedRequest">
         INSERT INTO Resource(class_detail_id, resource)
@@ -24,11 +24,11 @@
         WHERE resource_id=#{resource_id};
     </insert>
 
-<!--    <insert id="uploadClass" parameterType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest">-->
-<!--        INSERT INTO Class-->
-<!--        (instructors_id, category_id, class_name, description, summary, price, video, total_video_length, regdate, edit_date)-->
-<!--        VALUES(#{instructors_id}, #{category_id}, #{class_name}, #{description}, #{summary}, #{price}, #{video}, #{total_video_length}, CURRENT_TIMESTAMP, '');-->
-<!--    </insert>-->
+   <insert id="uploadClass" parameterType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest" useGeneratedKeys="true" keyProperty="class_id">
+		INSERT INTO Class
+		(instructors_id, category_id, class_name, description, summary, price, video, total_video_length, regdate)
+		VALUES(#{instructors_id}, #{category_id}, #{class_name}, #{description}, #{summary}, #{price}, #{video}, #{total_video_length}, NOW());
+   </insert>
 
 <!--    <insert id="editClass" parameterType="com.example.classhubproject.data.lecture.LectureClassEditedRequest">-->
 <!--        UPDATE Class-->
@@ -42,5 +42,38 @@
         FROM Class
         WHERE class_id = #{classId}
     </select>
+    
+    <!-- 영상 등록 -->
+    <insert id="addClassVideo" parameterType="com.example.classhubproject.data.lecture.LectureClassDetailDTO">
+    	INSERT INTO Class_Detail (class_id, title, video, video_length, regdate)
+    	VALUES(#{class_id}, #{title}, #{video}, #{video_length}, NOW());
+    </insert>
+    
+    <!-- 강의 전체 조회 -->
+    <select id="selectAll" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
+    	SELECT * FROM Class;
+    </select>
+    
+    <!-- 강의 키워드 조회 -->
+    <select id="selectByKeyword" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
+    	SELECT c.*, COUNT(fc.favorite_class_id) favorite_count
 
+    	FROM Class c 
+
+    	LEFT JOIN Favorite_Class fc ON c.class_id = fc.class_id
+    	JOIN Instructors i ON c.instructors_id = i.instructors_id
+
+		WHERE name LIKE CONCAT('%', #{keyword}, '%')
+        OR class_name LIKE CONCAT('%', #{keyword}, '%')
+        OR description LIKE CONCAT('%', #{keyword}, '%')
+        OR summary LIKE CONCAT('%', #{keyword}, '%')
+
+		GROUP BY c.class_id
+		ORDER BY favorite_count DESC, c.regdate DESC;
+    </select>
+    
+    <!-- 강의 카테고리별 조회 -->
+    <select id="selectByCategory" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
+    	SELECT * FROM Class WHERE category_id = #{categoryId};
+    </select>
 </mapper>
