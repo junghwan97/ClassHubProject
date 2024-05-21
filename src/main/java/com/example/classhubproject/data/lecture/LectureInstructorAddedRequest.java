@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class LectureInstructorAddedRequest {
+	Integer		instructors_id;
     Integer     user_id;
     String      name;
     String      field;
