@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.classhubproject.mapper.payment.PaymentMapper">
+
+
+    <!-- 결제 정보 추가 -->
+    <insert id="insertPayment" parameterType="paymentRequest">
+        INSERT INTO Payment(orders_id,
+                            imp_uid,
+                            merchant_uid,
+                            pg_provider,
+                            pay_method,
+                            payment_amount,
+                            payment_status,
+                            paid_at)
+        VALUES (#{ordersId},
+                #{impUid},
+                #{merchantUid},
+                #{pgProvider},
+                #{payMethod},
+                #{paymentAmount},
+                #{paymentStatus},
+                #{paidAt})
+    </insert>
+
+
+    <resultMap id="PaymentWithOrdersResultMap" type="paymentResponse">
+        <id property="paymentId" column="payment_id"/>
+        <result property="ordersId" column="orders_id"/>
+        <result property="impUid" column="imp_uid"/>
+        <result property="merchantUid" column="merchant_uid"/>
+        <result property="payMethod" column="pay_method"/>
+        <result property="paymentAmount" column="payment_amount"/>
+        <result property="paymentStatus" column="payment_status"/>
+        <result property="paidAt" column="paid_at"/>
+        <result property="cancelledAt" column="cancelled_at"/>
+
+        <association property="orderResponseDTO" javaType="orderResponse">
+            <result property="userId" column="user_id"/>
+            <result property="orderName" column="order_name"/>
+            <result property="totalPrice" column="total_price"/>
+            <result property="finalOrderStatus" column="final_order_status"/>
+            <result property="regdate" column="regdate"/>
+        </association>
+    </resultMap>
+
+    <!-- 특정 회원의 결제 정보 조회 -->
+    <select id="getPaymentList" resultMap="PaymentWithOrdersResultMap">
+        SELECT *
+        FROM Payment
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- imp_uid로 orders_id 조회 -->
+    <select id="getOrdersIdByImpUid" resultType="int">
+        SELECT orders_id
+        FROM Payment
+        WHERE imp_uid = #{impUid}
+    </select>
+
+    <!-- 결제 취소 시 payment_status, cancelled_at 업데이트 -->
+    <update id="cancelPayment" parameterType="PaymentRequest">
+        UPDATE Payment
+        SET payment_status = #{paymentStatus},
+            cancelled_at   = #{cancelledAt}
+        WHERE imp_uid = #{impUid}
+    </update>
+
+
+</mapper>

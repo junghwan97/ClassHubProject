@@ -1,7 +1,9 @@
 package com.example.classhubproject.mapper.community;
 
-import com.example.classhubproject.data.community.CommunityResponseDTO;
+import com.example.classhubproject.data.community.CommunityImageRequestDTO;
+import com.example.classhubproject.data.community.CommunityImageUploadRequestDTO;
 import com.example.classhubproject.data.community.CommunityRequestDTO;
+import com.example.classhubproject.data.community.CommunityResponseDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -11,7 +13,7 @@ import java.util.List;
 public interface CommunityMapper {
     int posting(CommunityRequestDTO communityRequestDTO);
 
-    Integer insertImage(@Param("communityId") Integer communityId, @Param("image") String image);
+    Integer insertImage(CommunityImageRequestDTO communityImageRequestDTO);
 
     List<CommunityResponseDTO> selectAllRecentQuestions(@Param("startIndex")Integer startIndex,
                                                         @Param("rowPerPage") Integer rowPerPage,
@@ -48,9 +50,28 @@ public interface CommunityMapper {
 
     Integer modifyCommunity(@Param("communityId") Integer communityId, @Param("communityDto") CommunityRequestDTO communityDto);
 
-    void removeImage(@Param("communityId") Integer communityId, @Param("fileName") String fileName);
+    Integer removeImage(@Param("removeImageId") Integer removeImageId);
 
-    List<CommunityResponseDTO> selectStudiesByStatus(int status);
+    List<CommunityResponseDTO> selectStudiesByStatus(@Param("status") int status,
+                                                     @Param("startIndex")Integer startIndex,
+                                                     @Param("rowPerPage") Integer rowPerPage,
+                                                     @Param("search") String search,
+                                                     @Param(("type")) String type);
 
-    Integer countAll(@Param("search") String search, @Param("type") String type);
+    Integer countAllQuestions(@Param("search") String search, @Param("type") String type);
+    Integer countAllStudies(@Param("search") String search, @Param("type") String type);
+    Integer countAllStudiesByStatus(@Param("status") int status, @Param("search") String search, @Param("type") String type);
+
+//    void insertPath(@Param("imageId") List<Integer> imageId, @Param("filePath") Path filePath);
+
+    Integer insertCommunityToImage(CommunityImageUploadRequestDTO communityImageUploadRequestDTO);
+
+    Integer updateBoard(@Param("communityId") Integer communityId, @Param("communityRequest") CommunityRequestDTO communityRequestDTO);
+
+//    List<Integer> selectImageId(@Param("communityId")Integer communityId, @Param("files") String files);
+
+    String selectImageNameById(Integer removeImageId);
+
+    Integer updateImage(@Param("imageId") int imageId, @Param("fileName") String originalFilename);
+
 }

@@ -39,6 +39,9 @@ public class CommunityResponseDTO {
     @Schema(description = "게시물 댓글 수")
     private Integer commentCount;
 
+    @Schema(description = "게시물 이미지 ID")
+    private List<Integer> imageIds;
+
     @Schema(description = "게시물 이미지명")
     private List<String> image;
 }

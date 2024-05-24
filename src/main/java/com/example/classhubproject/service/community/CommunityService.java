@@ -1,19 +1,20 @@
 package com.example.classhubproject.service.community;
 
 
-import com.example.classhubproject.data.community.CommunityResponseDTO;
-import com.example.classhubproject.data.community.CommunityRequestDTO;
-import com.example.classhubproject.data.community.PagingDTO;
+import com.example.classhubproject.data.community.*;
 import com.example.classhubproject.mapper.community.CommunityMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
+@Slf4j
 @Transactional(rollbackFor = Exception.class)
 public class CommunityService {
 
@@ -24,32 +25,57 @@ public class CommunityService {
         this.communityMapper = communityMapper;
     }
 
-    public int posting(CommunityRequestDTO communityRequestDTO, MultipartFile[] files) {
-        int cnt = communityMapper.posting(communityRequestDTO);
-        try {
-            //게시물 insert
-            for (MultipartFile file : files) {
-                if (file.getSize() > 0) {
-                    // 파일 저장
-                    // 폴더 만들기(로컬 환경)
-                    String folder = "C:\\Users\\jhzza\\Desktop\\ProjectLMS\\upload\\" + communityRequestDTO.getCommunityId();
-                    File targetFolder = new File(folder);
-                    if (!targetFolder.exists()) {
-                        targetFolder.mkdirs();
-                    }
+    public int posting(CommunityRequestDTO communityRequestDTO) {
 
-                    String path = folder + "\\" + file.getOriginalFilename();
-                    File target = new File(path);
-                    file.transferTo(target);
+        List<Integer> imageIds = communityRequestDTO.getCommunityImageIds();
+        Integer result = communityMapper.posting(communityRequestDTO);
+        Integer communityId = communityRequestDTO.getCommunityId();
+        if (imageIds != null) {
+            for (Integer imageId : imageIds) {
+                CommunityImageUploadRequestDTO communityImageUploadRequestDTO = new CommunityImageUploadRequestDTO(communityId, imageId);
+                Integer result1 = communityMapper.insertCommunityToImage(communityImageUploadRequestDTO);
+            }
+        }
+        return communityId;
+    }
+
+
+    public List<Integer> postingImage(List<MultipartFile> files) {
+
+        List<Integer> imageIds = new ArrayList<>();
+        try {
+            for (MultipartFile file : files) {
+                if (file != null) {
+                    // 파일 저장
+                    // ubuntu에 이미지 저장
+                    String originalFilename = file.getOriginalFilename();
+                    String newFileName = generateUniqueFileName(originalFilename);
+                    String folder = "/home/ubuntu/images";
+                    file.transferTo(new File(folder + "/" + newFileName));
+
+                    CommunityImageRequestDTO communityImageRequestDTO = new CommunityImageRequestDTO(0, folder + "/" + newFileName);
+
+
                     //db에 관련 정보 저장
-                    communityMapper.insertImage(communityRequestDTO.getCommunityId(), file.getOriginalFilename());
+                    Integer imageId = communityMapper.insertImage(communityImageRequestDTO);
+                    imageIds.add(communityImageRequestDTO.getCommunityImageId());
+//                    communityMapper.insertPath(imageId, filePath);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return imageIds;
+    }
 
-        return cnt;
+    private String generateUniqueFileName(String originalFileName) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+        //Random 객체 생성
+        Random random = new Random();
+        // 0이상 100 미만의 랜덤한 정수 반환
+        String randomNumber = Integer.toString(random.nextInt(Integer.MAX_VALUE));
+        String timeStamp = dateFormat.format(new Date());
+        return timeStamp + randomNumber + originalFileName;
     }
 
     public PagingDTO<List<CommunityResponseDTO>> questionsRecentList(Integer page, String search, String type) {
@@ -61,7 +87,7 @@ public class CommunityService {
 
         // 페이지네이션에 필요한 정보
         // 전체 레코드 수
-        int numOfRecords = communityMapper.countAll(search, type);
+        int numOfRecords = communityMapper.countAllQuestions(search, type);
         // 마지막 페이지 번호
         int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
         //페이지네이션 왼쪽 번호
@@ -87,7 +113,7 @@ public class CommunityService {
 
         // 페이지네이션에 필요한 정보
         // 전체 레코드 수
-        int numOfRecords = communityMapper.countAll(search, type);
+        int numOfRecords = communityMapper.countAllQuestions(search, type);
         // 마지막 페이지 번호
         int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
         //페이지네이션 왼쪽 번호
@@ -112,7 +138,7 @@ public class CommunityService {
 
         // 페이지네이션에 필요한 정보
         // 전체 레코드 수
-        int numOfRecords = communityMapper.countAll(search, type);
+        int numOfRecords = communityMapper.countAllQuestions(search, type);
         // 마지막 페이지 번호
         int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
         //페이지네이션 왼쪽 번호
@@ -137,7 +163,7 @@ public class CommunityService {
 
         // 페이지네이션에 필요한 정보
         // 전체 레코드 수
-        int numOfRecords = communityMapper.countAll(search, type);
+        int numOfRecords = communityMapper.countAllStudies(search, type);
         // 마지막 페이지 번호
         int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
         //페이지네이션 왼쪽 번호
@@ -162,7 +188,7 @@ public class CommunityService {
 
         // 페이지네이션에 필요한 정보
         // 전체 레코드 수
-        int numOfRecords = communityMapper.countAll(search, type);
+        int numOfRecords = communityMapper.countAllStudies(search, type);
         // 마지막 페이지 번호
         int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
         //페이지네이션 왼쪽 번호
@@ -187,19 +213,19 @@ public class CommunityService {
 
         // 페이지네이션에 필요한 정보
         // 전체 레코드 수
-        int numOfRecords = communityMapper.countAll(search, type);
+        int numOfRecords = communityMapper.countAllStudies(search, type);
         // 마지막 페이지 번호
-        int lastPageNum = (numOfRecords - 1) / rowPerPage + 1;
+        int totalNum = (numOfRecords - 1) / rowPerPage + 1;
         //페이지네이션 왼쪽 번호
-        int leftPageNum = page - 5;
-        leftPageNum = Math.max(leftPageNum, 1);
+        int leftEndNum = page - 5;
+        leftEndNum = Math.max(leftEndNum, 1);
         //페이지네이션 오른쪽 번호
-        int rightPageNum = leftPageNum + 9;
-        rightPageNum = Math.min(rightPageNum, lastPageNum);
+        int rightEndNum = leftEndNum + 9;
+        rightEndNum = Math.min(rightEndNum, totalNum);
         int currentPageNum = page;
 
         List<CommunityResponseDTO> list = communityMapper.selectAllStudiesByComment(startIndex, rowPerPage, search, type);
-        PagingDTO pagingList = new PagingDTO(list, currentPageNum, lastPageNum, leftPageNum, rightPageNum);
+        PagingDTO pagingList = new PagingDTO(list, currentPageNum, totalNum, leftEndNum, rightEndNum);
         return pagingList;
     }
 
@@ -211,56 +237,84 @@ public class CommunityService {
         return communityMapper.selectStudy(id);
     }
 
-    public Integer modifyCommunity(Integer communityId, CommunityRequestDTO communityDto, MultipartFile[] addFiles, List<String> removeFiles) {
-        try {
-            // Image 테이블 삭제
-            if (removeFiles != null && !removeFiles.isEmpty()) {
-                for (String fileName : removeFiles) {
-                    // 하드웨어에서 삭제
-                    String path = "C:\\Users\\jhzza\\Desktop\\ProjectLMS\\upload\\" + communityId + "\\" + fileName;
-                    File file = new File(path);
-                    if (file.exists()) {
-                        file.delete();
-                    }
-                    // 테이블에서 삭제
-                    communityMapper.removeImage(communityId, fileName);
+    public PagingDTO<List<CommunityResponseDTO>> studiesStatusList(int status, int page, String search, String type) {
+        // 한페이지 당 게시물 수
+        Integer rowPerPage = 5;
+
+        // 쿼리 LIMIT절에 사용할 시작 인덱스
+        int startIndex = (page - 1) * rowPerPage;
+
+        // 페이지네이션에 필요한 정보
+        // 전체 레코드 수
+        int numOfRecords = communityMapper.countAllStudiesByStatus(status, search, type);
+        // 마지막 페이지 번호
+        int totalNum = (numOfRecords - 1) / rowPerPage + 1;
+        //페이지네이션 왼쪽 번호
+        int leftEndNum = page - 5;
+        leftEndNum = Math.max(leftEndNum, 1);
+        //페이지네이션 오른쪽 번호
+        int rightEndNum = leftEndNum + 9;
+        rightEndNum = Math.min(rightEndNum, totalNum);
+        int currentPageNum = page;
+
+//        List<CommunityResponseDTO> list = communityMapper.selectAllStudiesByComment(startIndex, rowPerPage, search, type);
+        List<CommunityResponseDTO> list = communityMapper.selectStudiesByStatus(status, startIndex, rowPerPage, search, type);
+        PagingDTO pagingList = new PagingDTO(list, currentPageNum, totalNum, leftEndNum, rightEndNum);
+        return pagingList;
+
+    }
+
+    public Integer modifyBoard(Integer communityId, CommunityRequestDTO communityRequestDTO) {
+        return communityMapper.updateBoard(communityId, communityRequestDTO);
+    }
+
+    public Integer deleteFiles(List<Integer> removeImageIds) {
+
+        int cnt = 0;
+        for (Integer removeImageId : removeImageIds) {
+            if (removeImageId > 0) {
+                // 파일 저장
+                // ubuntu에서 이미지 삭제
+                String folder = "/home/ubuntu/images";
+                String fileName = communityMapper.selectImageNameById(removeImageId);
+//                String originalFilename = folder + "/" + fileName;
+                File removeFile = new File(fileName);
+
+                if (removeFile.exists()) {
+                    boolean result = removeFile.delete();
+                    //db에 관련 정보 삭제
+                    cnt = communityMapper.removeImage(removeImageId);
+                } else {
+                    System.out.println("파일이 존재하지 않습니다: " + fileName);
+                    log.info("파일이 존재하지 않습니다: " + fileName);
+                    boolean result = false;
                 }
+
             }
-            // 새 파일 추가
-            if (addFiles != null) {
+        }
+        return cnt;
+    }
 
+    public Integer modifyFiles(List<Integer> communityImageId, List<MultipartFile> files) {
+//        List<Integer> imageModifyIds = new ArrayList<>();
+        int cnt = 0;
+        try {
+//
+            for (int i = 0; i < communityImageId.size(); i++) {
+                int imageId = communityImageId.get(i);
+                MultipartFile file = files.get(i);
+                // ubuntu에 이미지 저장
+                String originalFilename = file.getOriginalFilename();
+                String newFileName = generateUniqueFileName(originalFilename);
+                String folder = "/home/ubuntu/images";
+                String path = folder + "/" + newFileName;
+                file.transferTo(new File(path));
+                cnt += communityMapper.updateImage(imageId, path);
 
-                for (MultipartFile newFile : addFiles) {
-                    if (newFile.getSize() > 0) {
-                        // image 테이블에 파일명 추가
-                        communityMapper.insertImage(communityId, newFile.getOriginalFilename());
-
-                        String fileName = newFile.getOriginalFilename();
-                        String folder = "C:\\Users\\jhzza\\Desktop\\ProjectLMS\\upload\\" + communityId;
-                        String path = folder + "\\" + fileName;
-
-                        // 디렉토리 없으면 만듦
-                        File dir = new File(folder);
-                        if (!dir.exists()) {
-                            dir.mkdirs();
-                        }
-
-                        // 하드디스크에 파일 저장
-                        File file = new File(path);
-                        newFile.transferTo(file);
-                    }
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // 게시물 테이블 수정
-        int cnt = communityMapper.modifyCommunity(communityId, communityDto);
-
         return cnt;
-    }
-
-    public List<CommunityResponseDTO> studiesStatusList(int status) {
-        return communityMapper.selectStudiesByStatus(status);
     }
 }

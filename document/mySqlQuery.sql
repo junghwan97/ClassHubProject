@@ -1,19 +1,18 @@
-
-
 -- 사용자 정보 테이블 생성
 CREATE TABLE `User`
 (
-    `user_id`         INT NOT NULL AUTO_INCREMENT COMMENT '회원ID',
-    `sns_id`          varchar(50)  DEFAULT NULL COMMENT 'SNS ID',
-    `access_token`    varchar(500) DEFAULT NULL COMMENT '액세스 토큰',
-    `name`            varchar(20)  DEFAULT NULL COMMENT '이름',
-    `nickname`        varchar(20)  DEFAULT NULL COMMENT '허용	닉네임',
-    `email`           varchar(255) DEFAULT NULL COMMENT '이메일',
-    `phone_number`    varchar(20)  DEFAULT NULL COMMENT '전화번호',
-    `profile_picture` varchar(100) DEFAULT NULL COMMENT '허용 프로필 이미지',
-    `platform_type`   varchar(100) DEFAULT NULL COMMENT 'sns 타입',
-    `regdate`         DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '가입일',
-    `exit_date`       DATETIME     DEFAULT NULL COMMENT '허용 회원탈퇴 일자(여부)',
+    `user_id`         INT                 NOT NULL AUTO_INCREMENT COMMENT '회원ID',
+    `sns_id`          VARCHAR(50)  DEFAULT NULL COMMENT 'SNS ID',
+    `access_token`    VARCHAR(500) DEFAULT NULL COMMENT '액세스 토큰',
+    `name`            VARCHAR(20)  DEFAULT NULL COMMENT '이름',
+    `nickname`        VARCHAR(20)  DEFAULT NULL COMMENT '허용 닉네임',
+    `email`           VARCHAR(255) UNIQUE NOT NULL COMMENT '이메일',
+    `phone_number`    VARCHAR(20) UNIQUE  NOT NULL COMMENT '전화번호',
+    `profile_picture` VARCHAR(100) DEFAULT NULL COMMENT '허용 프로필 이미지',
+    `platform_type`   VARCHAR(20)  DEFAULT NULL COMMENT 'sns 타입',
+    `introduce`       VARCHAR(300) DEFAULT NULL COMMENT '자기 소개글',
+    `regdate`         DATE         DEFAULT CURRENT_TIMESTAMP COMMENT '가입일',
+    `exit_date`       DATE         DEFAULT NULL COMMENT '회원탈퇴 일자(여부)',
     PRIMARY KEY (`user_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -233,23 +232,33 @@ CREATE TABLE Favorite_Community
 -- 커뮤니티 사진 테이블 생성
 CREATE TABLE Community_Image
 (
-    community_image_id INT AUTO_INCREMENT PRIMARY KEY COMMENT '커뮤니티 사진 ID',
+    idx                INT NOT NULL AUTO_INCREMENT COMMENT '식별자',
     community_id       INT COMMENT '게시글 ID',
-    image              VARCHAR(100) NOT NULL COMMENT '이미지',
-    FOREIGN KEY (community_id) REFERENCES Community (community_id)
+    community_image_id INT COMMENT '커뮤니티 사진 ID',
+    PRIMARY KEY (idx),
+    FOREIGN KEY (community_id) REFERENCES Community (community_id),
+    FOREIGN KEY (community_image_id) REFERENCES Community_Image_Path (community_image_id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci COMMENT ='커뮤니티 사진';
 
+-- 커뮤니티 실물 사진 테이블 생성
+CREATE TABLE Community_Image_Path
+(
+    community_image_id INT AUTO_INCREMENT PRIMARY KEY COMMENT '게시글 사진 ID',
+    imagePath          VARCHAR(100) NOT NULL COMMENT '이미지 경로'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci COMMENT ='커뮤니티 실물사진 경로';
 
 -- 주문 테이블 생성
 CREATE TABLE Orders
 (
-    orders_id   INT AUTO_INCREMENT PRIMARY KEY COMMENT '주문 번호 ID',
-    user_id     INT COMMENT '회원 ID',
-    total_price INT NOT NULL COMMENT '총 주문 금액',
-    final_order_status CHAR(1) DEFAULT '1' COMMENT '최종 주문 상태',
-    regdate     DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '주문 일자',
+    orders_id          INT AUTO_INCREMENT PRIMARY KEY COMMENT '주문 번호 ID',
+    user_id            INT COMMENT '회원 ID',
+    total_price        INT NOT NULL COMMENT '총 주문 금액',
+    final_order_status CHAR(1)  DEFAULT '0' COMMENT '최종 주문 상태',
+    regdate            DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '주문 일자',
     FOREIGN KEY (user_id) REFERENCES User (user_id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -274,11 +283,14 @@ CREATE TABLE Payment
 (
     payment_id     INT AUTO_INCREMENT PRIMARY KEY COMMENT '결제 ID',
     orders_id      INT COMMENT '주문 번호 ID',
-    payment_type   VARCHAR(10) NOT NULL COMMENT '결제 수단',
-    payment_amount INT         NOT NULL COMMENT '결제 금액',
-    card           VARCHAR(10) NOT NULL COMMENT '카드 정보',
-    payment_status CHAR(1)  DEFAULT '1' COMMENT '결제 상태(결제완료/결제취소)',
-    regdate        DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '결제 일시',
+    imp_uid        VARCHAR(50) NOT NULL COMMENT '아임포트 거래 식별자',
+    merchant_uid   VARCHAR(50) NOT NULL COMMENT '가맹점 주문 번호',
+    pg_provider    VARCHAR(20) NOT NULL COMMENT '결제 대행사',
+    pay_method     VARCHAR(20) NOT NULL COMMENT '결제 수단',
+    payment_amount DECIMAL(10, 0) NOT NULL COMMENT '결제 금액',
+    payment_status CHAR(10) NOT NULL COMMENT '결제 상태',
+    paid_at        DATETIME COMMENT '결제일시',
+    cancelled_at   DATETIME COMMENT '결제 취소일시',
     FOREIGN KEY (orders_id) REFERENCES Orders (orders_id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4

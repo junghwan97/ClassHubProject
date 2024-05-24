@@ -12,12 +12,12 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    //Server server = new Server().url("https://devproject.store");
+    Server server = new Server().url("https://devproject.store");
 
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                //.servers(List.of(server))
+                .servers(List.of(server))
                 .info(new Info()
                         .title("LMS API")
                         .description("LMS 프로젝트 샘플입니다.")
@@ -85,6 +85,15 @@ public class SwaggerConfig {
                 .group("주문 관련")
                 .pathsToMatch("/order/*")
                 .packagesToScan("com.example.classhubproject.controller.order")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi payment () {
+        return GroupedOpenApi.builder()
+                .group("결제 관련")
+                .pathsToMatch("/payment/*")
+                .packagesToScan("com.example.classhubproject.controller.payment")
                 .build();
     }
 

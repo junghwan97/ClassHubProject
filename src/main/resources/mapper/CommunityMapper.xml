@@ -11,10 +11,29 @@
     </insert>
 
 
-    <insert id="insertImage" parameterType="communityRequest">
-        INSERT INTO Community_Image(community_id, image)
-        VALUES (#{communityId}, #{image});
+    <insert id="insertImage" parameterType="communityImageRequest">
+        <selectKey keyProperty="communityImageId" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID() AS community_image_id
+        </selectKey>
+        INSERT INTO Community_Image_Path(imagePath)
+        VALUES (#{imagePath});
     </insert>
+
+    <!--    <insert id="insertPath" parameterType="communityRequest">-->
+    <!--        INSERT INTO Community_Image_Path(community_image_id, imagePath)-->
+    <!--        VALUES (#{imageId}, #{imagePath});-->
+    <!--    </insert>-->
+
+    <insert id="insertImagePath" parameterType="communityRequest">
+        INSERT INTO Community_Image(image)
+        VALUES (#{image});
+    </insert>
+
+    <insert id="insertCommunityToImage" parameterType="communityImageUploadRequest">
+        INSERT INTO Community_Image(community_id, community_image_id)
+        VALUES (#{communityId}, #{imageId});
+    </insert>
+
 
     <select id="selectAllRecentQuestions" resultType="communityResponse">
         SELECT c.community_id,
@@ -47,16 +66,16 @@
 
     <select id="selectAllQuestionsByFavorite" resultType="communityResponse">
         SELECT c.community_id,
-               c.user_id,
-               c.community_type,
-               c.title,
-               c.text,
-               c.regdate,
-               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
-               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        c.user_id,
+        c.community_type,
+        c.title,
+        c.text,
+        c.regdate,
+        (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+        (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
         FROM Community c
---                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
---                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        -- LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+        -- LEFT JOIN Comment cm ON c.community_id = cm.community_id
         WHERE c.community_type = '1'
         <if test="type != null">
             <if test="type == 'all'">
@@ -76,16 +95,16 @@
 
     <select id="selectAllQuestionsByComment" resultType="communityResponse">
         SELECT c.community_id,
-               c.user_id,
-               c.community_type,
-               c.title,
-               c.text,
-               c.regdate,
-               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
-               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        c.user_id,
+        c.community_type,
+        c.title,
+        c.text,
+        c.regdate,
+        (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+        (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
         FROM Community c
---                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
---                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        -- LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+        -- LEFT JOIN Comment cm ON c.community_id = cm.community_id
         WHERE c.community_type = '1'
         <if test="type != null">
             <if test="type == 'all'">
@@ -105,18 +124,18 @@
 
     <select id="selectAllRecentStudies" resultType="communityResponse">
         SELECT c.community_id,
-               c.user_id,
-               c.community_type,
-               c.title,
-               c.text,
-               c.regdate,
-               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
-               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        c.user_id,
+        c.community_type,
+        c.title,
+        c.text,
+        c.regdate,
+        (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+        (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
         FROM Community c
---                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
---                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        -- LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+        -- LEFT JOIN Comment cm ON c.community_id = cm.community_id
         WHERE (c.community_type = '2'
-           OR c.community_type = '3')
+        OR c.community_type = '3')
         <if test="type != null">
             <if test="type == 'all'">
                 AND c.title LIKE CONCAT('%', #{search}, '%')
@@ -135,18 +154,18 @@
 
     <select id="selectAllStudiesByFavorite" resultType="communityResponse">
         SELECT c.community_id,
-               c.user_id,
-               c.community_type,
-               c.title,
-               c.text,
-               c.regdate,
-               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
-               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        c.user_id,
+        c.community_type,
+        c.title,
+        c.text,
+        c.regdate,
+        (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+        (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
         FROM Community c
---                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
---                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        -- LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+        -- LEFT JOIN Comment cm ON c.community_id = cm.community_id
         WHERE (c.community_type = '2'
-           OR c.community_type = '3')
+        OR c.community_type = '3')
         <if test="type != null">
             <if test="type == 'all'">
                 AND c.title LIKE CONCAT('%', #{search}, '%')
@@ -165,18 +184,18 @@
 
     <select id="selectAllStudiesByComment" resultType="communityResponse">
         SELECT c.community_id,
-               c.user_id,
-               c.community_type,
-               c.title,
-               c.text,
-               c.regdate,
-               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
-               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        c.user_id,
+        c.community_type,
+        c.title,
+        c.text,
+        c.regdate,
+        (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+        (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
         FROM Community c
---                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
---                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        -- LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+        -- LEFT JOIN Comment cm ON c.community_id = cm.community_id
         WHERE (c.community_type = '2'
-           OR c.community_type = '3')
+        OR c.community_type = '3')
         <if test="type != null">
             <if test="type == 'all'">
                 AND c.title LIKE CONCAT('%', #{search}, '%')
@@ -206,7 +225,20 @@
                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
 --                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
         WHERE c.community_type = #{status}
+        <if test="type != null">
+            <if test="type == 'all'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'title'">
+                AND c.title LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'content'">
+                AND c.text LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </if>
         ORDER BY c.community_id DESC
+        LIMIT #{startIndex}, #{rowPerPage}
     </select>
 
     <resultMap type="communityResponse" id="communityResultMap">
@@ -220,7 +252,10 @@
         <result column="comment_count" property="commentCount"/>
         <result column="edit_date" property="editDate"/>
         <collection property="image" ofType="string">
-            <result column="image"/>
+            <result column="imagePath"/>
+        </collection>
+        <collection property="imageIds" ofType="integer">
+            <result column="community_image_id"/>
         </collection>
     </resultMap>
 
@@ -234,11 +269,13 @@
                c.regdate,
                (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
                (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count,
-               ci.image,
+               cip.imagePath,
+               ci.community_image_id,
                c.edit_date
         FROM Community c
                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
                  LEFT JOIN Community_Image ci ON c.community_id = ci.community_id
+                 LEFT JOIN Community_Image_Path cip ON cip.community_image_id = ci.community_image_id
         WHERE c.community_type = '1'
           AND c.community_id = #{id}
     </select>
@@ -253,11 +290,13 @@
                c.regdate,
                (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
                (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count,
-               ci.image,
+               cip.imagePath,
+               ci.community_image_id,
                c.edit_date
         FROM Community c
                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
                  LEFT JOIN Community_Image ci ON c.community_id = ci.community_id
+                 LEFT JOIN Community_Image_Path cip ON cip.community_image_id = ci.community_image_id
         WHERE c.community_type = '2'
           AND c.community_id = #{id}
     </select>
@@ -272,17 +311,88 @@
         WHERE community_id = #{communityId}
     </update>
 
-    <delete id="removeImage" parameterType="communityRequest">
-        DELETE
-        FROM Community_Image
+    <update id="updateBoard" parameterType="communityRequest">
+        UPDATE Community
+        SET user_id        = #{communityRequest.userId},
+            community_type = #{communityRequest.communityType},
+            title          = #{communityRequest.title},
+            text           = #{communityRequest.text},
+            edit_date      = now()
         WHERE community_id = #{communityId}
-          AND image = #{fileName};
-    </delete>
+    </update>
 
-    <select id="countAll" resultType="Integer">
+    <!--    <delete id="removeImage" parameterType="communityRequest">-->
+    <!--        DELETE-->
+    <!--        FROM Community_Image-->
+    <!--        WHERE community_id = #{communityId}-->
+    <!--          AND image = #{fileName};-->
+    <!--    </delete>-->
+
+    <update id="removeImage" parameterType="communityRequest">
+        update Community_Image_Path
+        SET imagePath = 'null'
+        WHERE community_image_id = #{removeImageId};
+    </update>
+
+    <update id="updateImage" parameterType="communityRequest">
+        update Community_Image_Path
+        SET imagePath = #{fileName}
+        WHERE community_image_id = #{imageId};
+    </update>
+
+    <!--    <select id="selectImageId" resultType="Integer">-->
+    <!--        SELECT-->
+    <!--            community_image_id-->
+    <!--        FROM Community_Image-->
+    <!--        WHERE community_id = #{communityId}-->
+    <!--    </select>-->
+
+    <select id="selectImageNameById" resultType="java.lang.String">
+        SELECT imagePath
+        FROM Community_Image_Path
+        WHERE community_image_id = #{removeImageId}
+    </select>
+
+    <select id="countAllQuestions" resultType="Integer">
         SELECT count(*)
         FROM Community
         WHERE community_type = '1'
+        <if test="type != null">
+            <if test="type == 'all'">
+                AND title LIKE CONCAT('%', #{search}, '%')
+                OR text LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'title'">
+                AND title LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'content'">
+                AND text LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </if>
+    </select>
+
+    <select id="countAllStudies" resultType="Integer">
+        SELECT count(*)
+        FROM Community
+        WHERE (community_type = '2' OR community_type = '3')
+        <if test="type != null">
+            <if test="type == 'all'">
+                AND title LIKE CONCAT('%', #{search}, '%')
+                OR text LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'title'">
+                AND title LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="type == 'content'">
+                AND text LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </if>
+    </select>
+
+    <select id="countAllStudiesByStatus" resultType="Integer">
+        SELECT count(*)
+        FROM Community
+        WHERE community_type = #{status}
         <if test="type != null">
             <if test="type == 'all'">
                 AND title LIKE CONCAT('%', #{search}, '%')

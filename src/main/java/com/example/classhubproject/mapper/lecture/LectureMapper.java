@@ -22,17 +22,18 @@ public interface LectureMapper {
 
     // 강의 가격
     int getClassPrice(int classId);
-    
+
     //강의 영상등록
     int addClassVideo(LectureClassDetailDTO dto);
-    
+
     //강의 전체조회
     List<ClassResponseDTO> selectAll();
 
     //강의 키워드 조회
     List<ClassResponseDTO> selectByKeyword(String keyword);
-    
+
     //카데고리 조회
     List<ClassResponseDTO> selectByCategory(Integer categoryId);
 
+    ClassResponseDTO getClassInfoByClassId(int classId);
 }
