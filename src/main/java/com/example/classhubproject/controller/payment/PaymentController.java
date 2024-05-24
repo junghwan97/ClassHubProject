@@ -14,10 +14,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -27,20 +29,18 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "결제 기능 모음", description = "결제 관련 기능을 처리")
-public class PaymentController {
+public class PaymentController implements InitializingBean {
 
-    @Autowired
-    private IamportClient iamportClient;
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
     @Value("${iamport.key}")
     private String apiKey;
     @Value("${iamport.secret}")
     private String secretKey;
+    private IamportClient iamportClient;
 
-    @PostConstruct
-    public void init() {
+    @Override
+    public void afterPropertiesSet() {
         this.iamportClient = new IamportClient(apiKey, secretKey);
     }
 
@@ -54,19 +54,8 @@ public class PaymentController {
             }
     )
     @PostMapping("/add")
-    public ResponseEntity<ResponseData<Void>> addPayment(@RequestParam("imp_uid") String impUid) {
-        int paymentResult = paymentService.addPayment(impUid);
-
-        if (paymentResult == 0) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ResponseData.res(HttpStatus.INTERNAL_SERVER_ERROR.value(), ResponseMessage.PAYMENT_FAILED));
-        } else if (paymentResult == 1) {
-            return ResponseEntity.ok()
-                    .body(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.PAYMENT_SUCCESS));
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ResponseData.res(HttpStatus.INTERNAL_SERVER_ERROR.value(), ResponseMessage.PAYMENT_ERROR));
-        }
+    public void addPayment(@RequestParam("imp_uid") String impUid) {
+        paymentService.addPayment(impUid);
     }
 
 
@@ -80,7 +69,7 @@ public class PaymentController {
             }
     )
     @GetMapping("/{imp_uid}")
-    public ResponseEntity<ResponseData<IamportResponse<Payment>>> getPaymentByImpUid(@PathVariable("imp_uid") String imp_uid) {
+    public ResponseEntity<String> getPaymentByImpUid(@PathVariable("imp_uid") String imp_uid) {
         try {
             IamportResponse<Payment> response = iamportClient.paymentByImpUid(imp_uid);
             return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.PAYMENT_RETRIEVE_SUCCESS, response));
@@ -100,7 +89,7 @@ public class PaymentController {
             }
     )
     @PostMapping("/prepare")
-    public ResponseEntity<ResponseData<Void>> preparePayment(@RequestParam("merchant_uid") String merchantUid, @RequestParam("amount") BigDecimal amount) {
+    public Void preparePayment(@RequestParam("merchant_uid") String merchantUid, @RequestParam("amount") BigDecimal amount) {
         try {
             PrepareData prepareData = new PrepareData(merchantUid, amount);
             iamportClient.postPrepare(prepareData);

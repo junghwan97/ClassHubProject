@@ -1,7 +1,11 @@
 package com.example.classhubproject.service.payment;
 
+import com.example.classhubproject.data.common.ResponseMessage;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.siot.IamportRestClient.IamportClient;
@@ -12,6 +16,7 @@ import java.net.URL;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class IamportService {
 
     @Value("${iamport.key}")
@@ -19,6 +24,8 @@ public class IamportService {
 
     @Value("${iamport.secret}")
     private String secretKey;
+
+    private final IamportClient client;
 
     public String getToken() throws IOException {
         URL url = new URL("https://api.iamport.kr/users/getToken");
@@ -55,6 +62,16 @@ public class IamportService {
         conn.disconnect();
 
         return accessToken;
+    }
+
+    public IamportResponse<Payment> paymentByImpUid(String impUid) {
+
+        try {
+            return client.paymentByImpUid(impUid);
+        } catch (Exception e) {
+            throw new RuntimeException(ResponseMessage.PAYMENT_FAILED);
+        }
+
     }
 
 
