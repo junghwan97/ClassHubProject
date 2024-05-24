@@ -87,4 +87,12 @@
         WHERE orders_id = #{ordersId}
     </update>
 
+    <!-- 특정 주문ID의 총 주문 금액 가져오기 -->
+    <select id="getTotalPriceByOrdersId" resultType="int">
+        SELECT total_price
+        FROM Orders
+        WHERE orders_id = #{ordersId}
+    </select>
+
+
 </mapper>

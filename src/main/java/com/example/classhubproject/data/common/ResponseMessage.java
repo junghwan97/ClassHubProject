@@ -24,7 +24,7 @@ public class ResponseMessage {
     public static final String STUDY_SUCCESS = "스터디 게시물 조회 성공";
     public static final String MODIFY_COMMUNITY_SUCCESS = "게시물이 수정되었습니다.";
     public static final String MODIFY_COMMUNITY_ERROR = "게시물 수정 중 문제가 발생했습니다.";
-    // 댓글 ResponseMessage  
+    // 댓글 ResponseMessage
     public static final String COMMENT_LIST_SUCCESS = "게시물 댓글목록 조회 성공";
     public static final String COMMENT_SUCCESS = "게시물 댓글 조회 성공";
     public static final String POST_COMMENT_SUCCESS = "댓글이 등록되었습니다.";
@@ -53,8 +53,21 @@ public class ResponseMessage {
     public static final String LECTURE_INSERT_ERROR = "강의 등록 실패";
     public static final String LECTURE_SUCCESS = "강의 조회 성공";
     public static final String LECTURE_ERROR = "강의 조회 실패";
-    
-    
-    
-}
+    // 결제 ResponseMessage
+    public static final String ACCESS_TOKEN_SUCCESS = "액세스 토큰 가져오기 성공";
+    public static final String ACCESS_TOKEN_ERROR = "액세스 토큰 가져오는 중 오류가 발생했습니다.";
+    public static final String PAYMENT_PREPARE_SUCCESS = "사전 결제 금액 등록 성공";
+    public static final String PAYMENT_PREPARE_ERROR = "사전 결제 금액 등록 실패";
+    public static final String PREPARE_AMOUNT_SUCCESS = "사전 결제 금액 조회 성공";
+    public static final String PREPARE_AMOUNT_ERROR = "사전 결제 금액 조회 실패";
+    public static final String PAYMENT_RETRIEVE_SUCCESS = "결제 정보 조회 성공";
+    public static final String PAYMENT_RETRIEVE_ERROR = "결제 정보 조회 실패";
+    public static final String PAYMENT_CANCEL_SUCCESS = "결제 취소 성공";
+    public static final String PAYMENT_CANCEL_FAILED = "결제 취소 실패";
+    public static final String PAYMENT_CANCEL_ERROR = "결제 취소 중 오류가 발생했습니다.";
+    public static final String PAYMENT_FAILED = "결제 정보 등록 실패";
+    public static final String PAYMENT_SUCCESS = "결제 정보 등록 성공";
+    public static final String PAYMENT_ERROR = "결제 정보 등록 중 오류가 발생했습니다.";
 
+
+}
