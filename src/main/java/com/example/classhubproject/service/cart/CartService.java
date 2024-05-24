@@ -1,6 +1,7 @@
 package com.example.classhubproject.service.cart;
 
 import com.example.classhubproject.data.cart.*;
+import com.example.classhubproject.data.lecture.ClassResponseDTO;
 import com.example.classhubproject.mapper.cart.CartMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

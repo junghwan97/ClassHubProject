@@ -24,5 +24,12 @@ public interface OrderMapper {
 
     int getOrdersIdByUserId(int userId);
 
+    void completedOrder(int ordersId);
+
     void cancelOrder(int ordersId);
+
+    int getTotalPriceByOrdersId(int ordersId);
+
+    List<OrderDetailResponseDTO> getInProgressOrderList(int userId, int ordersId);
+
 }
