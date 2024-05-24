@@ -4,7 +4,9 @@ import com.example.classhubproject.data.order.*;
 import com.example.classhubproject.mapper.cart.CartMapper;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.example.classhubproject.mapper.order.OrderMapper;
+import com.example.classhubproject.service.payment.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,16 +26,62 @@ public class OrderService {
     CartMapper cartMapper;
 
     @Autowired
+    PaymentService paymentService;
+
+    @Autowired
     HttpServletRequest request;
 
 
-    // 주문 목록
+    // 진행중인 주문 목록 조회
+    public List<OrderDetailResponseDTO> getInProgressOrdersList(int userId) {
+        // 특정 회원의 가장 최근에 생성된 orders_id
+        int ordersId = orderMapper.getOrdersIdByUserId(userId);
+
+        // 진행중인 주문 목록 조회
+        return orderMapper.getInProgressOrderList(userId, ordersId);
+    }
+
+    // 진행중인 주문의 강의 개별 삭제
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteOrder(int classId) {
+        int userId = getUserId();
+        try {
+            List<OrderDetailResponseDTO> inProgressOrders = getInProgressOrdersList(userId);
+            List<Integer> classIds = new ArrayList<>();
+            for (OrderDetailResponseDTO order : inProgressOrders) {
+                if (order.getClassId() != classId) {
+                    classIds.add(order.getClassId());
+                }
+            }
+            // 주문에서 해당 강의 삭제
+            orderMapper.deleteInProgressOrderByClassId(classId);
+
+            // 총 주문 금액 계산
+            int totalPrice = calculateTotalPrice(classIds);
+
+            // 주문 아이디 확인
+            int ordersId = orderMapper.getOrdersIdByUserId(userId);
+
+            // 총 주문 금액 0일 때 해당 주문 정보 삭제
+            if (totalPrice == 0) {
+                orderMapper.deleteOrder(ordersId);
+            } else {
+                // 총 주문 금액 업데이트
+                orderMapper.updateTotalPrice(ordersId, totalPrice);
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // 특정 사용자의 전체 주문 목록
     public List<OrderResponseDTO> getOrderList(int userId) {
-        List<OrderResponseDTO> orderList = orderMapper.getOrderList(userId); // orderRequest
+        List<OrderResponseDTO> orderList = orderMapper.getOrderList(userId);
 
         List<OrderResponseDTO> updatedOrderList = new ArrayList<>();
 
-        // 생성된 주문명을 OrderReponseDTO의 orderName에 집어넣어서 목록 보여주기
         for (OrderResponseDTO order : orderList) {
             int ordersId = order.getOrdersId();
             String orderName = createOrderName(ordersId);
@@ -95,10 +143,10 @@ public class OrderService {
                 OrderRequestDTO orders = createOrder(userId, totalPrice);
 
                 // 주문 추가
-                int ordersId = addOrder(orders);
+                int ordersId = insertOrder(orders);
 
                 // 주문 상세 추가
-                addOrderDetails(classIds);
+                insertOrderDetails(classIds);
 
                 // 주문완료 시 Cart order_status 1로 변경
                 updateCartStatus(classIds);
@@ -106,7 +154,6 @@ public class OrderService {
                 return 2;
             }
         } catch (Exception e) {
-            System.out.println("주문 처리 중 오류 발생: " + e.getMessage());
             return 0;
         }
     }
@@ -156,13 +203,13 @@ public class OrderService {
     }
 
     // 주문 추가
-    private int addOrder(OrderRequestDTO orderRequestDTO) {
+    private int insertOrder(OrderRequestDTO orderRequestDTO) {
         orderMapper.insertOrder(orderRequestDTO);
         return orderRequestDTO.getOrdersId();
     }
 
     // 주문 상세 추가
-    private void addOrderDetails(List<Integer> classIds) {
+    private void insertOrderDetails(List<Integer> classIds) {
         // 세션에서 userId 조회
         int userId = getUserId();
 
@@ -187,6 +234,16 @@ public class OrderService {
                 int cartId = cartMapper.getCartIdByClassId(classId, userId);
                 cartMapper.updateOrderStatus(cartId);
             }
+        }
+    }
+
+    // 주문 완료
+    public boolean completedOrder(int ordersId) {
+        try {
+            orderMapper.completedOrder(ordersId);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 

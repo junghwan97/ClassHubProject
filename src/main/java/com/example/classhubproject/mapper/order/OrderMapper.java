@@ -30,6 +30,11 @@ public interface OrderMapper {
 
     int getTotalPriceByOrdersId(int ordersId);
 
+    void deleteInProgressOrderByClassId(int classId);
+
     List<OrderDetailResponseDTO> getInProgressOrderList(int userId, int ordersId);
 
+    void updateTotalPrice(int ordersId, int totalPrice);
+
+    void deleteOrder(int ordersId);
 }
