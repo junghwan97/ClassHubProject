@@ -1,6 +1,7 @@
 package com.example.classhubproject.service.lecture;
 
 import com.example.classhubproject.data.lecture.*;
+import com.example.classhubproject.exception.NoDataFoundException;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +43,23 @@ public class LectureService {
         return edited;
     }
 
-    public LectureMaterialUploadedResponse uploadMaterial(LectureMaterialUploadedRequest request) {
+    public int uploadMaterial(Integer id, List<MultipartFile> files) {
 
-        int upload = lectureMapper.uploadMaterial(request);
-
-        LectureMaterialUploadedResponse response  = new LectureMaterialUploadedResponse();
-        response.setUpload(upload);
-
-        return response;
+    	try {
+			for(MultipartFile f : files) {
+				LectureMaterialUploadedRequest request = new LectureMaterialUploadedRequest();
+				request.setClassId(id);
+				request.setResource(f.getOriginalFilename());
+				
+				int upload = lectureMapper.uploadMaterial(request);
+			}
+			return 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
     }
+    
 
     public LectureMaterialEditedResponse editMaterial(LectureMaterialEditedRequest request) {
 
@@ -112,5 +122,15 @@ public class LectureService {
     	
     	return lectureMapper.selectByCategory(categoryId);
     } 
+    
+    public List<LectureMaterialUploadedRequest> selectMaterial(Integer classId){
+    	
+    	List<LectureMaterialUploadedRequest> res = lectureMapper.selectMaterial(classId);
+
+    	if(res.isEmpty()) {
+    		throw new NoDataFoundException("조회 데이터 없음");
+    	}
+			return res;		
+    }
 
 }

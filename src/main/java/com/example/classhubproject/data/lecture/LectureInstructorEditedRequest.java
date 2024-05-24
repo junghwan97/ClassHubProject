@@ -4,11 +4,11 @@ import lombok.Data;
 
 @Data
 public class LectureInstructorEditedRequest {
-    Integer     instructors_id;
-    Integer     user_id;
+    Integer     instructorsId;
+    Integer     userId;
     String      name;
     String      field;
     String      text;
-    String   user_type;
-    String   request_status;
+    String   userType;
+    String   requestStatus;
 }

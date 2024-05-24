@@ -13,6 +13,7 @@ public interface LectureMapper {
     int editInstructor(LectureInstructorEditedRequest request);
     // 강의 자료 추가/수정
     int uploadMaterial(LectureMaterialUploadedRequest request);
+    List<LectureMaterialUploadedRequest> selectMaterial(Integer classId);
     int editMaterial(LectureMaterialEditedRequest request);
 
     // 강의 추가/수정

@@ -101,17 +101,42 @@ public class LectureController {
     
 
     // 강의 자료 업로드 / 수정 이것도 파일 업로드로 바꿔야함
-    @Operation(summary = "강의 자료 업로드", description = "강의자료 를 업로드.",
+    @Operation(summary = "강의 자료 업로드", description = "강의자료를 업로드.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureMaterialUploadedResponse.class))),
                     @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PostMapping("uploadMaterial")
-    public LectureMaterialUploadedResponse uploadMaterial(@RequestBody LectureMaterialUploadedRequest request) {
-        return lectureService.uploadMaterial(request);
+    public ResponseEntity<ResponseData<Void>> uploadMaterial(@RequestPart(name = "id") Integer id, @RequestPart(name = "files")List<MultipartFile> files) {
+        
+    	int res = lectureService.uploadMaterial(id, files);
+    	
+    	if(res>0) {
+    		return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.LECTURE_MATERIAL_SUCCESS));    		
+    	}
+    		return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.LECTURE_MATERIAL_ERROR));
+    	
     }
 
+    // 강의 자료 조회
+    @Operation(summary = "강의 자료 조회", description = "강의자료를 조회.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureMaterialUploadedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("selectMaterial")
+    public ResponseEntity<ResponseData<List<LectureMaterialUploadedRequest>>> uploadMaterial(@RequestParam("classId")Integer classId) {
+
+    	        
+    	List<LectureMaterialUploadedRequest> res = lectureService.selectMaterial(classId);
+    	
+    	return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.LECTURE_MATERIAL_SUCCESS, res));    		
+    	
+    }
+    
+    
     @Operation(summary = "강의 자료 수정", description = "강의 자료 수정.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorAddedResponse.class))),
