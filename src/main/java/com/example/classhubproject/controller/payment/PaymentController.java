@@ -1,37 +1,31 @@
 package com.example.classhubproject.controller.payment;
 
-import com.example.classhubproject.data.common.*;
 import com.example.classhubproject.data.payment.*;
+import com.example.classhubproject.service.payment.IamportService;
 import com.example.classhubproject.service.payment.PaymentService;
 import com.siot.IamportRestClient.IamportClient;
-import com.siot.IamportRestClient.exception.IamportResponseException;
-import com.siot.IamportRestClient.request.*;
 import com.siot.IamportRestClient.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("/payments")
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/payments")
 @Tag(name = "결제 기능 모음", description = "결제 관련 기능을 처리")
 public class PaymentController implements InitializingBean {
 
     private final PaymentService paymentService;
+    private final IamportService iamportService;
 
     @Value("${iamport.key}")
     private String apiKey;
@@ -69,13 +63,8 @@ public class PaymentController implements InitializingBean {
             }
     )
     @GetMapping("/{imp_uid}")
-    public ResponseEntity<String> getPaymentByImpUid(@PathVariable("imp_uid") String imp_uid) {
-        try {
-            IamportResponse<Payment> response = iamportClient.paymentByImpUid(imp_uid);
-            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.PAYMENT_RETRIEVE_SUCCESS, response));
-        } catch (IamportResponseException | IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseData.res(HttpStatus.INTERNAL_SERVER_ERROR.value(), ResponseMessage.PAYMENT_RETRIEVE_ERROR));
-        }
+    public IamportResponse<Payment> getPaymentByImpUid(@PathVariable("imp_uid") String imp_uid) {
+        return iamportService.paymentByImpUid(imp_uid);
     }
 
 
@@ -89,15 +78,8 @@ public class PaymentController implements InitializingBean {
             }
     )
     @PostMapping("/prepare")
-    public Void preparePayment(@RequestParam("merchant_uid") String merchantUid, @RequestParam("amount") BigDecimal amount) {
-        try {
-            PrepareData prepareData = new PrepareData(merchantUid, amount);
-            iamportClient.postPrepare(prepareData);
-            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.PAYMENT_PREPARE_SUCCESS));
-        } catch (IamportResponseException | IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ResponseData.res(HttpStatus.INTERNAL_SERVER_ERROR.value(), ResponseMessage.PAYMENT_PREPARE_ERROR));
-        }
+    public void preparePayment(@RequestParam("merchant_uid") String merchantUid, @RequestParam("amount") BigDecimal amount) {
+        iamportService.postPrepare(merchantUid, amount);
     }
 
 
@@ -110,18 +92,8 @@ public class PaymentController implements InitializingBean {
             }
     )
     @GetMapping("/prepare/{merchant_uid}")
-    public ResponseEntity<ResponseData<PaymentPrepareResponseDTO>> getPreparePayment(@PathVariable("merchant_uid") String merchantUid) {
-        log.info("사전 결제 정보를 조회 중, merchant_uid: {}", merchantUid);
-        try {
-            IamportResponse<Prepare> paymentInfo = iamportClient.getPrepare(merchantUid);
-            log.info("사전 결제 정보를 조회 성공함, merchant_uid: {}", merchantUid);
-            PaymentPrepareResponseDTO responseData = paymentService.convertToResponseDTO(paymentInfo);
-            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.PREPARE_AMOUNT_SUCCESS, responseData));
-        } catch (IamportResponseException | IOException e) {
-            log.error("사전 결제 정보 조회 중 오류가 발생함, merchant_uid: {}", merchantUid, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ResponseData.res(HttpStatus.INTERNAL_SERVER_ERROR.value(), ResponseMessage.PREPARE_AMOUNT_ERROR));
-        }
+    public PaymentPrepareResponseDTO getPreparePayment(@PathVariable("merchant_uid") String merchantUid) {
+        return paymentService.convertToResponseDTO(iamportService.getPrepare(merchantUid));
     }
 
 
@@ -135,16 +107,8 @@ public class PaymentController implements InitializingBean {
             }
     )
     @PostMapping("/cancel")
-    public ResponseEntity<ResponseData<Void>> CancelPayment(@RequestParam("imp_uid") @Schema(description = "아임포트 식별자", required = true, example = "{\"imp_uid\": 1}") String impUid) {
-        int cancelResult = paymentService.cancelPayment(impUid);
-
-        if (cancelResult == 1) {
-            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.PAYMENT_CANCEL_SUCCESS));
-        } else if (cancelResult == 0) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(ResponseData.res(HttpStatus.INTERNAL_SERVER_ERROR.value(), ResponseMessage.PAYMENT_CANCEL_FAILED));
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(ResponseData.res(HttpStatus.INTERNAL_SERVER_ERROR.value(), ResponseMessage.PAYMENT_CANCEL_ERROR));
-        }
+    public void CancelPayment(@RequestParam("imp_uid") @Schema(description = "아임포트 식별자", required = true, example = "{\"imp_uid\": 1}") String impUid) {
+        paymentService.cancelPayment(impUid);
     }
 
 }

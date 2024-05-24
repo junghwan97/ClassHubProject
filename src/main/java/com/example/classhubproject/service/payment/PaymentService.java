@@ -60,7 +60,7 @@ public class PaymentService {
     public void addPayment(String impUid) {
 
         // 포트원 결제 정보 가져오기
-        IamportResponse<Payment>  paymentResponse = iamportService.paymentByImpUid(impUid);
+        IamportResponse<Payment> paymentResponse = iamportService.paymentByImpUid(impUid);
 
         // 결제된 금액
         BigDecimal paymentAmount = paymentResponse.getResponse().getAmount();
@@ -75,7 +75,7 @@ public class PaymentService {
 
         // 결제 금액이 맞지 않으면 실패 !
         if (paymentAmount.compareTo(totalOrderAmount) != 0) {
-            throw new RuntimeException(ResponseMessage.PAYMENT_ERROR);
+            throw new RuntimeException("결제 금액 비일치");
         }
 
         // 결제된 금액과 주문 총 금액 비교
@@ -91,6 +91,7 @@ public class PaymentService {
                 .paidAt(payment.getPaidAt())
                 .build();
 
+        log.info("확인용: paymentInfo: {}", paymentInfo);
         paymentMapper.insertPayment(paymentInfo);
 
         // 최종 주문 상태 업데이트
@@ -99,37 +100,27 @@ public class PaymentService {
 
 
     // 결제 취소 시 payment_status & cancelled_at 업데이트
-    public int cancelPayment(String impUid) {
-        try {
-            CancelData cancelData = new CancelData(impUid, true);
-            IamportResponse<Payment> cancelResponse = iamportClient.cancelPaymentByImpUid(cancelData);
+    public void cancelPayment(String impUid) {
+        CancelData cancelData = new CancelData(impUid, true);
+        IamportResponse<Payment> cancelResponse = iamportService.cancelPaymentByImpUid(cancelData);
 
-            int responseCode = cancelResponse.getCode();
+        if (cancelResponse.getCode() == 0) {
+            Payment payment = cancelResponse.getResponse();
+            PaymentRequestDTO paymentInfo = PaymentRequestDTO.builder()
+                    .impUid(payment.getImpUid())
+                    .paymentStatus(payment.getStatus())
+                    .cancelledAt(payment.getCancelledAt())
+                    .build();
 
-            if (responseCode == 0) {
-                Payment payment = cancelResponse.getResponse();
-                PaymentRequestDTO paymentInfo = PaymentRequestDTO.builder()
-                        .impUid(payment.getImpUid())
-                        .paymentStatus(payment.getStatus())
-                        .cancelledAt(payment.getCancelledAt())
-                        .build();
+            // 결제 취소 정보 업데이트
+            paymentMapper.cancelPayment(paymentInfo);
 
-                // 결제 취소 정보 업데이트
-                paymentMapper.cancelPayment(paymentInfo);
-                
-                // 최종 주문 상태 업데이트
-                int ordersId = paymentMapper.getOrdersIdByImpUid(paymentInfo.getOrdersId());
-                orderMapper.cancelOrder(ordersId);
-
-                return 1;
-            } else {
-                return 0;
-            }
-        } catch (IamportResponseException | IOException e) {
-            return -1;
+            // 최종 주문 상태 업데이트
+            int ordersId = paymentMapper.getOrdersIdByImpUid(paymentInfo.getOrdersId());
+            log.info("주문번호 확인 : ordersId: {}", ordersId);
+            orderMapper.cancelOrder(ordersId);
         }
     }
-
 
 
     /*
