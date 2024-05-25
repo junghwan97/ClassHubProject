@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.classhubproject.mapper.enrollmentinfo.EnrollmentInfoMapper">
+
+    <!-- 수강 신청 정보 생성 -->
+    <insert id="insertEnrollmentInfo" parameterType="enrollmentInfoRequest">
+        INSERT INTO Enrollment_Info(user_id, class_id, enrollment_fee)
+        VALUES (#{userId}, #{classId}, #{enrollmentFee})
+    </insert>
+
+
+</mapper>

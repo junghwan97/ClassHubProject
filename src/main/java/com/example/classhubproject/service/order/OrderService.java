@@ -143,7 +143,7 @@ public class OrderService {
 
     // 테스트용 하드코딩 (임시)
     private int getUserId() {
-        return 2;
+        return 3;
     }
 
     // 이미 보유한 강의인지 확인

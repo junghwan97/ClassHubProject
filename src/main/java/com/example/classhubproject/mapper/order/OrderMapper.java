@@ -37,4 +37,6 @@ public interface OrderMapper {
     void updateTotalPrice(int ordersId, int totalPrice);
 
     void deleteOrder(int ordersId);
+
+    List<Integer> getClassIdByOrdersId(int ordersId);
 }

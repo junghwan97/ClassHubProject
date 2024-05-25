@@ -134,5 +134,12 @@
         WHERE orders_id = #{ordersId}
     </delete>
 
+    <!-- 특정 주문 ID에 해당하는 주문 상세의 강의 ID 조회 -->
+    <select id="getClassIdByOrdersId" resultType="int">
+        SELECT class_id
+        FROM Order_Detail
+        WHERE orders_id = #{ordersId}
+    </select>
+
 
 </mapper>
