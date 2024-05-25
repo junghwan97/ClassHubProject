@@ -2,10 +2,10 @@ package com.example.classhubproject.controller.order;
 
 import com.example.classhubproject.data.common.*;
 import com.example.classhubproject.data.order.*;
+import com.example.classhubproject.service.lecture.LectureService;
 import com.example.classhubproject.service.order.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +21,13 @@ public class OrderController {
 
     @Autowired
     OrderService orderService;
+    @Autowired
+    LectureService lectureService;
 
     // 주문
     @Operation(
             summary = "주문하기",
-            description = "상품을 주문합니다.",
+            description = "강의 ID를 배열로 받아 상품을 주문합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "주문 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderRequestDTO.class))),
                     @ApiResponse(responseCode = "500", description = "주문 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderRequestDTO.class)))
@@ -44,10 +46,42 @@ public class OrderController {
         }
     }
 
+    // 주문 진행 목록 조회
+    @Operation(
+            summary = "진행중인 주문 목록 조회",
+            description = "진행중인 주문 목록을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "진행중인 주문 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailResponseDTO.class)))
+            }
+    )
+    @GetMapping("/in-progress/{userId}")
+    public ResponseEntity<ResponseData<List<OrderDetailResponseDTO>>> InProgressOrders(@PathVariable("userId") int userId) {
+        List<OrderDetailResponseDTO> onGoingOrderList = orderService.getInProgressOrdersList(userId);
+        return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.ONGOING_ORDER_LIST_SUCCESS, onGoingOrderList));
+    }
+
+    // 주문 중인 상품 개별 삭제
+    @Operation(
+            summary = "진행중인 주문 목록에서 강의 개별 삭제",
+            description = "진행중인 주문 목록에서 강의를 개별 삭제합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "진행중인 주문 목록에서 강의 개별 삭제 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailResponseDTO.class)))
+            }
+    )
+    @PostMapping("/delete")
+    public ResponseEntity<ResponseData<Void>> deleteOrder(@RequestBody @Schema(description = "강의 ID", example = "{\"classId\": 1}") OrderRequestDTO orderRequestDTO) {
+        boolean isDeleted = orderService.deleteOrder(orderRequestDTO.getClassId());
+        if(isDeleted) {
+            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.DELETE_ORDER_SUCCESS));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseData.res(HttpStatus.INTERNAL_SERVER_ERROR.value(), ResponseMessage.DELETE_ORDER_ERROR));
+        }
+    }
+
     // 주문 내역
     @Operation(
-            summary = "주문 목록",
-            description = "특정 사용자의 주문 목록을 조회합니다.",
+            summary = "특정 사용자의 전체 주문 목록 조회",
+            description = "특정 사용자의 전체 주문 목록을 조회합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "주문 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderResponseDTO.class)))
             }
@@ -58,9 +92,9 @@ public class OrderController {
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.ORDER_LIST_SUCCESS, orderList));
     }
 
-    // 주문 상세 내역
+    // 주문 상세 내역 조회
     @Operation(
-            summary = "주문 상세 목록",
+            summary = "특정 주문의 상세 목록 조회",
             description = "특정 주문의 주문 상세 목록을 조회합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "주문 상세 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailResponseDTO.class)))
@@ -72,23 +106,4 @@ public class OrderController {
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.ORDER_DETAIL_LIST_SUCCESS, orderDetailList));
     }
 
-    // 주문 취소
-    @Operation(
-            summary = "주문 취소",
-            description = "주문을 취소합니다.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "주문 취소 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderRequestDTO.class))),
-                    @ApiResponse(responseCode = "500", description = "주문 취소 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderRequestDTO.class)))
-            }
-    )
-    @PostMapping("/cancel")
-    public ResponseEntity<ResponseData<Void>> cancelOrder(@RequestBody @Schema(description = "주문 ID", required = true, example = "{\"ordersId\": 1}") OrderRequestDTO orderRequestDTO) {
-        boolean cancelToOrder = orderService.cancelOrder(orderRequestDTO.getOrdersId());
-
-        if (cancelToOrder) {
-            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.ORDER_CANCEL_SUCCESS));
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body((ResponseData.res(HttpStatus.CONFLICT.value(), ResponseMessage.ORDER_CANCEL_FAILED)));
-        }
-    }
 }

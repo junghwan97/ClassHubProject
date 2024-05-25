@@ -96,5 +96,14 @@ public class SwaggerConfig {
                 .packagesToScan("com.example.classhubproject.controller.user")
                 .build();
     }
+  
+    @Bean
+    public GroupedOpenApi payment () {
+        return GroupedOpenApi.builder()
+                .group("결제 관련")
+                .pathsToMatch("/payment/*")
+                .packagesToScan("com.example.classhubproject.controller.payment")
+                .build();
+    }
 
 }

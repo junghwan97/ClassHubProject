@@ -26,6 +26,8 @@
         <typeAlias type="com.example.classhubproject.data.order.OrderRequestDTO" alias="orderRequest"/>
         <typeAlias type="com.example.classhubproject.data.order.OrderResponseDTO" alias="orderResponse"/>
         <typeAlias type="com.example.classhubproject.data.order.OrderDetailResponseDTO" alias="orderDetailResponse"/>
+        <typeAlias type="com.example.classhubproject.data.payment.PaymentRequestDTO" alias="paymentRequest"/>
+        <typeAlias type="com.example.classhubproject.data.payment.PaymentResponseDTO" alias="paymentResponse"/>
     </typeAliases>
 
 </configuration>
