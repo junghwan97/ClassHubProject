@@ -74,4 +74,5 @@ public interface CommunityMapper {
 
     Integer updateImage(@Param("imageId") int imageId, @Param("fileName") String originalFilename);
 
+    void removeImagePath(Integer removeImageId);
 }
