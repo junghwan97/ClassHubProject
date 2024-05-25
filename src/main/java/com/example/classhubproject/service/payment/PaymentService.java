@@ -1,21 +1,13 @@
 package com.example.classhubproject.service.payment;
 
-import com.example.classhubproject.data.common.ResponseMessage;
 import com.example.classhubproject.data.payment.PaymentPrepareResponseDTO;
 import com.example.classhubproject.data.payment.PaymentRequestDTO;
 import com.example.classhubproject.mapper.order.OrderMapper;
 import com.example.classhubproject.mapper.payment.PaymentMapper;
-import com.siot.IamportRestClient.exception.IamportResponseException;
-import com.siot.IamportRestClient.request.*;
-import com.siot.IamportRestClient.response.*;
-import com.siot.IamportRestClient.IamportClient;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 

@@ -1,25 +1,23 @@
 package com.example.classhubproject.controller.cart;
 
-import com.example.classhubproject.data.common.*;
 import com.example.classhubproject.data.cart.*;
 import com.example.classhubproject.service.cart.CartService;
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.media.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@Tag(name = "장바구니 기능 모음", description = "장바구니 관련 기능을 처리")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/cart")
+@Tag(name = "장바구니 기능 모음", description = "장바구니 관련 기능을 처리")
 public class CartController {
 
-    @Autowired
-    CartService cartService;
+    private final CartService cartService;
 
     // 장바구니 추가
     @Operation(
@@ -31,14 +29,9 @@ public class CartController {
             }
     )
     @PostMapping("/add")
-    public ResponseEntity<ResponseData<Void>> addCart(@RequestBody @Schema(description = "회원 및 강의 ID", required = true, example = "{\"userId\": 1, \"classId\": 1}")
-                                                      CartRequestDTO cartRequestDTO) {
-        boolean addedToCart = cartService.addCart(cartRequestDTO);
-        if (addedToCart) {
-            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.ADD_TO_CART_SUCCESS));
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseData.res(HttpStatus.CONFLICT.value(), ResponseMessage.ALREADY_IN_CART));
-        }
+    public void addCart(@RequestBody @Schema(description = "회원 및 강의 ID", required = true, example = "{\"userId\": 1, \"classId\": 1}")
+                        CartRequestDTO cartRequestDTO) {
+        cartService.addCart(cartRequestDTO);
     }
 
     // 장바구니 목록
@@ -50,9 +43,8 @@ public class CartController {
             }
     )
     @GetMapping("/list/{userId}")
-    public ResponseEntity<ResponseData<List<CartResponseDTO>>> cartList(@PathVariable("userId") int userId) {
-        List<CartResponseDTO> cartList = cartService.getCartList(userId);
-        return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.CART_LIST_SUCCESS, cartList));
+    public List<CartResponseDTO> cartList(@PathVariable("userId") int userId) {
+        return cartService.getCartList(userId);
     }
     // 장바구니 개별 삭제
     @Operation(
@@ -64,13 +56,8 @@ public class CartController {
             }
     )
     @PostMapping("/delete")
-    public ResponseEntity<ResponseData<Void>> deleteCart(@RequestBody @Schema(description = "장바구니 ID", example = "{\"cartId\": 1}") CartRequestDTO cartRequestDTO) {
-        boolean isDeleted = cartService.deleteCart(cartRequestDTO.getCartId());
-        if (isDeleted) {
-            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.REMOVE_FROM_CART_SUCCESS));
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseData.res(HttpStatus.INTERNAL_SERVER_ERROR.value(), ResponseMessage.DELETE_CART_ERROR));
-        }
+    public void deleteCart(@RequestBody @Schema(description = "장바구니 ID", example = "{\"cartId\": 1}") CartRequestDTO cartRequestDTO) {
+        cartService.deleteCart(cartRequestDTO.getCartId());
     }
 
     // 장바구니 비우기
@@ -83,13 +70,8 @@ public class CartController {
             }
     )
     @PostMapping("/clear")
-    public ResponseEntity<ResponseData<Void>> clearCart(@RequestBody @Schema(description = "회원 ID", example = "{\"userId\": 1}") CartRequestDTO cartRequestDTO) {
-        boolean isCleared = cartService.clearCart(cartRequestDTO.getUserId());
-        if (isCleared) {
-            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.CLEAR_CART_SUCCESS));
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseData.res(HttpStatus.INTERNAL_SERVER_ERROR.value(), ResponseMessage.CLEAR_CART_ERROR));
-        }
+    public void clearCart(@RequestBody @Schema(description = "회원 ID", example = "{\"userId\": 1}") CartRequestDTO cartRequestDTO) {
+        cartService.clearCart(cartRequestDTO.getUserId());
     }
 
 }
