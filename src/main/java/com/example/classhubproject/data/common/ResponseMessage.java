@@ -5,14 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "API 응답 메시지")
 public class ResponseMessage {
 
-    // 장바구니 ResponseMessage
-    public static final String ALREADY_IN_CART = "이미 장바구니에 담긴 상품입니다.";
-    public static final String ADD_TO_CART_SUCCESS = "장바구니에 상품이 추가되었습니다.";
-    public static final String CART_LIST_SUCCESS = "장바구니 목록 조회 성공";
-    public static final String REMOVE_FROM_CART_SUCCESS = "장바구니에서 상품이 삭제되었습니다.";
-    public static final String DELETE_CART_ERROR = "장바구니 상품 삭제 중 오류가 발생했습니다.";
-    public static final String CLEAR_CART_SUCCESS = "장바구니가 비워졌습니다.";
-    public static final String CLEAR_CART_ERROR = "장바구니 비우기 중 오류가 발생했습니다.";
     // 게시판 ResponseMessage
     public static final String POST_COMMUNITY_SUCCESS = "게시글이 등록되었습니다";
     public static final String POST_COMMUNITY_IMAGE_SUCCESS = "게시글 이미지가 등록되었습니다";
@@ -54,20 +46,5 @@ public class ResponseMessage {
     public static final String LECTURE_INSERT_ERROR = "강의 등록 실패";
     public static final String LECTURE_SUCCESS = "강의 조회 성공";
     public static final String LECTURE_ERROR = "강의 조회 실패";
-    // 결제 ResponseMessage
-    public static final String ACCESS_TOKEN_SUCCESS = "액세스 토큰 가져오기 성공";
-    public static final String ACCESS_TOKEN_ERROR = "액세스 토큰 가져오는 중 오류가 발생했습니다.";
-    public static final String PAYMENT_PREPARE_SUCCESS = "사전 결제 금액 등록 성공";
-    public static final String PAYMENT_PREPARE_ERROR = "사전 결제 금액 등록 실패";
-    public static final String PREPARE_AMOUNT_SUCCESS = "사전 결제 금액 조회 성공";
-    public static final String PREPARE_AMOUNT_ERROR = "사전 결제 금액 조회 실패";
-    public static final String PAYMENT_RETRIEVE_SUCCESS = "결제 정보 조회 성공";
-    public static final String PAYMENT_RETRIEVE_ERROR = "결제 정보 조회 실패";
-    public static final String PAYMENT_CANCEL_SUCCESS = "결제 취소 성공";
-    public static final String PAYMENT_CANCEL_FAILED = "결제 취소 실패";
-    public static final String PAYMENT_CANCEL_ERROR = "결제 취소 중 오류가 발생했습니다.";
-    public static final String PAYMENT_FAILED = "결제 정보 등록 실패";
-    public static final String PAYMENT_SUCCESS = "결제 정보 등록 성공";
-    public static final String PAYMENT_ERROR = "결제 정보 등록 중 오류가 발생했습니다.";
 }
 

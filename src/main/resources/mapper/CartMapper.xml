@@ -52,6 +52,7 @@
         DELETE
         FROM Cart
         WHERE cart_id = #{cartId}
+          AND order_status = 2
     </delete>
 
     <!-- 장바구니 비우기 -->

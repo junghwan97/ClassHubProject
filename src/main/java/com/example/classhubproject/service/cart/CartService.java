@@ -1,27 +1,25 @@
 package com.example.classhubproject.service.cart;
 
 import com.example.classhubproject.data.cart.*;
-import com.example.classhubproject.data.lecture.ClassResponseDTO;
 import com.example.classhubproject.mapper.cart.CartMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class CartService {
 
-    @Autowired
-    CartMapper cartMapper;
+    private final CartMapper cartMapper;
 
     // 장바구니 담기
-    public boolean addCart(CartRequestDTO cartRequestDTO) {
+    public void addCart(CartRequestDTO cartRequestDTO) {
         // 장바구니 동일 상품 체크
         if (checkDuplicate(cartRequestDTO)) {
-            return false;
+            throw new RuntimeException("이미 장바구니에 동일한 상품이 있습니다.");
         } else {
             cartMapper.addCart(cartRequestDTO);
-            return true;
         }
     }
 
@@ -36,23 +34,13 @@ public class CartService {
     }
 
     // 장바구니 상품 개별 삭제
-    public boolean deleteCart(int cartId) {
-        try {
-            cartMapper.deleteCart(cartId);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public void deleteCart(int cartId) {
+        cartMapper.deleteCart(cartId);
     }
 
     // 장바구니 비우기
-    public boolean clearCart(int userId) {
-        try {
-            cartMapper.clearCart(userId);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public void clearCart(int userId) {
+        cartMapper.clearCart(userId);
     }
 
 }
