@@ -30,4 +30,18 @@
         WHERE sns_id = #{snsId}
     </select>
 
+    <update id="updateUserInfo" parameterType="user">
+        UPDATE User
+        SET    name = #{name},
+               nickname = #{nickname},
+               email = #{email}
+        WHERE sns_id = #{snsId}
+    </update>
+
+    <update id="updateUserImage" parameterType="user">
+        UPDATE User
+        SET    profile_picture = #{file}
+        WHERE sns_id = #{snsId}
+    </update>
+
 </mapper>

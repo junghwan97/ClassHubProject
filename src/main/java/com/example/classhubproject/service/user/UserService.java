@@ -11,9 +11,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 public class UserService {
@@ -112,9 +117,39 @@ public class UserService {
     }
 
     public UserResponseDTO selectUserBySnsId(String snsId) {
-       return userMapper.selectUserBySnsId(snsId);
+        return userMapper.selectUserBySnsId(snsId);
     }
 
-    public void updateUserInfo(UserResponseDTO user) {
+    public Integer updateUserInfo(UserResponseDTO user) {
+        int cnt = userMapper.updateUserInfo(user);
+        return cnt;
+    }
+
+    public void updateUserImage(Integer snsId, MultipartFile file) {
+        try {
+            if (file != null) {
+                // 파일 저장
+                // ubuntu에 이미지 저장
+                String originalFilename = file.getOriginalFilename();
+                String newFileName = generateUniqueFileName(originalFilename);
+                String folder = "/home/ubuntu/images";
+                file.transferTo(new File(folder + "/" + newFileName));
+
+                //db에 관련 정보 저장
+                userMapper.updateUserImage(snsId, "https://devproject.store" + folder + newFileName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String generateUniqueFileName(String originalFileName) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+        //Random 객체 생성
+        Random random = new Random();
+        // 0이상 100 미만의 랜덤한 정수 반환
+        String randomNumber = Integer.toString(random.nextInt(Integer.MAX_VALUE));
+        String timeStamp = dateFormat.format(new Date());
+        return timeStamp + randomNumber + originalFileName;
     }
 }

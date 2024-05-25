@@ -2,6 +2,7 @@ package com.example.classhubproject.mapper.user;
 
 import com.example.classhubproject.data.user.UserResponseDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserMapper {
@@ -15,4 +16,8 @@ public interface UserMapper {
     Integer join(UserResponseDTO userDTO);
 
     UserResponseDTO selectUserBySnsId(String snsId);
+
+    Integer updateUserInfo(UserResponseDTO user);
+
+    void updateUserImage(@Param("snsId") Integer snsId, @Param("file") String file);
 }
