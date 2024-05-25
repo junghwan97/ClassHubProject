@@ -9,17 +9,20 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 import java.util.Set;
 
 @Tag(name = "회원 기능 모음", description = "회원 관련 기능을 처리")
 @RestController
+@Slf4j
 //@RequestMapping(produces = "application/json")
 public class UserController {
 
@@ -82,9 +85,28 @@ public class UserController {
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.SELECT_USER, user));
     }
 
-//    @PostMapping("updateUserInfo")
-//    public ResponseEntity<ResponseData<UserResponseDTO>> updateUser(@RequestParam("snsId") String snsId) {
-//        UserResponseDTO user = userService.selectUserBySnsId(snsId);
-//        userService.updateUserInfo(user);
-//    }
+    @Operation(summary = "회원 정보 수정",
+            description = "회원 정보를 수정 할 수 있습니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "회원 정보 수정 성공", content = @Content(schema = @Schema(implementation = UserResponseDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "회원 정보 수정 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("updateUserInfo")
+    public void updateUserInfo(@RequestBody UserResponseDTO user) {
+        userService.updateUserInfo(user);
+    }
+
+    @Operation(summary = "회원 이미지 프로플 수정",
+            description = "회원 이미지를 수정 할 수 있습니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "회원 이미지 수정 성공", content = @Content(schema = @Schema(implementation = UserResponseDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "회원 이미지 수정 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("updateUserImage")
+    public void updateUserImage(@RequestParam("snsId") Integer snsId,
+                                @RequestPart("multipartFile") MultipartFile file) {
+        userService.updateUserImage(snsId, file);
+    }
 }
