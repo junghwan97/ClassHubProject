@@ -10,6 +10,7 @@ CREATE TABLE `User`
     `phone_number`    varchar(20)  DEFAULT NULL COMMENT '전화번호',
     `profile_picture` varchar(100) DEFAULT NULL COMMENT '허용 프로필 이미지',
     `platform_type`   varchar(100) DEFAULT NULL COMMENT 'sns 타입',
+    `introduce`       varchar(300) DEFAULT NULL COMMENT '자기소개글'
     `regdate`         DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '가입일',
     `exit_date`       DATETIME     DEFAULT NULL COMMENT '허용 회원탈퇴 일자(여부)',
     PRIMARY KEY (`user_id`)

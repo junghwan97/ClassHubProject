@@ -88,4 +88,13 @@ public class SwaggerConfig {
                 .build();
     }
 
+    @Bean
+    public GroupedOpenApi user() {
+        return GroupedOpenApi.builder()
+                .group("회원 기능")
+                .pathsToMatch("/user/*")
+                .packagesToScan("com.example.classhubproject.controller.user")
+                .build();
+    }
+
 }
