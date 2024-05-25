@@ -1,10 +1,12 @@
 package com.example.classhubproject.service.payment;
 
-import com.example.classhubproject.data.payment.PaymentPrepareResponseDTO;
-import com.example.classhubproject.data.payment.PaymentRequestDTO;
+import com.example.classhubproject.data.payment.*;
 import com.example.classhubproject.mapper.order.OrderMapper;
 import com.example.classhubproject.mapper.payment.PaymentMapper;
+import com.siot.IamportRestClient.IamportClient;
 import lombok.RequiredArgsConstructor;
+import com.siot.IamportRestClient.request.*;
+import com.siot.IamportRestClient.response.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

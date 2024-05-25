@@ -1,35 +1,23 @@
 package com.example.classhubproject.service.order;
 
 import com.example.classhubproject.data.order.*;
-import com.example.classhubproject.mapper.cart.CartMapper;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.example.classhubproject.mapper.order.OrderMapper;
-import com.example.classhubproject.service.payment.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
 
-    @Autowired
-    OrderMapper orderMapper;
-
-    @Autowired
-    LectureMapper lectureMapper;
-
-    @Autowired
-    CartMapper cartMapper;
-
-    @Autowired
-    PaymentService paymentService;
-
-    @Autowired
-    HttpServletRequest request;
+    private final OrderMapper orderMapper;
+    private final LectureMapper lectureMapper;
+    private final HttpServletRequest request;
 
 
     // 진행중인 주문 목록 조회
@@ -42,37 +30,33 @@ public class OrderService {
     }
 
     // 진행중인 주문의 강의 개별 삭제
-    @Transactional(rollbackFor = Exception.class)
-    public boolean deleteOrder(int classId) {
+    @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
+    public void deleteOrder(int classId) {
         int userId = getUserId();
-        try {
-            List<OrderDetailResponseDTO> inProgressOrders = getInProgressOrdersList(userId);
-            List<Integer> classIds = new ArrayList<>();
-            for (OrderDetailResponseDTO order : inProgressOrders) {
-                if (order.getClassId() != classId) {
-                    classIds.add(order.getClassId());
-                }
+
+        List<OrderDetailResponseDTO> inProgressOrders = getInProgressOrdersList(userId);
+        List<Integer> classIds = new ArrayList<>();
+        for (OrderDetailResponseDTO order : inProgressOrders) {
+            if (order.getClassId() != classId) {
+                classIds.add(order.getClassId());
             }
-            // 주문에서 해당 강의 삭제
-            orderMapper.deleteInProgressOrderByClassId(classId);
+        }
 
-            // 총 주문 금액 계산
-            int totalPrice = calculateTotalPrice(classIds);
+        // 주문에서 해당 강의 삭제
+        orderMapper.deleteInProgressOrderByClassId(classId);
 
-            // 주문 아이디 확인
-            int ordersId = orderMapper.getOrdersIdByUserId(userId);
+        // 총 주문 금액 계산
+        int totalPrice = calculateTotalPrice(classIds);
 
-            // 총 주문 금액 0일 때 해당 주문 정보 삭제
-            if (totalPrice == 0) {
-                orderMapper.deleteOrder(ordersId);
-            } else {
-                // 총 주문 금액 업데이트
-                orderMapper.updateTotalPrice(ordersId, totalPrice);
-            }
+        // 주문 아이디 확인
+        int ordersId = orderMapper.getOrdersIdByUserId(userId);
 
-            return true;
-        } catch (Exception e) {
-            return false;
+        // 총 주문 금액 0일 때 해당 주문 정보 삭제
+        if (totalPrice == 0) {
+            orderMapper.deleteOrder(ordersId);
+        } else {
+            // 총 주문 금액 업데이트
+            orderMapper.updateTotalPrice(ordersId, totalPrice);
         }
     }
 
@@ -124,37 +108,29 @@ public class OrderService {
     }
 
     // 주문하기
-    @Transactional(rollbackFor = Exception.class)
-    public int addOrder(List<Integer> classIds) {
-        try {
-            // 세션에서 userId 조회
-            int userId = getUserId();
+    @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
+    public boolean addOrder(List<Integer> classIds) {
+        // 세션에서 userId 조회
+        int userId = getUserId();
 
-            // 보유한 강의인지 확인
-            boolean alreadyHold = checkHoldClass(classIds);
-            if (alreadyHold) {
-                return 1;
-            } else {
+        // 이미 보유한 강의인지 확인
+        boolean alreadyHold = checkHoldClass(classIds);
+        if (alreadyHold) {
+            throw new RuntimeException("이미 보유한 강의가 포함되어 있습니다.");
+        } else {
+            // 총 주문 금액 계산
+            int totalPrice = calculateTotalPrice(classIds);
 
-                // 총 주문 금액 계산
-                int totalPrice = calculateTotalPrice(classIds);
+            // 주문 정보 생성
+            OrderRequestDTO orders = createOrder(userId, totalPrice);
 
-                // 주문 정보 생성
-                OrderRequestDTO orders = createOrder(userId, totalPrice);
+            // 주문 추가
+            int ordersId = insertOrder(orders);
 
-                // 주문 추가
-                int ordersId = insertOrder(orders);
+            // 주문 상세 추가
+            insertOrderDetails(classIds);
 
-                // 주문 상세 추가
-                insertOrderDetails(classIds);
-
-                // 주문완료 시 Cart order_status 1로 변경
-                updateCartStatus(classIds);
-
-                return 2;
-            }
-        } catch (Exception e) {
-            return 0;
+            return true;
         }
     }
 
@@ -176,7 +152,6 @@ public class OrderService {
 
         for (int classId : classIds) {
             boolean alreadyOrder = orderMapper.checkHoldClass(classId, userId);
-
             if (alreadyOrder) {
                 return true;
             }
@@ -221,19 +196,6 @@ public class OrderService {
                     .ordersId(ordersId)
                     .classId(classId).build();
             orderMapper.insertOrderDetail(orderDetailDto);
-        }
-    }
-
-    // 주문완료 시 장바구니 주문상태 변경
-    private void updateCartStatus(List<Integer> classIds) {
-        int userId = getUserId();
-        for (int classId : classIds) {
-            boolean cartExists = cartMapper.checkCartByClassId(classId, userId);
-
-            if (cartExists) { // 장바구니에 담겨있을 때만 작동
-                int cartId = cartMapper.getCartIdByClassId(classId, userId);
-                cartMapper.updateOrderStatus(cartId);
-            }
         }
     }
 

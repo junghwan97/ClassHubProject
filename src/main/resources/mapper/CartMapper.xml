@@ -80,7 +80,7 @@
                         AND order_status = 2)
     </select>
 
-    <!-- 주문 완료 시 order_status 1(=주문완료) 업데이트 -->
+    <!-- 결제 완료 시 order_status 1(=주문완료) 업데이트 -->
     <update id="updateOrderStatus" parameterType="cartRequest">
         UPDATE Cart
         SET order_status = 1
