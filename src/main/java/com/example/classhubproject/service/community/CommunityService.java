@@ -27,8 +27,8 @@ public class CommunityService {
 
     public int posting(CommunityRequestDTO communityRequestDTO) {
 
-        List<Integer> imageIds = communityRequestDTO.getCommunityImageIds();
         Integer result = communityMapper.posting(communityRequestDTO);
+        List<Integer> imageIds = communityRequestDTO.getCommunityImageIds();
         Integer communityId = communityRequestDTO.getCommunityId();
         if (imageIds != null) {
             for (Integer imageId : imageIds) {
@@ -230,11 +230,53 @@ public class CommunityService {
     }
 
     public CommunityResponseDTO selectQuestion(Integer id) {
-        return communityMapper.selectQuestion(id);
+        CommunityResponseDTO test = communityMapper.selectQuestion(id);
+        List<String> images = test.getImage();
+        List<String> imageForFront = new ArrayList<>();
+        for (String image : images) {
+            String imagePath = "https://devproject.store" + image;
+            imageForFront.add(imagePath);
+        }
+        CommunityResponseDTO result = new CommunityResponseDTO(
+                test.getUserId(),
+                test.getCommunityId(),
+                test.getCommunityType(),
+                test.getTitle(),
+                test.getText(),
+                test.getRegDate(),
+                test.getEditDate(),
+                test.getFavoriteCount(),
+                test.getCommentCount(),
+                test.getImageIds(),
+                imageForFront,
+                test.getLikeUsers());
+
+        return result;
     }
 
     public CommunityResponseDTO selectStudy(Integer id) {
-        return communityMapper.selectStudy(id);
+        CommunityResponseDTO test = communityMapper.selectStudy(id);
+        List<String> images = test.getImage();
+        List<String> imageForFront = new ArrayList<>();
+        for (String image : images) {
+            String imagePath = "https://devproject.store" + image;
+            imageForFront.add(imagePath);
+        }
+        CommunityResponseDTO result = new CommunityResponseDTO(
+                test.getUserId(),
+                test.getCommunityId(),
+                test.getCommunityType(),
+                test.getTitle(),
+                test.getText(),
+                test.getRegDate(),
+                test.getEditDate(),
+                test.getFavoriteCount(),
+                test.getCommentCount(),
+                test.getImageIds(),
+                imageForFront,
+                test.getLikeUsers());
+
+        return result;
     }
 
     public PagingDTO<List<CommunityResponseDTO>> studiesStatusList(int status, int page, String search, String type) {
@@ -265,6 +307,14 @@ public class CommunityService {
     }
 
     public Integer modifyBoard(Integer communityId, CommunityRequestDTO communityRequestDTO) {
+        int cnt = 0;
+        List<Integer> imageIds = communityRequestDTO.getCommunityImageIds();
+        if (imageIds != null) {
+            for (Integer imageId : imageIds) {
+                CommunityImageUploadRequestDTO communityImageUploadRequestDTO = new CommunityImageUploadRequestDTO(communityId, imageId);
+                Integer result1 = communityMapper.insertCommunityToImage(communityImageUploadRequestDTO);
+            }
+        }
         return communityMapper.updateBoard(communityId, communityRequestDTO);
     }
 
@@ -275,7 +325,7 @@ public class CommunityService {
             if (removeImageId > 0) {
                 // 파일 저장
                 // ubuntu에서 이미지 삭제
-                String folder = "/home/ubuntu/images";
+//                String folder = "/home/ubuntu/images";
                 String fileName = communityMapper.selectImageNameById(removeImageId);
 //                String originalFilename = folder + "/" + fileName;
                 File removeFile = new File(fileName);
@@ -284,6 +334,7 @@ public class CommunityService {
                     boolean result = removeFile.delete();
                     //db에 관련 정보 삭제
                     cnt = communityMapper.removeImage(removeImageId);
+                    communityMapper.removeImagePath(removeImageId);
                 } else {
                     System.out.println("파일이 존재하지 않습니다: " + fileName);
                     log.info("파일이 존재하지 않습니다: " + fileName);
