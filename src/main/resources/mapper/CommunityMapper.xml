@@ -257,6 +257,9 @@
         <collection property="imageIds" ofType="integer">
             <result column="community_image_id"/>
         </collection>
+        <collection property="likeUsers" ofType="integer">
+            <result column="favorite_user_id"/>
+        </collection>
     </resultMap>
 
     <select id="selectQuestion" resultType="communityResponse"
@@ -269,6 +272,7 @@
                c.regdate,
                (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
                (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count,
+               fc.user_id AS favorite_user_id,
                cip.imagePath,
                ci.community_image_id,
                c.edit_date
@@ -290,6 +294,7 @@
                c.regdate,
                (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
                (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count,
+               fc.user_id AS favorite_user_id,
                cip.imagePath,
                ci.community_image_id,
                c.edit_date
@@ -328,11 +333,23 @@
     <!--          AND image = #{fileName};-->
     <!--    </delete>-->
 
-    <update id="removeImage" parameterType="communityRequest">
-        update Community_Image_Path
-        SET imagePath = 'null'
+<!--    <update id="removeImage" parameterType="communityRequest">-->
+<!--        update Community_Image_Path-->
+<!--        SET imagePath = 'null'-->
+<!--        WHERE community_image_id = #{removeImageId};-->
+<!--    </update>-->
+
+    <delete id="removeImage" parameterType="communityRequest">
+        DELETE
+        FROM Community_Image
         WHERE community_image_id = #{removeImageId};
-    </update>
+    </delete>
+
+    <delete id="removeImagePath" parameterType="communityRequest">
+        DELETE
+        FROM Community_Image_Path
+        WHERE community_image_id = #{removeImageId};
+    </delete>
 
     <update id="updateImage" parameterType="communityRequest">
         update Community_Image_Path
