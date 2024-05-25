@@ -28,15 +28,6 @@ public class ResponseMessage {
     // 게시판요좋아요 ResponseMessage
     public static final String FAVORITE_INSERT_SUCCESS = "좋아요가 등록되었습니다.";
     public static final String FAVORITE_CANCEL_SUCCESS = "좋아요가 취소되었습니다.";
-    // 주문ResponseMessage
-    public static final String DELETE_ORDER_SUCCESS = "진행중인 주문 목록에서 강의 개별 삭제 성공";
-    public static final String DELETE_ORDER_ERROR = "진행중인 주문 목록에서 강의 개별 삭제 에러";
-    public static final String ONGOING_ORDER_LIST_SUCCESS = "주문 진행 목록 조회 성공";
-    public static final String ALREADY_OWNED = "이미 보유한 강의가 포함되어 있습니다.";
-    public static final String ORDER_SUCCESS = "주문이 성공적으로 처리되었습니다.";
-    public static final String ORDER_FAILED = "주문 처리 중 오류가 발생했습니다.";
-    public static final String ORDER_LIST_SUCCESS = "주문 목록 조회 성공";
-    public static final String ORDER_DETAIL_LIST_SUCCESS = "주문 상세 목록 조회 성공";
     // 강의 ResponseMessage
     public static final String EDITE_INSTRUCTOR_SUCCESS = "강사 정보 수정 성공";
     public static final String EDITE_INSTRUCTOR_ERROR = "강사 정보 수정 실패";
