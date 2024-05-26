@@ -48,7 +48,7 @@ public class PaymentController implements InitializingBean {
             }
     )
     @PostMapping("/add")
-    public void addPayment(@RequestParam("imp_uid") String impUid) {
+    public void addPayment(@RequestBody String impUid) {
         paymentService.addPayment(impUid);
     }
 
