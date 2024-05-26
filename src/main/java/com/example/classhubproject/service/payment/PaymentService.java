@@ -106,26 +106,25 @@ public class PaymentService {
 
 
     // 결제 취소 시 payment_status & cancelled_at 업데이트
-    public void cancelPayment(String impUid) {
+    public void cancelPayment(CancelDataRequestDTO request) {
+        String impUid = request.getImpUid();
         CancelData cancelData = new CancelData(impUid, true);
-        IamportResponse<Payment> cancelResponse = iamportService.cancelPaymentByImpUid(cancelData);
 
-        if (cancelResponse.getCode() == 0) {
-            Payment payment = cancelResponse.getResponse();
-            PaymentRequestDTO paymentInfo = PaymentRequestDTO.builder()
-                    .impUid(payment.getImpUid())
-                    .paymentStatus(payment.getStatus())
-                    .cancelledAt(payment.getCancelledAt())
-                    .build();
+        Payment payment = iamportService.cancelPaymentByImpUid(cancelData);
 
-            // 결제 취소 정보 업데이트
-            paymentMapper.cancelPayment(paymentInfo);
+        PaymentRequestDTO paymentInfo = PaymentRequestDTO.builder()
+                .impUid(payment.getImpUid())
+                .paymentStatus(payment.getStatus())
+                .cancelledAt(payment.getCancelledAt())
+                .build();
 
-            // 최종 주문 상태 업데이트
-            int ordersId = paymentMapper.getOrdersIdByImpUid(paymentInfo.getOrdersId());
-            log.info("주문번호 확인 : ordersId: {}", ordersId);
-            orderMapper.cancelOrder(ordersId);
-        }
+        // 결제 취소 정보 업데이트
+        paymentMapper.cancelPayment(paymentInfo);
+
+        // 최종 주문 상태 업데이트
+        int ordersId = paymentMapper.getOrdersIdByImpUid(paymentInfo.getOrdersId());
+        log.info("주문번호 확인 : ordersId: {}", ordersId);
+        orderMapper.cancelOrder(ordersId);
     }
 
 
