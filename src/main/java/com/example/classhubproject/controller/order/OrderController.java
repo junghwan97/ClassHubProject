@@ -44,7 +44,7 @@ public class OrderController {
             }
     )
     @GetMapping("/in-progress/{userId}")
-    public List<OrderDetailResponseDTO> InProgressOrders(@PathVariable("userId") int userId) {
+    public List<OrderDetailResponseDTO> InProgressOrders(@PathVariable("userId") Integer userId) {
         return orderService.getInProgressOrdersList(userId);
     }
 
@@ -70,7 +70,7 @@ public class OrderController {
             }
     )
     @GetMapping("/list/{userId}")
-    public List<OrderResponseDTO> orderList(@PathVariable("userId") int userId) {
+    public List<OrderResponseDTO> orderList(@PathVariable("userId") Integer userId) {
         return orderService.getOrderList(userId);
     }
 
@@ -83,7 +83,7 @@ public class OrderController {
             }
     )
     @GetMapping("/detail/{ordersId}")
-    public List<OrderDetailResponseDTO> orderDetailList(@PathVariable("ordersId") int ordersId) {
+    public List<OrderDetailResponseDTO> orderDetailList(@PathVariable("ordersId") Integer ordersId) {
         return orderService.getOrderDetailList(ordersId);
     }
 

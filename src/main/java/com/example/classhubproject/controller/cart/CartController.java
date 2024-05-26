@@ -43,7 +43,7 @@ public class CartController {
             }
     )
     @GetMapping("/list/{userId}")
-    public List<CartResponseDTO> cartList(@PathVariable("userId") int userId) {
+    public List<CartResponseDTO> cartList(@PathVariable("userId") Integer userId) {
         return cartService.getCartList(userId);
     }
     // 장바구니 개별 삭제
