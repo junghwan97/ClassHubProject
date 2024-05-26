@@ -31,7 +31,7 @@ public class OrderController {
             }
     )
     @PostMapping("/add")
-    public void addOrder(@RequestBody List<Integer> classIds) {
+    public void addOrder(@RequestBody @Schema(description = "강의 ID", example = "[classId: integer]") List<Integer> classIds) {
         orderService.addOrder(classIds);
     }
 
