@@ -4,8 +4,6 @@ import com.example.classhubproject.data.payment.*;
 import com.example.classhubproject.service.payment.IamportService;
 import com.example.classhubproject.service.payment.PaymentService;
 import com.siot.IamportRestClient.IamportClient;
-import com.siot.IamportRestClient.request.CancelData;
-import com.siot.IamportRestClient.request.PrepareData;
 import com.siot.IamportRestClient.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.*;
