@@ -4,7 +4,6 @@ import com.example.classhubproject.data.payment.*;
 import com.example.classhubproject.service.payment.IamportService;
 import com.example.classhubproject.service.payment.PaymentService;
 import com.siot.IamportRestClient.IamportClient;
-import com.siot.IamportRestClient.request.PrepareData;
 import com.siot.IamportRestClient.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.*;
@@ -79,8 +78,8 @@ public class PaymentController implements InitializingBean {
             }
     )
     @PostMapping("/prepare")
-    public void preparePayment(@RequestParam("merchant_uid") String merchantUid, @RequestParam("amount") BigDecimal amount) {
-        iamportService.postPrepare(merchantUid, amount);
+    public void preparePayment(@RequestBody PaymentPrepareRequestDTO request) {
+        iamportService.postPrepare(request.getMerchantUid(), request.getAmount());
     }
 
 
@@ -108,8 +107,8 @@ public class PaymentController implements InitializingBean {
             }
     )
     @PostMapping("/cancel")
-    public void CancelPayment(@RequestParam("imp_uid") @Schema(description = "아임포트 식별자", required = true, example = "{\"imp_uid\": 1}") String impUid) {
-        paymentService.cancelPayment(impUid);
+    public void CancelPayment(@RequestBody CancelDataRequestDTO request) {
+        paymentService.cancelPayment(request);
     }
 
 }

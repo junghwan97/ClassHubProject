@@ -81,9 +81,15 @@ public class IamportService {
 
     }
 
-    public IamportResponse<Payment> cancelPaymentByImpUid(CancelData cancelData) {
+    public Payment cancelPaymentByImpUid(CancelData cancelData) {
         try {
-            return client.cancelPaymentByImpUid(cancelData);
+            IamportResponse<Payment> response = client.cancelPaymentByImpUid(cancelData);
+
+            if (response.getCode() != 0) {
+                throw new RuntimeException("결제 취소 요청이 실패했습니다.");
+            }
+
+            return response.getResponse();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
