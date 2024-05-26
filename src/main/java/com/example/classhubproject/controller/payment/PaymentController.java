@@ -4,6 +4,7 @@ import com.example.classhubproject.data.payment.*;
 import com.example.classhubproject.service.payment.IamportService;
 import com.example.classhubproject.service.payment.PaymentService;
 import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.request.PrepareData;
 import com.siot.IamportRestClient.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.*;
@@ -48,7 +49,7 @@ public class PaymentController implements InitializingBean {
             }
     )
     @PostMapping("/add")
-    public void addPayment(@RequestBody String impUid) {
+    public void addPayment(@RequestBody @Schema(description = "아임포트 식별자", example = "{imp_uid: string}") String impUid) {
         paymentService.addPayment(impUid);
     }
 
