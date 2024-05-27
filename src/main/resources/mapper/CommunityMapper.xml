@@ -46,8 +46,8 @@
         WHERE c.community_type = '1'
         <if test="type != null">
             <if test="type == 'all'">
-                AND c.title LIKE CONCAT('%', #{search}, '%')
-                OR c.text LIKE CONCAT('%', #{search}, '%')
+                AND (c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%'))
             </if>
             <if test="type == 'title'">
                 AND c.title LIKE CONCAT('%', #{search}, '%')
@@ -76,8 +76,8 @@
         WHERE c.community_type = '1'
         <if test="type != null">
             <if test="type == 'all'">
-                AND c.title LIKE CONCAT('%', #{search}, '%')
-                OR c.text LIKE CONCAT('%', #{search}, '%')
+                AND (c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%'))
             </if>
             <if test="type == 'title'">
                 AND c.title LIKE CONCAT('%', #{search}, '%')
@@ -106,8 +106,8 @@
         WHERE c.community_type = '1'
         <if test="type != null">
             <if test="type == 'all'">
-                AND c.title LIKE CONCAT('%', #{search}, '%')
-                OR c.text LIKE CONCAT('%', #{search}, '%')
+                AND (c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%'))
             </if>
             <if test="type == 'title'">
                 AND c.title LIKE CONCAT('%', #{search}, '%')
@@ -137,8 +137,8 @@
         OR c.community_type = '3')
         <if test="type != null">
             <if test="type == 'all'">
-                AND c.title LIKE CONCAT('%', #{search}, '%')
-                OR c.text LIKE CONCAT('%', #{search}, '%')
+                AND (c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%'))
             </if>
             <if test="type == 'title'">
                 AND c.title LIKE CONCAT('%', #{search}, '%')
@@ -168,8 +168,8 @@
         OR c.community_type = '3')
         <if test="type != null">
             <if test="type == 'all'">
-                AND c.title LIKE CONCAT('%', #{search}, '%')
-                OR c.text LIKE CONCAT('%', #{search}, '%')
+                AND (c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%'))
             </if>
             <if test="type == 'title'">
                 AND c.title LIKE CONCAT('%', #{search}, '%')
@@ -199,8 +199,8 @@
         OR c.community_type = '3')
         <if test="type != null">
             <if test="type == 'all'">
-                AND c.title LIKE CONCAT('%', #{search}, '%')
-                OR c.text LIKE CONCAT('%', #{search}, '%')
+                AND (c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%'))
             </if>
             <if test="type == 'title'">
                 AND c.title LIKE CONCAT('%', #{search}, '%')
@@ -229,8 +229,8 @@
         WHERE c.community_type = #{status}
         <if test="type != null">
             <if test="type == 'all'">
-                AND c.title LIKE CONCAT('%', #{search}, '%')
-                OR c.text LIKE CONCAT('%', #{search}, '%')
+                AND (c.title LIKE CONCAT('%', #{search}, '%')
+                OR c.text LIKE CONCAT('%', #{search}, '%'))
             </if>
             <if test="type == 'title'">
                 AND c.title LIKE CONCAT('%', #{search}, '%')

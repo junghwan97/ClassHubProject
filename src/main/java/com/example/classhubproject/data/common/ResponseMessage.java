@@ -5,17 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "API 응답 메시지")
 public class ResponseMessage {
 
-    // 게시판 ResponseMessage
-    public static final String POST_COMMUNITY_SUCCESS = "게시글이 등록되었습니다";
-    public static final String POST_COMMUNITY_IMAGE_SUCCESS = "게시글 이미지가 등록되었습니다";
-    public static final String DELETE_COMMUNITY_IMAGE_SUCCESS = "게시글 이미지가 삭제되었습니다";
-    public static final String POST_COMMUNITY_ERROR = "게시글 등록 중 문제가 발생했습니다";
-    public static final String QUESTION_LIST_SUCCESS = "질문 게시판 조회 성공";
-    public static final String STUDY_LIST_SUCCESS = "스터디 게시판 조회 성공";
-    public static final String QUESTION_SUCCESS = "스터디 게시물 조회 성공";
-    public static final String STUDY_SUCCESS = "스터디 게시물 조회 성공";
-    public static final String MODIFY_COMMUNITY_SUCCESS = "게시물이 수정되었습니다.";
-    public static final String MODIFY_COMMUNITY_ERROR = "게시물 수정 중 문제가 발생했습니다.";
     // 댓글 ResponseMessage  
     public static final String COMMENT_LIST_SUCCESS = "게시물 댓글목록 조회 성공";
     public static final String COMMENT_SUCCESS = "게시물 댓글 조회 성공";
