@@ -15,6 +15,9 @@ public class ClassResponseDTO {
     @Schema(description = "강사 ID")
     private int instructorsId;
 
+    @Schema(description = "강사 이름")
+    private String name;
+
     @Schema(description = "카테고리 ID")
     private int categoryId;
 
@@ -35,6 +38,9 @@ public class ClassResponseDTO {
 
     @Schema(description = "강의 총 영상 길이(재생시간)")
     private int totalVideoLength;
+
+    @Schema(description = "강의 평점")
+    private double review_score;
 
     @Schema(description = "강의 등록일", defaultValue = "현재 날짜와 시간", format = "date-time")
     private Date regdate;
