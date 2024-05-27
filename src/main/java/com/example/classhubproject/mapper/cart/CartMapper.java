@@ -1,7 +1,6 @@
 package com.example.classhubproject.mapper.cart;
 
 import com.example.classhubproject.data.cart.*;
-import com.example.classhubproject.data.lecture.ClassResponseDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.*;

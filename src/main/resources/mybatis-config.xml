@@ -12,6 +12,7 @@
     </settings>
 
     <typeAliases>
+        <typeAlias type="com.example.classhubproject.data.user.UserResponseDTO" alias="user"/>
         <typeAlias type="com.example.classhubproject.data.community.CommunityRequestDTO" alias="communityRequest"/>
         <typeAlias type="com.example.classhubproject.data.community.CommunityResponseDTO" alias="communityResponse"/>
         <typeAlias type="com.example.classhubproject.data.community.CommunityImageRequestDTO" alias="communityImageRequest"/>
@@ -27,6 +28,7 @@
         <typeAlias type="com.example.classhubproject.data.order.OrderDetailResponseDTO" alias="orderDetailResponse"/>
         <typeAlias type="com.example.classhubproject.data.payment.PaymentRequestDTO" alias="paymentRequest"/>
         <typeAlias type="com.example.classhubproject.data.payment.PaymentResponseDTO" alias="paymentResponse"/>
+        <typeAlias type="com.example.classhubproject.data.enrollmentInfo.EnrollmentInfoRequestDTO" alias="enrollmentInfoRequest"/>
     </typeAliases>
 
 </configuration>

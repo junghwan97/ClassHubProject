@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.classhubproject.mapper.user.UserMapper">
+
+    <insert id="joinByGoogle" parameterType="user">
+        INSERT INTO User(sns_id, access_token, name, nickname, email, profile_picture, platform_type)
+        VALUES (#{snsId}, #{accessToken}, #{name}, #{nickname}, #{email}, #{profilePicture}, "Google");
+    </insert>
+
+    <insert id="join" parameterType="user">
+        INSERT INTO User(sns_id, access_token, name, nickname, email, profile_picture, platform_type)
+        VALUES (#{snsId}, #{accessToken}, #{name}, #{nickname}, #{email}, #{profilePicture}, "Google");
+    </insert>
+
+    <select id="selectUserIDBySnsId" resultType="Integer">
+        SELECT user_id
+        FROM User
+        WHERE sns_id = #{snsId}
+    </select>
+
+    <select id="checkDuplicateBySnsId" resultType="Integer">
+        SELECT count(*)
+        FROM User
+        WHERE sns_id = #{snsId}
+    </select>
+
+    <select id="selectUserBySnsId" resultType="user">
+        SELECT *
+        FROM User
+        WHERE sns_id = #{snsId}
+    </select>
+
+    <update id="updateUserInfo" parameterType="user">
+        UPDATE User
+        SET    name = #{name},
+               nickname = #{nickname},
+               email = #{email}
+        WHERE sns_id = #{snsId}
+    </update>
+
+    <update id="updateUserImage" parameterType="user">
+        UPDATE User
+        SET    profile_picture = #{file}
+        WHERE sns_id = #{snsId}
+    </update>
+
+</mapper>

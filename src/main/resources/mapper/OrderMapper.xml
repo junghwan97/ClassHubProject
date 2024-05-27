@@ -33,7 +33,7 @@
     <select id="getOrderList" resultType="orderResponse">
         SELECT *
         FROM Orders
-        WHERE user_id = #{userId}
+        WHERE user_id = #{userId} AND final_order_status != 0
     </select>
 
     <resultMap id="OrderDetailWithClassResultMap" type="orderDetailResponse">
@@ -82,9 +82,10 @@
 
     <!-- 진행중인 주문에서 강의 개별 삭제 -->
     <delete id="deleteInProgressOrderByClassId" parameterType="orderRequest">
-        DELETE
-        FROM Order_Detail
-        WHERE class_id = #{classId}
+        DELETE od
+        FROM Order_Detail od
+               JOIN Orders o ON od.orders_id = o.orders_id
+        WHERE od.class_id = #{classId} AND o.final_order_status = 0
     </delete>
 
     <!-- 주문 완료-->
@@ -132,6 +133,13 @@
         FROM Orders
         WHERE orders_id = #{ordersId}
     </delete>
+
+    <!-- 특정 주문 ID에 해당하는 주문 상세의 강의 ID 조회 -->
+    <select id="getClassIdByOrdersId" resultType="int">
+        SELECT class_id
+        FROM Order_Detail
+        WHERE orders_id = #{ordersId}
+    </select>
 
 
 </mapper>
