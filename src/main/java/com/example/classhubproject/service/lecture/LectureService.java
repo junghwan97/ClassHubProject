@@ -44,7 +44,7 @@ public class LectureService {
 
     public int uploadMaterial(Integer id, List<MultipartFile> files) {
 
-    	String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy";
+    	String uploadFolder = "/home/ubuntu/lecture";
     	
     	File uploadPath = new File(uploadFolder, id.toString());
     	
@@ -104,7 +104,10 @@ public class LectureService {
     	
     	//폴더 생성 및 업로드 Date정보로 머릿글 생성 
     	
-    	String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy";
+    	String uploadFolder = "/home/ubuntu/lecture";
+
+		// /home/ubuntu/lecture
+		//"C:\\Users\\USER\\Desktop\\dummy"
     	
     	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     	SimpleDateFormat save = new SimpleDateFormat("yyyyMMddHHmmss");
