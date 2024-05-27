@@ -1,10 +1,9 @@
 package com.example.classhubproject.mapper.lecture;
 
 import com.example.classhubproject.data.lecture.*;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface LectureMapper {
@@ -13,6 +12,7 @@ public interface LectureMapper {
     int editInstructor(LectureInstructorEditedRequest request);
     // 강의 자료 추가/수정
     int uploadMaterial(LectureMaterialUploadedRequest request);
+    List<LectureMaterialUploadedRequest> selectMaterial(Integer classId);
     int editMaterial(LectureMaterialEditedRequest request);
 
     // 강의 추가/수정
@@ -35,4 +35,8 @@ public interface LectureMapper {
     List<ClassResponseDTO> selectByCategory(Integer categoryId);
 
     ClassResponseDTO getClassInfoByClassId(int classId);
+
+    int favoriteLecture(Integer classId, int userId);
+
+    int clearFavoriteLecture(Integer classId, int userId);
 }

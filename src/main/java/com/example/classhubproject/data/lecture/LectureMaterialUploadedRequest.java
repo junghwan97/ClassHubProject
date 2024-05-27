@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class LectureMaterialUploadedRequest {
-    Integer class_detail_id;
+    Integer resourceId;
+	Integer classId;
     String resource;
 }

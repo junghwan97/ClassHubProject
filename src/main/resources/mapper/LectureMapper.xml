@@ -14,9 +14,13 @@
     </insert>
 
     <insert id="uploadMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialUploadedRequest">
-        INSERT INTO Resource(class_detail_id, resource)
-        VALUES (#{class_detail_id}, #{resource});
+        INSERT INTO Resource(class_id, resource)
+        VALUES (#{classId}, #{resource});
     </insert>
+    
+    <select id="selectMaterial" resultType="com.example.classhubproject.data.lecture.LectureMaterialUploadedRequest">
+    	SELECT * FROM Resource WHERE class_id = #{classId}
+    </select>
 
     <insert id="editMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialEditedRequest">
         UPDATE Resource
@@ -81,5 +85,16 @@
     <select id="getClassInfoByClassId" resultType="classResponse">
         SELECT * FROM Class WHERE class_id = #{classId}
     </select>
+
+    <!-- 관심강의 등록 -->
+    <insert id="favoriteLecture">
+        INSERT INTO Favorite_Class (user_id, class_id, regdate)
+        VALUES (#{userId}, #{classId}, NOW());
+    </insert>
+
+    <!-- 관심강의 해제-->
+    <delete id="clearFavoriteLecture">
+        DELETE FROM Favorite_Class WHERE user_id = #{userId} AND class_id = #{classId};
+    </delete>
 
 </mapper>
