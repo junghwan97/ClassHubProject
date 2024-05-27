@@ -33,6 +33,7 @@
     <select id="selectAllRecentQuestions" resultType="communityResponse">
         SELECT c.community_id,
         c.user_id,
+        (SELECT nickname FROM User WHERE user_id = c.user_id) AS nickname,
         c.community_type,
         c.title,
         c.text,
@@ -62,6 +63,7 @@
     <select id="selectAllQuestionsByFavorite" resultType="communityResponse">
         SELECT c.community_id,
         c.user_id,
+        (SELECT nickname FROM User WHERE user_id = c.user_id) AS nickname,
         c.community_type,
         c.title,
         c.text,
@@ -91,6 +93,7 @@
     <select id="selectAllQuestionsByComment" resultType="communityResponse">
         SELECT c.community_id,
         c.user_id,
+        (SELECT nickname FROM User WHERE user_id = c.user_id) AS nickname,
         c.community_type,
         c.title,
         c.text,
@@ -120,6 +123,7 @@
     <select id="selectAllRecentStudies" resultType="communityResponse">
         SELECT c.community_id,
         c.user_id,
+        (SELECT nickname FROM User WHERE user_id = c.user_id) AS nickname,
         c.community_type,
         c.title,
         c.text,
@@ -150,6 +154,7 @@
     <select id="selectAllStudiesByFavorite" resultType="communityResponse">
         SELECT c.community_id,
         c.user_id,
+        (SELECT nickname FROM User WHERE user_id = c.user_id) AS nickname,
         c.community_type,
         c.title,
         c.text,
@@ -180,6 +185,7 @@
     <select id="selectAllStudiesByComment" resultType="communityResponse">
         SELECT c.community_id,
         c.user_id,
+        (SELECT nickname FROM User WHERE user_id = c.user_id) AS nickname,
         c.community_type,
         c.title,
         c.text,
@@ -209,16 +215,17 @@
 
     <select id="selectStudiesByStatus" resultType="communityResponse">
         SELECT c.community_id,
-               c.user_id,
-               c.community_type,
-               c.title,
-               c.text,
-               c.regdate,
-               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
-               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        c.user_id,
+        (SELECT nickname FROM User WHERE user_id = c.user_id) AS nickname,
+        c.community_type,
+        c.title,
+        c.text,
+        c.regdate,
+        (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+        (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id) AS comment_count
         FROM Community c
-                 LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
---                  LEFT JOIN Comment cm ON c.community_id = cm.community_id
+        LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
+        -- LEFT JOIN Comment cm ON c.community_id = cm.community_id
         WHERE c.community_type = #{status}
         <if test="type != null">
             <if test="type == 'all'">
@@ -239,6 +246,7 @@
     <resultMap type="communityResponse" id="communityResultMap">
         <id column="community_id" property="communityId"/>
         <result column="user_id" property="userId"/>
+        <result column="nickname" property="nickname"/>
         <result column="community_type" property="communityType"/>
         <result column="title" property="title"/>
         <result column="text" property="text"/>
@@ -261,13 +269,14 @@
             resultMap="communityResultMap">
         SELECT c.community_id,
                c.user_id,
+               u.nickname,
                c.community_type,
                c.title,
                c.text,
                c.regdate,
                (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
                (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count,
-               fc.user_id AS favorite_user_id,
+               fc.user_id                                                                        AS favorite_user_id,
                cip.imagePath,
                ci.community_image_id,
                c.edit_date
@@ -275,6 +284,7 @@
                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
                  LEFT JOIN Community_Image ci ON c.community_id = ci.community_id
                  LEFT JOIN Community_Image_Path cip ON cip.community_image_id = ci.community_image_id
+                 LEFT JOIN User u ON c.user_id = u.user_id
         WHERE c.community_type = '1'
           AND c.community_id = #{id}
     </select>
@@ -283,13 +293,14 @@
             resultMap="communityResultMap">
         SELECT c.community_id,
                c.user_id,
+               (SELECT nickname FROM User WHERE user_id = c.user_id) AS writer,
                c.community_type,
                c.title,
                c.text,
                c.regdate,
                (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
                (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count,
-               fc.user_id AS favorite_user_id,
+               fc.user_id                                                                        AS favorite_user_id,
                cip.imagePath,
                ci.community_image_id,
                c.edit_date
@@ -328,11 +339,11 @@
     <!--          AND image = #{fileName};-->
     <!--    </delete>-->
 
-<!--    <update id="removeImage" parameterType="communityRequest">-->
-<!--        update Community_Image_Path-->
-<!--        SET imagePath = 'null'-->
-<!--        WHERE community_image_id = #{removeImageId};-->
-<!--    </update>-->
+    <!--    <update id="removeImage" parameterType="communityRequest">-->
+    <!--        update Community_Image_Path-->
+    <!--        SET imagePath = 'null'-->
+    <!--        WHERE community_image_id = #{removeImageId};-->
+    <!--    </update>-->
 
     <delete id="removeImage" parameterType="communityRequest">
         DELETE
