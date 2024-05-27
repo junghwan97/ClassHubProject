@@ -55,7 +55,8 @@
 
     <!-- 강의 전체 조회 -->
     <select id="selectAll" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
-    	SELECT * FROM Class;
+        SELECT c.*, i.name, r.review_score FROM Class c JOIN Instructors i ON c.instructors_id = i.instructors_id
+        LEFT JOIN (SELECT class_id, ROUND(AVG(review_score), 1) AS review_score FROM Class_Review GROUP BY class_id) r ON r.class_id = c.class_id;
     </select>
 
     <!-- 강의 키워드 조회 -->
