@@ -3,42 +3,47 @@ package com.example.classhubproject.service.community;
 
 import com.example.classhubproject.data.community.*;
 import com.example.classhubproject.mapper.community.CommunityMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 @Transactional(rollbackFor = Exception.class)
 public class CommunityService {
 
     private final CommunityMapper communityMapper;
 
-    @Autowired
-    public CommunityService(CommunityMapper communityMapper) {
-        this.communityMapper = communityMapper;
-    }
+    public void posting(CommunityRequestDTO communityRequestDTO) {
 
-    public int posting(CommunityRequestDTO communityRequestDTO) {
-
-        Integer result = communityMapper.posting(communityRequestDTO);
-        List<Integer> imageIds = communityRequestDTO.getCommunityImageIds();
-        Integer communityId = communityRequestDTO.getCommunityId();
-        if (imageIds != null) {
-            for (Integer imageId : imageIds) {
-                CommunityImageUploadRequestDTO communityImageUploadRequestDTO = new CommunityImageUploadRequestDTO(communityId, imageId);
-                Integer result1 = communityMapper.insertCommunityToImage(communityImageUploadRequestDTO);
+        // db에 게시글 정보 삽입
+        int cnt = communityMapper.posting(communityRequestDTO);
+        if (cnt == 1) {
+            List<Integer> imageIds = communityRequestDTO.getCommunityImageIds();
+            // 게시글 생성 후 키 반환
+            Integer communityId = communityRequestDTO.getCommunityId();
+            if (imageIds != null) {
+                for (Integer imageId : imageIds) {
+                    CommunityImageUploadRequestDTO communityImageUploadRequestDTO = new CommunityImageUploadRequestDTO(communityId, imageId);
+//                Integer result1 = communityMapper.insertCommunityToImage(communityImageUploadRequestDTO);
+                    communityMapper.insertCommunityToImage(communityImageUploadRequestDTO);
+                }
             }
+        } else {
+            throw new RuntimeException("게시글 등록 중 문제가 발생했습니다");
         }
-        return communityId;
+//        return communityId;
     }
-
 
     public List<Integer> postingImage(List<MultipartFile> files) {
 
@@ -52,14 +57,11 @@ public class CommunityService {
                     String newFileName = generateUniqueFileName(originalFilename);
                     String folder = "/home/ubuntu/images";
                     file.transferTo(new File(folder + "/" + newFileName));
-
                     CommunityImageRequestDTO communityImageRequestDTO = new CommunityImageRequestDTO(0, folder + "/" + newFileName);
-
 
                     //db에 관련 정보 저장
                     Integer imageId = communityMapper.insertImage(communityImageRequestDTO);
                     imageIds.add(communityImageRequestDTO.getCommunityImageId());
-//                    communityMapper.insertPath(imageId, filePath);
                 }
             }
         } catch (Exception e) {
@@ -81,7 +83,6 @@ public class CommunityService {
     public PagingDTO<List<CommunityResponseDTO>> questionsRecentList(Integer page, String search, String type) {
         // 한페이지 당 게시물 수
         Integer rowPerPage = 5;
-
         // 쿼리 LIMIT절에 사용할 시작 인덱스
         int startIndex = (page - 1) * rowPerPage;
 
@@ -237,19 +238,21 @@ public class CommunityService {
             String imagePath = "https://devproject.store" + image;
             imageForFront.add(imagePath);
         }
-        CommunityResponseDTO result = new CommunityResponseDTO(
-                test.getUserId(),
-                test.getCommunityId(),
-                test.getCommunityType(),
-                test.getTitle(),
-                test.getText(),
-                test.getRegDate(),
-                test.getEditDate(),
-                test.getFavoriteCount(),
-                test.getCommentCount(),
-                test.getImageIds(),
-                imageForFront,
-                test.getLikeUsers());
+        CommunityResponseDTO result = CommunityResponseDTO.builder()
+                .userId(test.getUserId())
+                .nickname(test.getNickname())
+                .communityId(test.getCommunityId())
+                .communityType(test.getCommunityType())
+                .title(test.getTitle())
+                .text(test.getText())
+                .regDate(test.getRegDate())
+                .editDate(test.getEditDate())
+                .favoriteCount(test.getFavoriteCount())
+                .commentCount(test.getCommentCount())
+                .imageIds(test.getImageIds())
+                .image(imageForFront)
+                .likeUsers(test.getLikeUsers())
+                .build();
 
         return result;
     }
@@ -262,19 +265,21 @@ public class CommunityService {
             String imagePath = "https://devproject.store" + image;
             imageForFront.add(imagePath);
         }
-        CommunityResponseDTO result = new CommunityResponseDTO(
-                test.getUserId(),
-                test.getCommunityId(),
-                test.getCommunityType(),
-                test.getTitle(),
-                test.getText(),
-                test.getRegDate(),
-                test.getEditDate(),
-                test.getFavoriteCount(),
-                test.getCommentCount(),
-                test.getImageIds(),
-                imageForFront,
-                test.getLikeUsers());
+        CommunityResponseDTO result = CommunityResponseDTO.builder()
+                .userId(test.getUserId())
+                .nickname(test.getNickname())
+                .communityId(test.getCommunityId())
+                .communityType(test.getCommunityType())
+                .title(test.getTitle())
+                .text(test.getText())
+                .regDate(test.getRegDate())
+                .editDate(test.getEditDate())
+                .favoriteCount(test.getFavoriteCount())
+                .commentCount(test.getCommentCount())
+                .imageIds(test.getImageIds())
+                .image(imageForFront)
+                .likeUsers(test.getLikeUsers())
+                .build();
 
         return result;
     }
@@ -306,66 +311,64 @@ public class CommunityService {
 
     }
 
-    public Integer modifyBoard(Integer communityId, CommunityRequestDTO communityRequestDTO) {
-        int cnt = 0;
-        List<Integer> imageIds = communityRequestDTO.getCommunityImageIds();
-        if (imageIds != null) {
-            for (Integer imageId : imageIds) {
-                CommunityImageUploadRequestDTO communityImageUploadRequestDTO = new CommunityImageUploadRequestDTO(communityId, imageId);
-                Integer result1 = communityMapper.insertCommunityToImage(communityImageUploadRequestDTO);
+    public void modifyBoard(Integer communityId, CommunityRequestDTO communityRequestDTO) {
+        int cnt = communityMapper.updateBoard(communityId, communityRequestDTO);
+        if (cnt == 1) {
+            List<Integer> imageIds = communityRequestDTO.getCommunityImageIds();
+            if (imageIds != null) {
+                for (Integer imageId : imageIds) {
+                    CommunityImageUploadRequestDTO communityImageUploadRequestDTO = new CommunityImageUploadRequestDTO(communityId, imageId);
+                    communityMapper.insertCommunityToImage(communityImageUploadRequestDTO);
+                }
             }
+        } else {
+            throw new RuntimeException("게시글 수정 중 문제가 발생했습니다");
         }
-        return communityMapper.updateBoard(communityId, communityRequestDTO);
     }
 
-    public Integer deleteFiles(List<Integer> removeImageIds) {
+    public void deleteFiles(List<Integer> removeImageIds) {
 
-        int cnt = 0;
         for (Integer removeImageId : removeImageIds) {
             if (removeImageId > 0) {
-                // 파일 저장
-                // ubuntu에서 이미지 삭제
-//                String folder = "/home/ubuntu/images";
+                // db에서 삭제할 이미지 이름 조회
                 String fileName = communityMapper.selectImageNameById(removeImageId);
-//                String originalFilename = folder + "/" + fileName;
                 File removeFile = new File(fileName);
 
+                // ubuntu에서 이미지 삭제
                 if (removeFile.exists()) {
                     boolean result = removeFile.delete();
                     //db에 관련 정보 삭제
-                    cnt = communityMapper.removeImage(removeImageId);
+                    communityMapper.removeImage(removeImageId);
                     communityMapper.removeImagePath(removeImageId);
+                    log.info("파일이 삭제되었습니다 : " + fileName);
                 } else {
-                    System.out.println("파일이 존재하지 않습니다: " + fileName);
                     log.info("파일이 존재하지 않습니다: " + fileName);
                     boolean result = false;
                 }
-
             }
         }
-        return cnt;
     }
 
-    public Integer modifyFiles(List<Integer> communityImageId, List<MultipartFile> files) {
-//        List<Integer> imageModifyIds = new ArrayList<>();
-        int cnt = 0;
-        try {
+//    public Integer modifyFiles(List<Integer> communityImageId, List<MultipartFile> files) {
+////        List<Integer> imageModifyIds = new ArrayList<>();
+//        int cnt = 0;
+//        try {
+////
+//            for (int i = 0; i < communityImageId.size(); i++) {
+//                int imageId = communityImageId.get(i);
+//                MultipartFile file = files.get(i);
+//                // ubuntu에 이미지 저장
+//                String originalFilename = file.getOriginalFilename();
+//                String newFileName = generateUniqueFileName(originalFilename);
+//                String folder = "/home/ubuntu/images";
+//                String path = folder + "/" + newFileName;
+//                file.transferTo(new File(path));
+//                cnt += communityMapper.updateImage(imageId, path);
 //
-            for (int i = 0; i < communityImageId.size(); i++) {
-                int imageId = communityImageId.get(i);
-                MultipartFile file = files.get(i);
-                // ubuntu에 이미지 저장
-                String originalFilename = file.getOriginalFilename();
-                String newFileName = generateUniqueFileName(originalFilename);
-                String folder = "/home/ubuntu/images";
-                String path = folder + "/" + newFileName;
-                file.transferTo(new File(path));
-                cnt += communityMapper.updateImage(imageId, path);
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return cnt;
-    }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return cnt;
+//    }
 }
