@@ -19,11 +19,6 @@
         VALUES (#{imagePath});
     </insert>
 
-    <!--    <insert id="insertPath" parameterType="communityRequest">-->
-    <!--        INSERT INTO Community_Image_Path(community_image_id, imagePath)-->
-    <!--        VALUES (#{imageId}, #{imagePath});-->
-    <!--    </insert>-->
-
     <insert id="insertImagePath" parameterType="communityRequest">
         INSERT INTO Community_Image(image)
         VALUES (#{image});

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Mapper
 public interface CommunityMapper {
-    int posting(CommunityRequestDTO communityRequestDTO);
+    Integer posting(CommunityRequestDTO communityRequestDTO);
 
     Integer insertImage(CommunityImageRequestDTO communityImageRequestDTO);
 
@@ -59,16 +59,14 @@ public interface CommunityMapper {
                                                      @Param(("type")) String type);
 
     Integer countAllQuestions(@Param("search") String search, @Param("type") String type);
-    Integer countAllStudies(@Param("search") String search, @Param("type") String type);
-    Integer countAllStudiesByStatus(@Param("status") int status, @Param("search") String search, @Param("type") String type);
 
-//    void insertPath(@Param("imageId") List<Integer> imageId, @Param("filePath") Path filePath);
+    Integer countAllStudies(@Param("search") String search, @Param("type") String type);
+
+    Integer countAllStudiesByStatus(@Param("status") int status, @Param("search") String search, @Param("type") String type);
 
     Integer insertCommunityToImage(CommunityImageUploadRequestDTO communityImageUploadRequestDTO);
 
     Integer updateBoard(@Param("communityId") Integer communityId, @Param("communityRequest") CommunityRequestDTO communityRequestDTO);
-
-//    List<Integer> selectImageId(@Param("communityId")Integer communityId, @Param("files") String files);
 
     String selectImageNameById(Integer removeImageId);
 
