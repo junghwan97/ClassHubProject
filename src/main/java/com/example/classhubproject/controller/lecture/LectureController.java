@@ -237,6 +237,8 @@ public class LectureController {
         return ResponseEntity.ok(ResponseData.res(HttpStatus.BAD_REQUEST.value(),ResponseMessage.LECTURE_ERROR));
     }
 
+    //강의 정보 던져 주는 로직
+
     
 //
 //    @PostMapping("test")
