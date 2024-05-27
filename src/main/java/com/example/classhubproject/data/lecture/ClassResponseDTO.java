@@ -40,7 +40,7 @@ public class ClassResponseDTO {
     private int totalVideoLength;
 
     @Schema(description = "강의 평점")
-    private double review_score;
+    private double reviewScore;
 
     @Schema(description = "강의 등록일", defaultValue = "현재 날짜와 시간", format = "date-time")
     private Date regdate;
