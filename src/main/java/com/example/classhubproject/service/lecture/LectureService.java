@@ -9,13 +9,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -45,13 +46,29 @@ public class LectureService {
 
     public int uploadMaterial(Integer id, List<MultipartFile> files) {
 
+    	String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy";
+    	
+    	File uploadPath = new File(uploadFolder, id.toString());
+    	
+    	if(uploadPath.exists() == false) {
+    		uploadPath.mkdir();
+    	}
+    	
     	try {
 			for(MultipartFile f : files) {
 				LectureMaterialUploadedRequest request = new LectureMaterialUploadedRequest();
 				request.setClassId(id);
 				request.setResource(f.getOriginalFilename());
 				
-				int upload = lectureMapper.uploadMaterial(request);
+				lectureMapper.uploadMaterial(request);
+				
+				File saveFile = new File(uploadPath, f.getOriginalFilename());
+				
+				try {
+					f.transferTo(saveFile);
+				}catch(Exception e) {
+					log.error(e.getMessage());
+				}
 			}
 			return 1;
 		} catch (Exception e) {
@@ -87,12 +104,46 @@ public class LectureService {
     	    	
     	int upload = lectureMapper.uploadClass(request);
     	
-    	for(LectureClassDetailDTO video : sections.getVideos()) {
-    		video.setClass_id(request.getClass_id());
-    		lectureMapper.addClassVideo(video);
-    	}
-    	/*파일 스토리지 업로드 로직 추가 해야함 */
+    	//폴더 생성 및 업로드 Date정보로 머릿글 생성 
+    	
+    	String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy";
+    	
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+    	SimpleDateFormat save = new SimpleDateFormat("yyyyMMddHHmmss");
+    	
+    	Date date = new Date();
+    	
+    	String str = sdf.format(date);
+    	
+    	String random = save.format(date);
+    	
+    	File uploadPath = new File(uploadFolder, str);
   
+    	if(uploadPath.exists() == false) {
+    		uploadPath.mkdir();
+    	}
+    	
+    	//파일 정보 DB업로드
+    	for(LectureClassDetailDTO video : sections.getVideos()) {
+    		    		
+    		video.setClass_id(request.getClass_id());
+    		
+    		video.setVideo(random + "_" + video.getVideo());
+    		lectureMapper.addClassVideo(video);	
+    	}
+    	
+    	//파일 업로드
+    	for(MultipartFile file : videos) {
+    		String temp = random + "_" + file.getOriginalFilename();
+    		File saveFile = new File(uploadPath, temp);
+    		
+    		try {
+    			file.transferTo(saveFile);
+    		}catch(Exception e) {
+    			log.error(e.getMessage());
+    		}
+    	}
+
     	return upload;
     	
     	//파일따로, 정보만 따로 -->json배열안에 파일을 넣을수없음

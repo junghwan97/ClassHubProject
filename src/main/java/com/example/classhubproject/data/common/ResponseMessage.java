@@ -54,6 +54,8 @@ public class ResponseMessage {
     public static final String LECTURE_INSERT_ERROR = "강의 등록 실패";
     public static final String LECTURE_SUCCESS = "강의 조회 성공";
     public static final String LECTURE_ERROR = "강의 조회 실패";
+    public static final String LECTURE_MATERIAL_SUCCESS = "강의 자료 등록 성공";
+    public static final String LECTURE_MATERIAL_ERROR = "강의 자료 등록 실패";
     // 결제 ResponseMessage
     public static final String ACCESS_TOKEN_SUCCESS = "액세스 토큰 가져오기 성공";
     public static final String ACCESS_TOKEN_ERROR = "액세스 토큰 가져오는 중 오류가 발생했습니다.";
