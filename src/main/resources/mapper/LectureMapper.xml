@@ -86,4 +86,15 @@
         SELECT * FROM Class WHERE class_id = #{classId}
     </select>
 
+    <!-- 관심강의 등록 -->
+    <insert id="favoriteLecture">
+        INSERT INTO Favorite_Class (user_id, class_id, regdate)
+        VALUES (#{userId}, #{classId}, NOW());
+    </insert>
+
+    <!-- 관심강의 해제-->
+    <delete id="clearFavoriteLecture">
+        DELETE FROM Favorite_Class WHERE user_id = #{userId} AND class_id = #{classId};
+    </delete>
+
 </mapper>

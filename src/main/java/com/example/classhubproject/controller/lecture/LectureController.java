@@ -6,29 +6,20 @@ import com.example.classhubproject.data.lecture.*;
 import com.example.classhubproject.service.lecture.LectureService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.models.media.MediaType;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -198,6 +189,54 @@ public class LectureController {
     	
     }
     
+ // 카테고리 별 조회
+    @Operation(summary = "강의 추천 알고리즘", description = "강의 추천 알고리즘.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("recommendLectures")
+    public ResponseEntity<ResponseData<List<ClassResponseDTO>>> recommendLectures(@RequestBody ClassResponseDTO request){
+    	List<ClassResponseDTO> res = lectureService.recommendLectures(request);
+    	
+    	if(!res.isEmpty()) {
+    		return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(),ResponseMessage.LECTURE_SUCCESS, res));
+        }
+        	return ResponseEntity.ok(ResponseData.res(HttpStatus.BAD_REQUEST.value(),ResponseMessage.LECTURE_ERROR));
+    	
+    }
+
+    // 관심 강의 등록
+    @Operation(summary = "관심 강의 등록", description = "관심 강의 등록.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("favoriteLecture")
+    public ResponseEntity<ResponseData<Void>> favoriteLecture(@RequestParam("classId") Integer classId){
+        if(lectureService.favoriteLecture(classId) > 0){
+            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(),ResponseMessage.LECTURE_SUCCESS));
+        }
+            return ResponseEntity.ok(ResponseData.res(HttpStatus.BAD_REQUEST.value(),ResponseMessage.LECTURE_ERROR));
+    }
+
+    // 관심 강의 해제
+    @Operation(summary = "관심 강의 해제", description = "관심 강의 해제.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("clearFavoriteLecture")
+    public ResponseEntity<ResponseData<Void>> clearFavoriteLecture(@RequestParam("classId") Integer classId){
+        if(lectureService.clearFavoriteLecture(classId) > 0){
+            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(),ResponseMessage.LECTURE_SUCCESS));
+        }
+        return ResponseEntity.ok(ResponseData.res(HttpStatus.BAD_REQUEST.value(),ResponseMessage.LECTURE_ERROR));
+    }
+
     
 //
 //    @PostMapping("test")

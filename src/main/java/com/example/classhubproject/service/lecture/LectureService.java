@@ -6,18 +6,16 @@ import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -183,5 +181,73 @@ public class LectureService {
     	}
 			return res;		
     }
+
+	public int favoriteLecture(Integer classId) {
+		int userId = getUserId();
+		return lectureMapper.favoriteLecture(classId, userId);
+	}
+
+	public int clearFavoriteLecture(Integer classId) {
+		int userId = getUserId();
+		return lectureMapper.clearFavoriteLecture(classId, userId);
+	}
+
+	//테스트용 하드코딩
+	public int getUserId(){
+		return 1;
+	}
+    
+    public List<ClassResponseDTO> recommendLectures(ClassResponseDTO request){
+    	List<ClassResponseDTO> lectures = lectureMapper.selectAll();
+    	
+    	Map<ClassResponseDTO, Double> similarityScores = new HashMap<>();
+    	
+    	for(ClassResponseDTO dto : lectures) {
+    		if(!dto.getClassName().equalsIgnoreCase(request.getClassName())) {
+    			double similarity = calculateCosineSimilarity(request.getClassName(), dto.getClassName());
+    			similarityScores.put(dto, similarity);
+    		}
+    	}
+    	
+    	return similarityScores.entrySet().stream()
+    			.sorted(Map.Entry.<ClassResponseDTO, Double>comparingByValue().reversed())
+    			.limit(5)
+    			.map(entry -> entry.getKey())
+    			.collect(Collectors.toList());
+    }
+    
+    private double calculateCosineSimilarity(String text1, String text2) {
+        Map<String, Integer> wordFreq1 = getWordFrequency(text1);
+        Map<String, Integer> wordFreq2 = getWordFrequency(text2);
+
+        Set<String> allWords = new HashSet<>();
+        allWords.addAll(wordFreq1.keySet());
+        allWords.addAll(wordFreq2.keySet());
+
+        int dotProduct = 0;
+        int norm1 = 0;
+        int norm2 = 0;
+
+        for (String word : allWords) {
+            int freq1 = wordFreq1.getOrDefault(word, 0);
+            int freq2 = wordFreq2.getOrDefault(word, 0);
+            dotProduct += freq1 * freq2;
+            norm1 += freq1 * freq1;
+            norm2 += freq2 * freq2;
+        }
+
+        return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
+    }
+
+    private Map<String, Integer> getWordFrequency(String text) {
+        Map<String, Integer> wordFreq = new HashMap<>();
+        String[] words = text.toLowerCase().split("\\W+");
+        for (String word : words) {
+            wordFreq.put(word, wordFreq.getOrDefault(word, 0) + 1);
+        }
+        return wordFreq;
+    }
+
+
 
 }
