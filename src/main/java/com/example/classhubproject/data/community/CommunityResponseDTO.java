@@ -1,21 +1,23 @@
 package com.example.classhubproject.data.community;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.sql.Date;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
+@Builder
 @Schema(description = "커뮤니티 Response DTO")
 public class CommunityResponseDTO {
 
     @Schema(description = "회원 ID")
     private Integer userId;
+
+    @Schema(description = "작성자")
+    private String nickname;
 
     @Schema(description = "게시물 ID")
     private Integer communityId;
@@ -49,19 +51,4 @@ public class CommunityResponseDTO {
 
     @Schema(description = "게시물 좋아요 누른 회원 리스트")
     private List<Integer> likeUsers;
-
-    public CommunityResponseDTO(Integer userId, Integer communityId, Character communityType, String title, String text, Date regDate, Date editDate, Integer favoriteCount, Integer commentCount, List<Integer> imageIds, List<String> image, List<Integer> likeUsers) {
-        this.userId = userId;
-        this.communityId = communityId;
-        this.communityType = communityType;
-        this.title = title;
-        this.text = text;
-        this.regDate = regDate;
-        this.editDate = editDate;
-        this.favoriteCount = favoriteCount;
-        this.commentCount = commentCount;
-        this.imageIds = imageIds;
-        this.image = image;
-        this.likeUsers = likeUsers;
-    }
 }

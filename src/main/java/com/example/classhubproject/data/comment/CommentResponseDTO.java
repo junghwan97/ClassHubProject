@@ -17,6 +17,9 @@ public class CommentResponseDTO {
     @Schema(description = "회원 ID")
     private Integer userId;
 
+    @Schema(description = "작성자")
+    private String nickname;
+
     @Schema(description = "게시물 고유 번호")
     private Integer communityId;
 
