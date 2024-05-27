@@ -15,6 +15,7 @@
                c.text,
                c.regdate,
                c.edit_date,
+               (SELECT nickname FROM User WHERE user_id = c.user_id) AS nickname,
                (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = comment_id) AS favoriteCount
         from Comment c
                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '2'
