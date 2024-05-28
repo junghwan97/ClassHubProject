@@ -25,7 +25,18 @@
     </select>
 
     <select id="selectUserBySnsId" resultType="user">
-        SELECT *
+        SELECT
+            user_id,
+            sns_id,
+            access_token,
+            name,
+            nickname,
+            email,
+            profile_picture,
+            introduce,
+            regdate,
+            exit_date,
+            role
         FROM User
         WHERE sns_id = #{snsId}
     </select>
