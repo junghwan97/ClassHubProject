@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -76,7 +77,18 @@ public class LectureController {
     	}
         return null;
     }
-    
+
+    // 강의 1개 조회
+    @Operation(summary = "강의 1개 조회", description = "강의 1개 조회",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("selectById/{classId}")
+    public Map<String, Object> selectById(@PathVariable("classId") Integer classId){
+        return lectureService.selectById(classId);
+    }
 
     // 강의 자료 업로드 / 수정 이것도 파일 업로드로 바꿔야함
     @Operation(summary = "강의 자료 업로드", description = "강의자료를 업로드.",
@@ -210,16 +222,28 @@ public class LectureController {
     }
 
     //학습 진행도 불러오기
-//    @Operation(summary = "강의 학습 데이터 불러오기", description = "강의 학습 데이터 불러오기",
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
-//                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-//            }
-//    )
-//    @GetMapping("selectLearningData/{Id}")
-//    public LearningDataDTO selectLearningData(@PathVariable("Id") Integer classDetailId){
-//        return lectureService.selectLearningData(classDetailId);
-//    }
+    @Operation(summary = "학습 진행도 불러오기", description = "학습 진행도 불러오기",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("selectLearningData/{classDetailId}")
+    public LearningDataDTO selectLearningData(@PathVariable("classDetailId") Integer classDetailId){
+        return lectureService.selectLearningData(classDetailId);
+    }
+
+    //학습 진행도 전체 불러오기
+    @Operation(summary = "학습 진행도 전체 불러오기", description = "학습 진행도 전체 불러오기",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("selectAllLearningData/{classId}")
+    public List<LearningDataDTO> selectAllLearningData(@PathVariable("classId") Integer classId){
+        return lectureService.selectAllLearningData(classId);
+    }
 
     @Operation(summary = "강의 시청 기록", description = "강의 시청 기록.",
             responses = {
