@@ -371,31 +371,53 @@ public class CommunityService {
         }
         return listForMain;
     }
+//    public List<CommunityResponseDTO> selectQuestionForMypage(Integer userId) {
+//        List<CommunityResponseDTO> list = communityMapper.selectQuestionForMypage(userId);
+//        List<CommunityResponseDTO> listForMypage = new ArrayList<>();
+//        for (CommunityResponseDTO response : list) {
+//            CommunityResponseDTO result = CommunityResponseDTO.builder()
+//                    .userId(response.getUserId())
+//                    .nickname(response.getNickname())
+//                    .communityId(response.getCommunityId())
+//                    .communityType(response.getCommunityType())
+//                    .title(response.getTitle())
+//                    .text(response.getText())
+//                    .regDate(response.getRegDate())
+//                    .editDate(response.getEditDate())
+//                    .favoriteCount(response.getFavoriteCount())
+//                    .commentCount(response.getCommentCount())
+//                    .imageIds(response.getImageIds())
+//                    .likeUsers(response.getLikeUsers())
+//                    .build();
+//            listForMypage.add(result);
+//        }
+//        return listForMypage;
+//    }
+//
+//    public List<CommunityResponseDTO> selectStduyForMypage(Integer userId) {
+//        List<CommunityResponseDTO> list = communityMapper.selectStudyForMypage(userId);
+//        List<CommunityResponseDTO> listForMypage = new ArrayList<>();
+//        for (CommunityResponseDTO response : list) {
+//            CommunityResponseDTO result = CommunityResponseDTO.builder()
+//                    .userId(response.getUserId())
+//                    .nickname(response.getNickname())
+//                    .communityId(response.getCommunityId())
+//                    .communityType(response.getCommunityType())
+//                    .title(response.getTitle())
+//                    .text(response.getText())
+//                    .regDate(response.getRegDate())
+//                    .editDate(response.getEditDate())
+//                    .favoriteCount(response.getFavoriteCount())
+//                    .commentCount(response.getCommentCount())
+//                    .imageIds(response.getImageIds())
+//                    .likeUsers(response.getLikeUsers())
+//                    .build();
+//            listForMypage.add(result);
+//        }
+//        return listForMypage;
+//    }
 
-    public List<CommunityResponseDTO> selectQuestionForMypage(Integer userId) {
-        List<CommunityResponseDTO> list = communityMapper.selectQuestionForMypage(userId);
-        List<CommunityResponseDTO> listForMypage = new ArrayList<>();
-        for (CommunityResponseDTO response : list) {
-            CommunityResponseDTO result = CommunityResponseDTO.builder()
-                    .userId(response.getUserId())
-                    .nickname(response.getNickname())
-                    .communityId(response.getCommunityId())
-                    .communityType(response.getCommunityType())
-                    .title(response.getTitle())
-                    .text(response.getText())
-                    .regDate(response.getRegDate())
-                    .editDate(response.getEditDate())
-                    .favoriteCount(response.getFavoriteCount())
-                    .commentCount(response.getCommentCount())
-                    .imageIds(response.getImageIds())
-                    .likeUsers(response.getLikeUsers())
-                    .build();
-            listForMypage.add(result);
-        }
-        return listForMypage;
-    }
-
-    public List<CommunityResponseDTO> selectStduyForMypage(Integer userId) {
+    public List<CommunityResponseDTO> selectMyCommunityByUserId(Integer userId) {
         List<CommunityResponseDTO> list = communityMapper.selectStudyForMypage(userId);
         List<CommunityResponseDTO> listForMypage = new ArrayList<>();
         for (CommunityResponseDTO response : list) {
@@ -414,6 +436,7 @@ public class CommunityService {
                     .likeUsers(response.getLikeUsers())
                     .build();
             listForMypage.add(result);
+            return communityMapper.selectCommunityForMyPage(userId);
         }
         return listForMypage;
     }
