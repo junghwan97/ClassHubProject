@@ -44,7 +44,7 @@ public class LectureService {
 
     public int uploadMaterial(Integer id, List<MultipartFile> files) {
 
-		String uploadFolder = "/home/ubuntu/contents/videos";
+		String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy";
     	
     	File uploadPath = new File(uploadFolder, id.toString());
     	
@@ -93,20 +93,28 @@ public class LectureService {
 
 		Integer length = 0;
 		ClassDetailResponseDTO dto = obm.readValue(sectionsJson, ClassDetailResponseDTO.class);
+		System.out.println(dto.toString());
 
 		for(SectionDTO sections : dto.getSections()){
 			for(LectureClassDetailDTO video : sections.getVideos()){
 				length = length + video.getVideoLength();
 			}
-			request.setClass_name(dto.getTitle());
-			request.setTotal_video_length(length);
+			request.setClassName(dto.getTitle());
+			request.setTotalVideoLength(length);
 		}
-
-		int upload = lectureMapper.uploadClass(request);
-
+		System.out.println(request.toString());
+		log.info("111111");
+		int upload = 0;
+		try {
+			upload = lectureMapper.uploadClass(request);
+		} catch (Exception e) {
+			log.info("gggg" + e.getMessage());
+			throw new RuntimeException(e);
+		}
+		log.info("ddddd");
     	//폴더 생성 및 업로드 Date정보로 머릿글 생성
 
-    	String uploadFolder = "/home/ubuntu/contents/videos";
+    	String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy";
 
 		// /home/ubuntu/contents/videos
 		//"C:\\Users\\USER\\Desktop\\dummy"
@@ -116,7 +124,7 @@ public class LectureService {
 
     	Date date = new Date();
 
-    	String str = String.valueOf(request.getClass_id());
+    	String str = String.valueOf(request.getClassId());
 
     	String random = save.format(date);
 
@@ -125,18 +133,18 @@ public class LectureService {
     	if(uploadPath.exists() == false) {
     		uploadPath.mkdir();
     	}
-    	
+    	log.info("1번");
     	//파일 정보 DB업로드
 		for(SectionDTO sections : dto.getSections()){
     		for(LectureClassDetailDTO video : sections.getVideos()) {
 
-				video.setClassId(request.getClass_id());
-				video.setSectionTitle(sections.getSectiontitle());
+				video.setClassId(request.getClassId());
+				video.setSectionTitle(sections.getSectionTitle());
 				video.setVideo(random + "_" + video.getVideo());
 				lectureMapper.addClassVideo(video);
 			}
     	}
-    	
+    	log.info("2번");
     	//파일 업로드
     	for(MultipartFile file : videos) {
     		String temp = random + "_" + file.getOriginalFilename();
@@ -148,7 +156,7 @@ public class LectureService {
     			log.error(e.getMessage());
     		}
     	}
-
+		log.info("3번");
     	return upload;
     }
 
@@ -254,14 +262,16 @@ public class LectureService {
     }
 
 
-	public List<LectureClassDetailDTO> selectClassDetail(Integer classId) {
+	public List<List<LectureClassDetailDTO>> selectClassDetail(Integer classId) {
 		List<LectureClassDetailDTO> list = lectureMapper.selectClassDetail(classId);
-		List<LectureClassDetailDTO> response = new ArrayList<>();
+		Map<String, List<LectureClassDetailDTO>> group = new LinkedHashMap<>();
 
 		for(LectureClassDetailDTO dto : list){
 			dto.setVideo("https://devproject.store/home/ubunt/contents/videos/" + classId + "/" + dto.getVideo());
-			response.add(dto);
+
+			group.computeIfAbsent(dto.getSectionTitle(), k -> new ArrayList<>()).add(dto);
 		}
+		List<List<LectureClassDetailDTO>> response = new ArrayList<>(group.values());
 		return response;
 	}
 

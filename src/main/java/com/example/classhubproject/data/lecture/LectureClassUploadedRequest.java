@@ -5,15 +5,15 @@ import java.sql.Date;
 
 @Data
 public class LectureClassUploadedRequest {
-    Integer class_id;
-    Integer instructors_id;
-    Integer category_id;
-    String class_name;
+    Integer classId;
+    Integer instructorsId;
+    Integer categoryId;
+    String className;
     String description;
     String summary;
     Integer price;
     String thumnail;
-    Integer total_video_length;
+    Integer totalVideoLength;
     Date regdate;
-    Date edit_date;
+    Date editDate;
 }

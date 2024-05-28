@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class SectionDTO {
 
-	private String sectiontitle;
+	private String sectionTitle;
 	private List<LectureClassDetailDTO> videos;
 	
 }

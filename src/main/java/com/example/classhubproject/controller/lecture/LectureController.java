@@ -205,7 +205,7 @@ public class LectureController {
             }
     )
     @GetMapping("selectClassDetail/{classId}")
-    public List<LectureClassDetailDTO> selectClassDetail(@PathVariable("classId") Integer classId){
+    public List<List<LectureClassDetailDTO>> selectClassDetail(@PathVariable("classId") Integer classId){
         return lectureService.selectClassDetail(classId);
     }
 
