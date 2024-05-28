@@ -7,7 +7,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,11 +24,13 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class LectureService {
     private final LectureMapper lectureMapper;
+	private final GroupedOpenApi lecture;
 
-    @Autowired
-    public LectureService(LectureMapper lectureMapper){
+	@Autowired
+    public LectureService(LectureMapper lectureMapper, @Qualifier("lecture") GroupedOpenApi lecture){
         this.lectureMapper = lectureMapper;
-    }
+		this.lecture = lecture;
+	}
 
     public int addInstructor(LectureInstructorAddedRequest request) {
 
@@ -279,8 +283,46 @@ public class LectureService {
 		lectureMapper.learningPoint(request);
 	}
 
-//	public LearningDataDTO selectLearningData(Integer classDetailId) {
-//		int userId = getUserId();
-//		return lectureMapper.selectLearningData(classDetailId, userId);
-//	}
+	public Map<String, Object> selectById(Integer classId) {
+		Map<String, Object> response = new LinkedHashMap<>();
+
+		// classInfo 정보 추가
+		ClassResponseDTO classInfo = lectureMapper.selectById(classId);
+		response.put("classInfo", classInfo);
+
+		// classDetail 정보 추가
+		List<List<LectureClassDetailDTO>> classDetail = selectClassDetail(classId);
+		response.put("classDetail", classDetail);
+
+		// learningData 정보 추가
+		List<LearningDataDTO> learningData = selectAllLearningData(classId);
+		response.put("learningData", learningData);
+
+		// 총 진행률, 학습시간 계산 후 추가
+		double percent = 0;
+		int learningTime = 0;
+		int count = 0;
+		for(LearningDataDTO dto : learningData){
+			percent = dto.getProgressRate() + percent;
+			learningTime = dto.getVideoEndTime() + learningTime;
+			count++;
+		}
+		double percentage = percent / count;
+
+		response.put("learningTime", learningTime);
+		response.put("percentage", Math.round(percentage));
+
+		return response;
+	}
+
+	public LearningDataDTO selectLearningData(Integer classDetailId) {
+		//원래 세션이나 다른걸로 받아와야함
+		int userId = getUserId();
+		return lectureMapper.selectLearningData(classDetailId, userId);
+	}
+
+	public List<LearningDataDTO> selectAllLearningData(Integer classId) {
+		int userId = getUserId();
+		return lectureMapper.selectAllLearningData(classId, userId);
+	}
 }

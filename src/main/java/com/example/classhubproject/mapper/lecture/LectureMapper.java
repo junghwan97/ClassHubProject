@@ -44,5 +44,9 @@ public interface LectureMapper {
 
     void learningPoint(LearningDataDTO request);
 
-    //LearningDataDTO selectLearningData(Integer classDetailId, int userId);
+    ClassResponseDTO selectById(Integer classId);
+
+    LearningDataDTO selectLearningData(Integer classDetailId, int userId);
+
+    List<LearningDataDTO> selectAllLearningData(Integer classId, int userId);
 }
