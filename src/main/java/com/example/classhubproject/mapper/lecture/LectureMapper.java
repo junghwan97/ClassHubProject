@@ -39,4 +39,10 @@ public interface LectureMapper {
     int favoriteLecture(Integer classId, int userId);
 
     int clearFavoriteLecture(Integer classId, int userId);
+
+    List<LectureClassDetailDTO> selectClassDetail(Integer classId);
+
+    void learningPoint(LearningDataDTO request);
+
+    //LearningDataDTO selectLearningData(Integer classDetailId, int userId);
 }

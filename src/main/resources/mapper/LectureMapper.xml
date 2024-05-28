@@ -9,8 +9,8 @@
 
     <insert id="editInstructor" parameterType="com.example.classhubproject.data.lecture.LectureInstructorEditedRequest">
         UPDATE Instructors
-        SET user_id=#{user_id}, name=#{name}, field=#{field}, `text`=#{text}, user_type=#{user_type}, request_status=#{request_status}
-        WHERE instructors_id=#{instructors_id};
+        SET user_id=#{userId}, name=#{name}, field=#{field}, `text`=#{text}, user_type=#{userType}, request_status=#{requestStatus}
+        WHERE instructors_id=#{instructorsId};
     </insert>
 
     <insert id="uploadMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialUploadedRequest">
@@ -22,11 +22,11 @@
     	SELECT * FROM Resource WHERE class_id = #{classId}
     </select>
 
-    <insert id="editMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialEditedRequest">
+    <update id="editMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialEditedRequest">
         UPDATE Resource
         SET class_detail_id=#{class_detail_id}, resource=#{resource}
         WHERE resource_id=#{resource_id};
-    </insert>
+    </update>
 
    <insert id="uploadClass" parameterType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest" useGeneratedKeys="true" keyProperty="class_id">
 		INSERT INTO Class
@@ -49,8 +49,8 @@
 
     <!-- 영상 등록 -->
     <insert id="addClassVideo" parameterType="com.example.classhubproject.data.lecture.LectureClassDetailDTO">
-    	INSERT INTO Class_Detail (class_id, title, video, video_length, regdate)
-    	VALUES(#{class_id}, #{title}, #{video}, #{video_length}, NOW());
+    	INSERT INTO Class_Detail (class_id, title, section_title, video, video_length, regdate)
+    	VALUES(#{class_id}, #{title}, #{sectionTitle}, #{video}, #{video_length}, NOW());
     </insert>
 
     <!-- 강의 전체 조회 -->
@@ -97,5 +97,14 @@
     <delete id="clearFavoriteLecture">
         DELETE FROM Favorite_Class WHERE user_id = #{userId} AND class_id = #{classId};
     </delete>
+
+    <!-- 강의상세정보 목록 -->
+    <select id="selectClassDetail" resultType="com.example.classhubproject.data.lecture.LectureClassDetailDTO">
+        SELECT * FROM Class_Detail WHERE class_id = #{clssId};
+    </select>
+
+    <update id="learningPoint" parameterType="com.example.classhubproject.data.lecture.LearningDataDTO">
+        UPDATE Learning_Data SET video_end_time = #{videoEndTime} WHERE user_id = #{userId} AND class_detail_id = #{classDeTailId};
+    </update>
 
 </mapper>

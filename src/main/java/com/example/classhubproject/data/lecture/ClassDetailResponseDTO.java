@@ -5,9 +5,8 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class SectionDTO {
+public class ClassDetailResponseDTO {
 
-	private String sectiontitle;
-	private List<LectureClassDetailDTO> videos;
-	
+    private String title;
+    private List<SectionDTO> sections;
 }
