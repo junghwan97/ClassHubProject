@@ -9,6 +9,8 @@
         <setting name="callSettersOnNulls" value="true"/>
         <!-- 쿼리에 보내는 파라미터가 null인 경우, 오류가 발생하는 것 방지 -->
         <setting name="jdbcTypeForNull" value="NULL"/>
+<!--        &lt;!&ndash; MyBatis 로그 레벨 설정 &ndash;&gt;-->
+<!--        <setting name="logImpl" value="STDOUT_LOGGING"/>-->
     </settings>
 
     <typeAliases>

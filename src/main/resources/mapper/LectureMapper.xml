@@ -4,7 +4,7 @@
 
     <insert id="addInstructor" parameterType="com.example.classhubproject.data.lecture.LectureInstructorAddedRequest">
         INSERT INTO Instructors(user_id, name, field, `text`, user_type, request_status, regdate)
-        VALUES (#{user_id}, #{name}, #{field},  #{text},  #{user_type},  #{request_status}, NOW());
+        VALUES (#{userId}, #{name}, #{field},  #{text},  #{userType},  #{requestStatus}, NOW());
     </insert>
 
     <insert id="editInstructor" parameterType="com.example.classhubproject.data.lecture.LectureInstructorEditedRequest">
@@ -28,10 +28,10 @@
         WHERE resource_id=#{resource_id};
     </update>
 
-   <insert id="uploadClass" parameterType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest" useGeneratedKeys="true" keyProperty="class_id">
+   <insert id="uploadClass" parameterType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest" useGeneratedKeys="true" keyProperty="classId">
 		INSERT INTO Class
 		(instructors_id, category_id, class_name, description, summary, price, thumnail, total_video_length, regdate)
-		VALUES(#{instructors_id}, #{category_id}, #{class_name}, #{description}, #{summary}, #{price}, #{thumnail}, #{total_video_length}, NOW());
+		VALUES(#{instructorsId}, #{categoryId}, #{className}, #{description}, #{summary}, #{price}, #{thumnail}, #{totalVideoLength}, NOW());
    </insert>
 
 <!--    <insert id="editClass" parameterType="com.example.classhubproject.data.lecture.LectureClassEditedRequest">-->
@@ -50,7 +50,7 @@
     <!-- 영상 등록 -->
     <insert id="addClassVideo" parameterType="com.example.classhubproject.data.lecture.LectureClassDetailDTO">
     	INSERT INTO Class_Detail (class_id, title, section_title, video, video_length, regdate)
-    	VALUES(#{class_id}, #{title}, #{sectionTitle}, #{video}, #{video_length}, NOW());
+    	VALUES(#{classId}, #{title}, #{sectionTitle}, #{video}, #{videoLength}, NOW());
     </insert>
 
     <!-- 강의 전체 조회 -->

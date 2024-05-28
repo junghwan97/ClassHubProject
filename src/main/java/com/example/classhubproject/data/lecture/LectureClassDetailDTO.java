@@ -14,5 +14,5 @@ public class LectureClassDetailDTO {
 	private String video;
 	private Integer videoLength;
 	private Date regdate;
-	private Date edit_date;
+	private Date editDate;
 }
