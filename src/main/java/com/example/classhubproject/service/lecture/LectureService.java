@@ -44,7 +44,7 @@ public class LectureService {
 
     public int uploadMaterial(Integer id, List<MultipartFile> files) {
 
-    	String uploadFolder = "/home/ubuntu/lecture";
+		String uploadFolder = "/home/ubuntu/contents/videos";
     	
     	File uploadPath = new File(uploadFolder, id.toString());
     	
@@ -90,47 +90,51 @@ public class LectureService {
     public int uploadClass(LectureClassUploadedRequest request, String sectionsJson, List<MultipartFile> videos) throws JsonMappingException, JsonProcessingException {
     	
     	ObjectMapper obm = new ObjectMapper();
-    	SectionDTO sections = obm.readValue(sectionsJson, SectionDTO.class);
-    	Integer length = 0;
-    	
-    	//전체 길이 등록
-    	for(LectureClassDetailDTO video : sections.getVideos()) {   		
-    		length = length + video.getVideo_length();
-    	}
-    	request.setClass_name(sections.getTitle());
-    	request.setTotal_video_length(length);
-    	    	
-    	int upload = lectureMapper.uploadClass(request);
-    	
-    	//폴더 생성 및 업로드 Date정보로 머릿글 생성 
-    	
-    	String uploadFolder = "/home/ubuntu/lecture";
 
-		// /home/ubuntu/lecture
+		Integer length = 0;
+		ClassDetailResponseDTO dto = obm.readValue(sectionsJson, ClassDetailResponseDTO.class);
+
+		for(SectionDTO sections : dto.getSections()){
+			for(LectureClassDetailDTO video : sections.getVideos()){
+				length = length + video.getVideoLength();
+			}
+			request.setClass_name(dto.getTitle());
+			request.setTotal_video_length(length);
+		}
+
+		int upload = lectureMapper.uploadClass(request);
+
+    	//폴더 생성 및 업로드 Date정보로 머릿글 생성
+
+    	String uploadFolder = "/home/ubuntu/contents/videos";
+
+		// /home/ubuntu/contents/videos
 		//"C:\\Users\\USER\\Desktop\\dummy"
-    	
+
     	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     	SimpleDateFormat save = new SimpleDateFormat("yyyyMMddHHmmss");
-    	
+
     	Date date = new Date();
-    	
-    	String str = sdf.format(date);
-    	
+
+    	String str = String.valueOf(request.getClass_id());
+
     	String random = save.format(date);
-    	
+
     	File uploadPath = new File(uploadFolder, str);
-  
+
     	if(uploadPath.exists() == false) {
     		uploadPath.mkdir();
     	}
     	
     	//파일 정보 DB업로드
-    	for(LectureClassDetailDTO video : sections.getVideos()) {
-    		    		
-    		video.setClass_id(request.getClass_id());
-    		
-    		video.setVideo(random + "_" + video.getVideo());
-    		lectureMapper.addClassVideo(video);	
+		for(SectionDTO sections : dto.getSections()){
+    		for(LectureClassDetailDTO video : sections.getVideos()) {
+
+				video.setClassId(request.getClass_id());
+				video.setSectionTitle(sections.getSectiontitle());
+				video.setVideo(random + "_" + video.getVideo());
+				lectureMapper.addClassVideo(video);
+			}
     	}
     	
     	//파일 업로드
@@ -146,8 +150,6 @@ public class LectureService {
     	}
 
     	return upload;
-    	
-    	//파일따로, 정보만 따로 -->json배열안에 파일을 넣을수없음
     }
 
     public LectureClassEditedResponse editClass(LectureClassEditedRequest request) {
@@ -252,5 +254,23 @@ public class LectureService {
     }
 
 
+	public List<LectureClassDetailDTO> selectClassDetail(Integer classId) {
+		List<LectureClassDetailDTO> list = lectureMapper.selectClassDetail(classId);
+		List<LectureClassDetailDTO> response = new ArrayList<>();
 
+		for(LectureClassDetailDTO dto : list){
+			dto.setVideo("https://devproject.store/home/ubunt/contents/videos/" + classId + "/" + dto.getVideo());
+			response.add(dto);
+		}
+		return response;
+	}
+
+	public void learningPoint(LearningDataDTO request) {
+		lectureMapper.learningPoint(request);
+	}
+
+//	public LearningDataDTO selectLearningData(Integer classDetailId) {
+//		int userId = getUserId();
+//		return lectureMapper.selectLearningData(classDetailId, userId);
+//	}
 }

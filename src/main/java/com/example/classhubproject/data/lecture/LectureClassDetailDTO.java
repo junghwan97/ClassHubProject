@@ -1,18 +1,18 @@
 package com.example.classhubproject.data.lecture;
 
-import java.sql.Date;
-
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.Data;
+
+import java.sql.Date;
 
 @Data
 public class LectureClassDetailDTO {
 
-	private Integer class_id;
+	private Integer classDetailId;
+	private Integer classId;
+	private String sectionTitle;
 	private String title;
 	private String video;
-	private Integer video_length;
+	private Integer videoLength;
 	private Date regdate;
 	private Date edit_date;
 }
