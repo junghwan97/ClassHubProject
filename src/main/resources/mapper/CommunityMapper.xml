@@ -293,7 +293,7 @@
             resultMap="communityResultMap">
         SELECT c.community_id,
                c.user_id,
-               (SELECT nickname FROM User WHERE user_id = c.user_id) AS writer,
+               (SELECT nickname FROM User WHERE user_id = c.user_id)                             AS writer,
                c.community_type,
                c.title,
                c.text,
@@ -428,6 +428,50 @@
                 AND text LIKE CONCAT('%', #{search}, '%')
             </if>
         </if>
+    </select>
+
+    <select id="selectCommunityForMainpage" resultType="communityResponse">
+        SELECT c.community_id,
+               c.user_id,
+               (SELECT nickname FROM User WHERE user_id = c.user_id)                             AS nickname,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        FROM Community c
+        ORDER BY community_id DESC LIMIT 10;
+    </select>
+
+    <select id="selectQuestionForMypage" resultType="communityResponse">
+        SELECT c.community_id,
+               c.user_id,
+               (SELECT nickname FROM User WHERE user_id = c.user_id)                             AS nickname,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        FROM Community c
+        WHERE c.user_id = #{userId}
+          AND c.community_type = 1;
+    </select>
+
+    <select id="selectStudyForMypage" resultType="communityResponse">
+        SELECT c.community_id,
+               c.user_id,
+               (SELECT nickname FROM User WHERE user_id = c.user_id)                             AS nickname,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        FROM Community c
+        WHERE c.user_id = #{userId}
+          AND (c.community_type = 2 OR c.community_type = 3);
     </select>
 
 </mapper>

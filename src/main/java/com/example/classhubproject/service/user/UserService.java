@@ -120,9 +120,8 @@ public class UserService {
         return userMapper.selectUserBySnsId(snsId);
     }
 
-    public Integer updateUserInfo(UserResponseDTO user) {
-        int cnt = userMapper.updateUserInfo(user);
-        return cnt;
+    public void updateUserInfo(UserResponseDTO user) {
+        userMapper.updateUserInfo(user);
     }
 
     public void updateUserImage(Integer snsId, MultipartFile file) {
@@ -132,7 +131,7 @@ public class UserService {
                 // ubuntu에 이미지 저장
                 String originalFilename = file.getOriginalFilename();
                 String newFileName = generateUniqueFileName(originalFilename);
-                String folder = "/home/ubuntu/images";
+                String folder = "/home/ubuntu/contents/images";
                 file.transferTo(new File(folder + "/" + newFileName));
 
                 //db에 관련 정보 저장

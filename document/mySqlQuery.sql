@@ -11,6 +11,7 @@ CREATE TABLE `User`
     `profile_picture` VARCHAR(100) DEFAULT NULL COMMENT '허용 프로필 이미지',
     `platform_type`   VARCHAR(20)  DEFAULT NULL COMMENT 'sns 타입',
     `introduce`       VARCHAR(300) DEFAULT NULL COMMENT '자기 소개글',
+    `role`            CHAR(1) DEFAULT 1 COMMENT '권한',
     `regdate`         DATE         DEFAULT CURRENT_TIMESTAMP COMMENT '가입일',
     `exit_date`       DATE         DEFAULT NULL COMMENT '회원탈퇴 일자(여부)',
     PRIMARY KEY (`user_id`)
