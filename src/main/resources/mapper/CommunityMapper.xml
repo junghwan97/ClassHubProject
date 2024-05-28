@@ -474,4 +474,18 @@
           AND (c.community_type = 2 OR c.community_type = 3);
     </select>
 
+    <select id="selectCommunityForMyPage" resultType="communityResponse">
+        SELECT c.community_id,
+               c.user_id,
+               (SELECT nickname FROM User WHERE user_id = c.user_id)                             AS nickname,
+               c.community_type,
+               c.title,
+               c.text,
+               c.regdate,
+               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = c.community_id) AS favorite_count,
+               (SELECT COUNT(*) FROM Comment WHERE community_id = c.community_id)                AS comment_count
+        FROM Community c
+        WHERE c.user_id = #{userId}
+    </select>
+
 </mapper>

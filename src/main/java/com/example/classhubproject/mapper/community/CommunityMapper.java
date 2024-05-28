@@ -79,4 +79,6 @@ public interface CommunityMapper {
     List<CommunityResponseDTO> selectQuestionForMypage(Integer userId);
 
     List<CommunityResponseDTO> selectStudyForMypage(Integer userId);
+
+    List<CommunityResponseDTO> selectCommunityForMyPage(Integer userId);
 }
