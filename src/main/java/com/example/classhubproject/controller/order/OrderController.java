@@ -27,7 +27,7 @@ public class OrderController {
             description = "강의 ID를 배열로 받아 상품을 주문합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "주문 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderRequestDTO.class))),
-                    @ApiResponse(responseCode = "500", description = "주문 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderRequestDTO.class)))
+                    @ApiResponse(responseCode = "409", description = "주문 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderRequestDTO.class)))
             }
     )
     @PostMapping("/add")

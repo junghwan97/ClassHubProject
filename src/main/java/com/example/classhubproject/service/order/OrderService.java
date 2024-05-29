@@ -63,22 +63,6 @@ public class OrderService {
         return orderMapper.getOrderDetailList(ordersId);
     }
 
-    // 주문별 주문명 생성
-    private String createOrderName(int ordersId) {
-        int orderDetailCount = orderMapper.getOrderDetailCountByOrdersId(ordersId);
-        String className = orderMapper.getClassNameByOrdersId(ordersId);
-
-        String orderName;
-
-        if (orderDetailCount == 1) {
-            orderName = className;
-        } else {
-            orderName = className + " 외 " + (orderDetailCount - 1) + "건";
-        }
-
-        return orderName;
-    }
-
     // 주문하기
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
     public boolean addOrder(List<Integer> classIds) {
@@ -131,6 +115,22 @@ public class OrderService {
             throw new ConflictException("이미 보유한 강의가 포함되어 있습니다.");
         }
 
+    }
+
+    // 주문별 주문명 생성
+    private String createOrderName(int ordersId) {
+        int orderDetailCount = orderMapper.getOrderDetailCountByOrdersId(ordersId);
+        String className = orderMapper.getClassNameByOrdersId(ordersId);
+
+        String orderName;
+
+        if (orderDetailCount == 1) {
+            orderName = className;
+        } else {
+            orderName = className + " 외 " + (orderDetailCount - 1) + "건";
+        }
+
+        return orderName;
     }
 
     // 총 주문 금액 계산
