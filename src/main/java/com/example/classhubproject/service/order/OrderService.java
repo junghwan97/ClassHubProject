@@ -204,10 +204,11 @@ public class OrderService {
         return OrderResponseDTO.builder()
                 .ordersId(order.getOrdersId())
                 .userId(order.getUserId())
+                .orderName(orderName)
                 .totalPrice(order.getTotalPrice())
                 .finalOrderStatus(order.getFinalOrderStatus())
                 .regdate(order.getRegdate())
-                .orderName(orderName)
                 .build();
     }
+
 }

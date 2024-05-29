@@ -41,24 +41,37 @@
         <result property="ordersId" column="orders_id"/>
         <result property="classId" column="class_id"/>
 
-        <association property="classResponseDTO" javaType="classResponse">
-            <result property="instructorsId" column="instructors_id"/>
-            <result property="className" column="class_name"/>
-            <result property="description" column="description"/>
-            <result property="summary" column="summary"/>
-            <result property="price" column="price"/>
-            <result property="video" column="video"/>
-            <result property="totalVideoLength" column="total_video_length"/>
-            <result property="regdate" column="regdate"/>
-            <result property="editDate" column="edit_date"/>
+        <association property="classResponseDTO" resultMap="ClassResponseResultMap"/>
+    </resultMap>
+
+    <resultMap id="ClassResponseResultMap" type="classResponse">
+        <id property="classId" column="class_id"/>
+        <result property="instructorsId" column="instructors_id"/>
+        <result property="className" column="class_name"/>
+        <result property="description" column="description"/>
+        <result property="summary" column="summary"/>
+        <result property="price" column="price"/>
+        <result property="thumnail" column="thumnail"/>
+        <result property="totalVideoLength" column="total_video_length"/>
+        <result property="regdate" column="regdate"/>
+        <result property="editDate" column="edit_date"/>
+
+        <association property="categoryResponseDTO" javaType="categoryResponse">
+            <result property="categoryId" column="category_id"/>
+            <result property="categoryName" column="category_name"/>
+        </association>
+
+        <association property="instructorsResponseDTO" javaType="instructorResponse">
+            <result property="name" column="name"/>
         </association>
     </resultMap>
 
     <!-- 특정 주문의 상세 목록 조회 -->
     <select id="getOrderDetailList" resultMap="OrderDetailWithClassResultMap">
-        SELECT od.*, c.class_name, c.price
+        SELECT od.*, c.*, i.*
         FROM Order_Detail od
                  JOIN Class c ON od.class_id = c.class_id
+                 JOIN Instructors AS i ON c.instructors_id = i.instructors_id
         WHERE orders_id = #{ordersId}
     </select>
 

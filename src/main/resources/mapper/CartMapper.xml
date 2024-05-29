@@ -9,24 +9,39 @@
         <result property="regdate" column="regdate"/>
         <result property="orderStatus" column="order_status"/>
 
-        <association property="classResponseDTO" javaType="classResponse">
-            <result property="instructorsId" column="instructors_id"/>
-            <result property="className" column="class_name"/>
-            <result property="description" column="description"/>
-            <result property="summary" column="summary"/>
-            <result property="price" column="price"/>
-            <result property="video" column="video"/>
-            <result property="totalVideoLength" column="total_video_length"/>
-            <result property="regdate" column="regdate"/>
-            <result property="editDate" column="edit_date"/>
+        <association property="classResponseDTO" resultMap="ClassResponseResultMap"/>
+    </resultMap>
+
+    <resultMap id="ClassResponseResultMap" type="classResponse">
+        <id property="classId" column="class_id"/>
+        <result property="instructorsId" column="instructors_id"/>
+        <result property="className" column="class_name"/>
+        <result property="description" column="description"/>
+        <result property="summary" column="summary"/>
+        <result property="price" column="price"/>
+        <result property="thumnail" column="thumnail"/>
+        <result property="totalVideoLength" column="total_video_length"/>
+        <result property="regdate" column="regdate"/>
+        <result property="editDate" column="edit_date"/>
+
+        <association property="categoryResponseDTO" javaType="categoryResponse">
+            <result property="categoryId" column="category_id"/>
+            <result property="categoryName" column="category_name"/>
+        </association>
+
+        <association property="instructorsResponseDTO" javaType="instructorResponse">
+            <result property="name" column="name"/>
         </association>
     </resultMap>
 
+
     <!-- 특정 회원의 장바구니 상품 조회 -->
     <select id="getCartList" resultMap="CartWithClassResultMap">
-        SELECT c.*, cl.class_id, cl.class_name, cl.price
+        SELECT c.*, cl.*, ct.*, i.name
         FROM Cart AS c
                  JOIN Class AS cl ON c.class_id = cl.class_id
+                 JOIN Category AS ct ON cl.category_id = ct.category_id
+                 JOIN Instructors AS i ON cl.instructors_id = i.instructors_id
         WHERE c.user_id = #{userId}
           AND c.order_status = 2
         ORDER BY c.regdate DESC
@@ -84,7 +99,8 @@
     <update id="updateOrderStatus" parameterType="cartRequest">
         UPDATE Cart
         SET order_status = 1
-        WHERE cart_id = #{cartId} AND order_status = 2
+        WHERE cart_id = #{cartId}
+          AND order_status = 2
     </update>
 
 </mapper>
