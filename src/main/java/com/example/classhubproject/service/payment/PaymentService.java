@@ -1,6 +1,7 @@
 package com.example.classhubproject.service.payment;
 
 import com.example.classhubproject.data.payment.*;
+import com.example.classhubproject.exception.ConflictException;
 import com.example.classhubproject.mapper.cart.CartMapper;
 import com.example.classhubproject.mapper.enrollmentinfo.EnrollmentInfoMapper;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
@@ -61,46 +62,20 @@ public class PaymentService {
         // 포트원 결제 정보 가져오기
         IamportResponse<Payment> paymentResponse = iamportService.paymentByImpUid(impUid);
 
-        // 결제된 금액
-        BigDecimal paymentAmount = paymentResponse.getResponse().getAmount();
-
-        int userId = getUserId();
-
-        // 최근 주문 ID 가져오기
-        int ordersId = orderMapper.getOrdersIdByUserId(userId);
-
-        // 주문 총 금액 가져오기 (BigDecimal로 형변환)
-        BigDecimal totalOrderAmount = new BigDecimal(orderMapper.getTotalPriceByOrdersId(ordersId));
-
-        // 결제 금액이 맞지 않으면 실패 !
-        if (paymentAmount.compareTo(totalOrderAmount) != 0) {
-            throw new RuntimeException("결제 금액 비일치");
-        }
-
         // 결제된 금액과 주문 총 금액 비교
-        Payment payment = paymentResponse.getResponse();
-        PaymentRequestDTO paymentInfo = PaymentRequestDTO.builder()
-                .ordersId(ordersId)
-                .impUid(payment.getImpUid())
-                .merchantUid(payment.getMerchantUid())
-                .pgProvider(payment.getPgProvider())
-                .payMethod(payment.getPayMethod())
-                .paymentAmount(payment.getAmount())
-                .paymentStatus(payment.getStatus())
-                .paidAt(payment.getPaidAt())
-                .build();
+        checkPayment(paymentResponse);
 
-        log.info("확인용: paymentInfo: {}", paymentInfo);
-        paymentMapper.insertPayment(paymentInfo);
+        // 결제 정보 생성
+        insertPaymentInfo(paymentResponse);
 
         // 장바구니 주문 상태 업데이트
-        updateCartStatus(ordersId);
+        updateCartStatus();
 
         // 최종 주문 상태 업데이트
-        orderMapper.completedOrder(ordersId);
+        completedOrder();
 
         // 수강 신청 정보 생성
-        insertEnrollmentInfo(ordersId);
+        insertEnrollmentInfo();
 
     }
 
@@ -110,21 +85,17 @@ public class PaymentService {
         String impUid = request.getImpUid();
         CancelData cancelData = new CancelData(impUid, true);
 
+        // 포트원 결제 취소 정보 가져오기
         Payment payment = iamportService.cancelPaymentByImpUid(cancelData);
 
-        PaymentRequestDTO paymentInfo = PaymentRequestDTO.builder()
-                .impUid(payment.getImpUid())
-                .paymentStatus(payment.getStatus())
-                .cancelledAt(payment.getCancelledAt())
-                .build();
-
         // 결제 취소 정보 업데이트
-        paymentMapper.cancelPayment(paymentInfo);
+        updatePayment(payment);
+
+        // 취소 주문 ID 조회
+        int ordersId = getOrdersId(impUid);
 
         // 최종 주문 상태 업데이트
-        int ordersId = paymentMapper.getOrdersIdByImpUid(paymentInfo.getOrdersId());
-        log.info("주문번호 확인 : ordersId: {}", ordersId);
-        orderMapper.cancelOrder(ordersId);
+        updateOrderCanceled(ordersId);
     }
 
 
@@ -140,38 +111,109 @@ public class PaymentService {
         return 3;
     }
 
+    // 특정 회원의 가장 최근에 생성된 주문ID 조회
+    private int getOrdersIdByUserId(int userId) {
+        return orderMapper.getOrdersIdByUserId(userId);
+    }
+
+    // 결제 정보 확인
+    private void checkPayment(IamportResponse<Payment> paymentResponse) {
+        // 포트원 사전 결제 금액과 DB 결제 금액 비교
+        BigDecimal paymentAmount = paymentResponse.getResponse().getAmount();
+
+        // 최근 주문 ID 가져오기
+        int ordersId = getOrdersIdByUserId(getUserId());
+        BigDecimal totalOrderAmount = new BigDecimal(orderMapper.getTotalPriceByOrdersId(ordersId));
+
+        if (paymentAmount.compareTo(totalOrderAmount) != 0) {
+            throw new ConflictException("결제 금액 비일치");
+        }
+
+    }
+
+    // 결제 정보 생성
+    private void insertPaymentInfo(IamportResponse<Payment> paymentResponse) {
+        int ordersId = getOrdersIdByUserId(getUserId());
+
+        Payment payment = paymentResponse.getResponse();
+        PaymentRequestDTO paymentInfo = PaymentRequestDTO.builder()
+                .ordersId(ordersId)
+                .impUid(payment.getImpUid())
+                .merchantUid(payment.getMerchantUid())
+                .pgProvider(payment.getPgProvider())
+                .payMethod(payment.getPayMethod())
+                .paymentAmount(payment.getAmount())
+                .paymentStatus(payment.getStatus())
+                .paidAt(payment.getPaidAt())
+                .build();
+
+        paymentMapper.insertPayment(paymentInfo);
+    }
+
 
     // 결제 완료 시 장바구니 주문상태 변경
-    private void updateCartStatus(int ordersId) {
+    private void updateCartStatus() {
         int userId = getUserId();
+        int ordersId = getOrdersIdByUserId(userId);
 
-        // 주문 상세의 class_id 조회
-        List<Integer> classIds = orderMapper.getClassIdByOrdersId(ordersId);
+        // 주문 상세의 강의 조회
+        List<Integer> classIds = getClassIds(ordersId);
 
-        for (int classId : classIds) {
-            boolean cartExists = cartMapper.checkCartByClassId(classId, userId);
+        classIds.stream()
+                .filter(classId -> cartMapper.checkCartByClassId(classId, userId))
+                .map(classId -> cartMapper.getCartIdByClassId(classId, userId))
+                .forEach(cartMapper::updateOrderStatus);
+    }
 
-            if (cartExists) { // 장바구니에 담겨있을 때만 작동
-                int cartId = cartMapper.getCartIdByClassId(classId, userId);
-                cartMapper.updateOrderStatus(cartId);
-            }
-        }
+    // 최종 주문 상태 업데이트
+    private void completedOrder() {
+        int ordersId = getOrdersIdByUserId(getUserId());
+
+        orderMapper.completedOrder(ordersId);
     }
 
     // 수강 신청 정보 생성
-    private void insertEnrollmentInfo(int ordersId) {
+    private void insertEnrollmentInfo() {
         int userId = getUserId();
+        int ordersId = getOrdersIdByUserId(userId);
 
-        // 주문 상세의 class_id 조회
-        List<Integer> classIds = orderMapper.getClassIdByOrdersId(ordersId);
+        // 주문 상세의 강의 조회
+        List<Integer> classIds = getClassIds(ordersId);
 
-        for (int classId : classIds) {
-            // 강의 별 수강료 조회
-            int enrollmentFee = lectureMapper.getClassPrice(classId);
+        classIds.stream()
+                .forEach(classId ->
+                        enrollmentInfoMapper.insertEnrollmentInfo(userId, classId, getEnrollmentFee(classId)));
+    }
 
-            enrollmentInfoMapper.insertEnrollmentInfo(userId, classId, enrollmentFee);
-        }
+    // 주문 상세의 강의 조회
+    private List<Integer> getClassIds(int ordersId) {
+        return orderMapper.getClassIdByOrdersId(ordersId);
     }
 
 
+    // 결제 취소 후 결제 정보 변경
+    private void updatePayment(Payment payment) {
+        PaymentRequestDTO paymentInfo = PaymentRequestDTO.builder()
+                .impUid(payment.getImpUid())
+                .paymentStatus(payment.getStatus())
+                .cancelledAt(payment.getCancelledAt())
+                .build();
+
+        paymentMapper.cancelPayment(paymentInfo);
+    }
+
+    // 결제 취소 후 최종 주문 상태 변경
+    private void updateOrderCanceled(int ordersId) {
+        orderMapper.cancelOrder(ordersId);
+    }
+
+    // 결제 정보에서 주문 ID 조회
+    private int getOrdersId(String impUid) {
+        return paymentMapper.getOrdersIdByImpUid(impUid);
+    }
+
+    // 수강료 조회
+    private int getEnrollmentFee(int classId) {
+        return lectureMapper.getClassPrice(classId);
+    }
 }
