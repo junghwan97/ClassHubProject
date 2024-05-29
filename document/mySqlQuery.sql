@@ -120,13 +120,13 @@ CREATE TABLE Enrollment_Info
 
 
 -- 강의 학습 데이터 테이블 생성
-CREATE TABLE Learning_data
+CREATE TABLE Learning_Data
 (
     learning_id       INT AUTO_INCREMENT PRIMARY KEY COMMENT '강의 학습 데이터 ID',
     user_id           INT COMMENT '회원 ID',
     class_detail_id   INT COMMENT '강의 상세정보 ID',
     video_end_time    TIME COMMENT '영상 종료 시간(=마지막 강의 시청 지점)',
-    progress_rate     INT     DEFAULT 0 COMMENT '한 강의에 대한 진도율',
+    progress_rate     INT DEFAULT 0 COMMENT '한 강의에 대한 진도율',
     completion_status CHAR(1) DEFAULT '2' COMMENT '학습 완료 여부(Y/N)',
     start_date        DATETIME COMMENT '학습 시작 일자',
     end_date          DATETIME COMMENT '학습 종료 일자',

@@ -1,6 +1,7 @@
 package com.example.classhubproject.service.cart;
 
 import com.example.classhubproject.data.cart.*;
+import com.example.classhubproject.exception.ConflictException;
 import com.example.classhubproject.mapper.cart.CartMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class CartService {
     public void addCart(CartRequestDTO cartRequestDTO) {
         // 장바구니 동일 상품 체크
         if (checkDuplicate(cartRequestDTO)) {
-            throw new RuntimeException("이미 장바구니에 동일한 상품이 있습니다.");
+            throw new ConflictException("이미 장바구니에 동일한 상품이 있습니다.");
         } else {
             cartMapper.addCart(cartRequestDTO);
         }
