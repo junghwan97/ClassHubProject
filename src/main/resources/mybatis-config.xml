@@ -31,6 +31,8 @@
         <typeAlias type="com.example.classhubproject.data.payment.PaymentRequestDTO" alias="paymentRequest"/>
         <typeAlias type="com.example.classhubproject.data.payment.PaymentResponseDTO" alias="paymentResponse"/>
         <typeAlias type="com.example.classhubproject.data.enrollmentInfo.EnrollmentInfoRequestDTO" alias="enrollmentInfoRequest"/>
+        <typeAlias type="com.example.classhubproject.data.category.CategoryResponseDTO" alias="categoryResponse"/>
+        <typeAlias type="com.example.classhubproject.data.instructor.InstructorsResponseDTO" alias="instructorResponse"/>
     </typeAliases>
 
 </configuration>

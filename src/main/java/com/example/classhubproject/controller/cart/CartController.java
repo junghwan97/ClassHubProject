@@ -46,6 +46,7 @@ public class CartController {
     public List<CartResponseDTO> cartList(@PathVariable("userId") Integer userId) {
         return cartService.getCartList(userId);
     }
+
     // 장바구니 개별 삭제
     @Operation(
             summary = "장바구니 개별 삭제",
