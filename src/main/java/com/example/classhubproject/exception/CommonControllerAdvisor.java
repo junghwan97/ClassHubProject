@@ -1,6 +1,5 @@
-package com.example.classhubproject.data.common;
+package com.example.classhubproject.exception;
 
-import com.example.classhubproject.exception.ConflictException;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.*;
 import org.springframework.http.server.*;

@@ -8,7 +8,7 @@ public interface PaymentMapper {
 
     void insertPayment(PaymentRequestDTO paymentRequestDTO);
 
-    int getOrdersIdByImpUid(int impUid);
+    int getOrdersIdByImpUid(String impUid);
 
     void cancelPayment(PaymentRequestDTO paymentInfo);
 
