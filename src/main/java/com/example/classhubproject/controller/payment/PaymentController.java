@@ -44,7 +44,7 @@ public class PaymentController implements InitializingBean {
             description = "아임포트 식별자로 사후 검증 후 결제 정보를 저장합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "결제 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PaymentResponseDTO.class))),
-                    @ApiResponse(responseCode = "500", description = "결제 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PaymentResponseDTO.class)))
+                    @ApiResponse(responseCode = "409", description = "결제 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PaymentResponseDTO.class)))
             }
     )
     @PostMapping("/add")
