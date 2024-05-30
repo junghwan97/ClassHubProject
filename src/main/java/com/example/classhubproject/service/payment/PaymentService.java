@@ -66,7 +66,7 @@ public class PaymentService {
         IamportResponse<Payment> paymentResponse = iamportService.paymentByImpUid(impUid);
 
         // 결제된 금액과 주문 총 금액 비교
-        checkPayment(paymentResponse);
+        validatePayment(paymentResponse);
 
         // 결제 정보 생성
         insertPaymentInfo(paymentResponse);
@@ -112,19 +112,19 @@ public class PaymentService {
     }
 
     // 결제 정보 확인
-    private void checkPayment(IamportResponse<Payment> paymentResponse) {
+    private void validatePayment(IamportResponse<Payment> paymentResponse) {
         // 포트원 사전 결제 금액과 DB 결제 금액 비교
-        BigDecimal paymentAmount = paymentResponse.getResponse().getAmount();
+        BigDecimal receivedPaymentAmount = paymentResponse.getResponse().getAmount();
 
         // 최근 주문 ID 가져오기
         int ordersId = getOrdersIdByUserId(getUserId());
-        BigDecimal totalOrderAmount = new BigDecimal(orderMapper.getTotalPriceByOrdersId(ordersId));
+        BigDecimal expectedOrderTotal = new BigDecimal(orderMapper.getTotalPriceByOrdersId(ordersId));
 
-        if (paymentAmount.compareTo(totalOrderAmount) != 0) {
+        if (receivedPaymentAmount.compareTo(expectedOrderTotal) != 0) {
             throw new ClassHubException(ClassHubErrorCode.HAS_PAYMENT_AMOUNT_MISMATCH);
         }
-
     }
+
 
     // 결제 정보 생성
     private void insertPaymentInfo(IamportResponse<Payment> paymentResponse) {
@@ -211,4 +211,5 @@ public class PaymentService {
     private int getEnrollmentFee(int classId) {
         return lectureMapper.getClassPrice(classId);
     }
+
 }
