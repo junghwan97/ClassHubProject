@@ -19,5 +19,5 @@ public interface UserMapper {
 
     void updateUserInfo(UserResponseDTO user);
 
-    void updateUserImage(@Param("snsId") Integer snsId, @Param("file") String file);
+    void updateUserImage(@Param("snsId") String snsId, @Param("file") String file);
 }
