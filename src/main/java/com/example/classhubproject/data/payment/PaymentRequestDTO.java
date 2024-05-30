@@ -19,6 +19,9 @@ public class PaymentRequestDTO {
     @Schema(description = "주문 ID")
     private int ordersId;
 
+    @Schema(description = "회원 ID")
+    private int userId;
+
     @Schema(description = "포트원 결제 고유번호")
     private String impUid;
 

@@ -48,8 +48,8 @@ public class PaymentController implements InitializingBean {
             }
     )
     @PostMapping("/add")
-    public void addPayment(@RequestBody @Schema(description = "아임포트 식별자", example = "{imp_uid: string}") String impUid) {
-        paymentService.addPayment(impUid);
+    public void addPayment(@RequestBody @Schema(description = "회원 ID 및 아임포트 식별자", example = "{\"userId\": 1, \"impUid\": string}") PaymentRequestDTO paymentRequestDTO) {
+        paymentService.addPayment(paymentRequestDTO.getUserId(), paymentRequestDTO.getImpUid());
     }
 
 
@@ -78,7 +78,7 @@ public class PaymentController implements InitializingBean {
             }
     )
     @PostMapping("/prepare")
-    public void preparePayment(@RequestBody PaymentPrepareRequestDTO request) {
+    public void preparePayment(@RequestBody @Schema(description = "가맹점 주문번호와 결제금액", example = "{\"merchantUid\": 1, \"amount\": 10000}") PaymentPrepareRequestDTO request) {
         iamportService.postPrepare(request.getMerchantUid(), request.getAmount());
     }
 
