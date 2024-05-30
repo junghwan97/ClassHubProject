@@ -17,7 +17,7 @@
     </select>
 
     <!-- 주문 상세 건수 조회-->
-    <select id="getOrderDetailCountByOrdersId" resultType="int">
+    <select id="getOrderedClassQuantityByOrderId" resultType="int">
         SELECT COUNT(*)
         FROM Order_Detail
         WHERE orders_id = #{ordersId}
@@ -85,7 +85,7 @@
     </select>
 
     <!-- 이미 보유한 강의인지 확인 -->
-    <select id="checkHoldClass" resultType="boolean">
+    <select id="hasAlreadyOwnedClasses" resultType="boolean">
         SELECT EXISTS(SELECT 1
                       FROM Orders o
                                JOIN Order_Detail od ON o.orders_id = od.orders_id

@@ -1,12 +1,12 @@
 package com.example.classhubproject.service.order;
 
-import com.example.classhubproject.exception.ConflictException;
 import com.example.classhubproject.data.order.*;
+import com.example.classhubproject.exception.ClassHubErrorCode;
+import com.example.classhubproject.exception.ClassHubException;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.example.classhubproject.mapper.order.OrderMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +70,7 @@ public class OrderService {
         int userId = getUserId();
 
         // 이미 보유한 강의인지 확인
-        checkHoldClass(classIds);
+        verifyAlreadyOwnedClasses(classIds);
 
         // 총 주문 금액 계산
         int totalPrice = calculateTotalPrice(classIds);
@@ -88,15 +88,8 @@ public class OrderService {
     }
 
     // 세션에서 userId 조회
-    /*
     private int getUserId() {
         return (int) request.getSession().getAttribute("userId");
-    }
-     */
-
-    // 테스트용 하드코딩 (임시)
-    private int getUserId() {
-        return 3;
     }
 
     // 특정 회원의 가장 최근에 생성된 주문ID 조회
@@ -105,29 +98,29 @@ public class OrderService {
     }
 
     // 이미 보유한 강의인지 확인
-    private void checkHoldClass(List<Integer> classIds) {
+    private void verifyAlreadyOwnedClasses(List<Integer> classIds) {
         int userId = getUserId();
 
-        boolean alreadyHold = classIds.stream()
-                .anyMatch(classId -> orderMapper.checkHoldClass(classId, userId));
+        boolean isAlreadyOwned = classIds.stream()
+                .anyMatch(classId -> orderMapper.hasAlreadyOwnedClasses(classId, userId));
 
-        if (alreadyHold) {
-            throw new ConflictException("이미 보유한 강의가 포함되어 있습니다.");
+        if (isAlreadyOwned) {
+            throw new ClassHubException(ClassHubErrorCode.ALREADY_ORDERED_ERROR);
         }
 
     }
 
     // 주문별 주문명 생성
     private String createOrderName(int ordersId) {
-        int orderDetailCount = orderMapper.getOrderDetailCountByOrdersId(ordersId);
+        int orderedClassQuantity = orderMapper.getOrderedClassQuantityByOrderId(ordersId);
         String className = orderMapper.getClassNameByOrdersId(ordersId);
 
         String orderName;
 
-        if (orderDetailCount == 1) {
+        if (orderedClassQuantity == 1) {
             orderName = className;
         } else {
-            orderName = className + " 외 " + (orderDetailCount - 1) + "건";
+            orderName = className + " 외 " + (orderedClassQuantity - 1) + "건";
         }
 
         return orderName;

@@ -1,12 +1,14 @@
 package com.example.classhubproject.service.payment;
 
 import com.example.classhubproject.data.payment.*;
-import com.example.classhubproject.exception.ConflictException;
+import com.example.classhubproject.exception.ClassHubErrorCode;
+import com.example.classhubproject.exception.ClassHubException;
 import com.example.classhubproject.mapper.cart.CartMapper;
 import com.example.classhubproject.mapper.enrollmentinfo.EnrollmentInfoMapper;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.example.classhubproject.mapper.order.OrderMapper;
 import com.example.classhubproject.mapper.payment.PaymentMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import com.siot.IamportRestClient.request.*;
 import com.siot.IamportRestClient.response.*;
@@ -28,6 +30,7 @@ public class PaymentService {
     private final CartMapper cartMapper;
     private final EnrollmentInfoMapper enrollmentInfoMapper;
     private final LectureMapper lectureMapper;
+    private final HttpServletRequest request;
 
     // PaymentPrepareResponseDTO 객체로 변환
     public PaymentPrepareResponseDTO convertToResponseDTO(IamportResponse<Prepare> paymentInfo) {
@@ -98,17 +101,9 @@ public class PaymentService {
         updateOrderCanceled(ordersId);
     }
 
-
-    /*
-        // 세션에서 user_id 가져오기
-        private int getUserId() {
-            return (int) request.getSession().getAttribute("userId");
-        }
-     */
-
-    //임시 하드코딩
+    // 세션에서 user_id 가져오기
     private int getUserId() {
-        return 3;
+        return (int) request.getSession().getAttribute("userId");
     }
 
     // 특정 회원의 가장 최근에 생성된 주문ID 조회
@@ -126,7 +121,7 @@ public class PaymentService {
         BigDecimal totalOrderAmount = new BigDecimal(orderMapper.getTotalPriceByOrdersId(ordersId));
 
         if (paymentAmount.compareTo(totalOrderAmount) != 0) {
-            throw new ConflictException("결제 금액 비일치");
+            throw new ClassHubException(ClassHubErrorCode.HAS_PAYMENT_AMOUNT_MISMATCH);
         }
 
     }
@@ -160,7 +155,7 @@ public class PaymentService {
         List<Integer> classIds = getClassIds(ordersId);
 
         classIds.stream()
-                .filter(classId -> cartMapper.checkCartByClassId(classId, userId))
+                .filter(classId -> cartMapper.hasClassInCart(classId, userId))
                 .map(classId -> cartMapper.getCartIdByClassId(classId, userId))
                 .forEach(cartMapper::updateOrderStatus);
     }

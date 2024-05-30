@@ -48,7 +48,7 @@
     </select>
 
     <!-- 중복 상품 체크 -->
-    <select id="checkDuplicate" resultType="boolean">
+    <select id="isAlreadyCart" resultType="boolean">
         SELECT EXISTS (SELECT 1
                        FROM Cart AS c
                        WHERE c.user_id = #{userId}
@@ -87,7 +87,7 @@
     </select>
 
     <!-- 주문하려는 상품이 장바구니에 있는지 체크 -->
-    <select id="checkCartByClassId" resultType="boolean">
+    <select id="hasClassInCart" resultType="boolean">
         SELECT EXISTS(SELECT 1
                       FROM Cart
                       WHERE class_id = #{classId}

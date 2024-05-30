@@ -10,13 +10,13 @@ public interface OrderMapper {
 
     List<OrderResponseDTO> getOrderList(int userId);
 
-    int getOrderDetailCountByOrdersId(int ordersId);
+    int getOrderedClassQuantityByOrderId(int ordersId);
 
     String getClassNameByOrdersId(int ordersId);
 
     List<OrderDetailResponseDTO> getOrderDetailList(int ordersId);
 
-    boolean checkHoldClass(int classId, int userId);
+    boolean hasAlreadyOwnedClasses(int classId, int userId);
 
     void insertOrder(OrderRequestDTO orderRequestDTO);
 

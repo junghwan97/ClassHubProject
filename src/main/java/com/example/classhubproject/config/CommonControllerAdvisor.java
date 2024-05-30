@@ -1,5 +1,6 @@
-package com.example.classhubproject.exception;
+package com.example.classhubproject.config;
 
+import com.example.classhubproject.exception.ClassHubException;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.*;
 import org.springframework.http.server.*;
@@ -14,9 +15,9 @@ public class CommonControllerAdvisor implements ResponseBodyAdvice {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 
-    @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<Object> handleConflictException(ConflictException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    @ExceptionHandler(ClassHubException.class)
+    public ResponseEntity<Object> handleClassHubException(ClassHubException e) {
+        return ResponseEntity.status(e.getHttpStatus()).body(e.getMessage());
     }
 
     @Override
