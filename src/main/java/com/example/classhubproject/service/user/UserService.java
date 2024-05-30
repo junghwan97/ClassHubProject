@@ -124,7 +124,7 @@ public class UserService {
         userMapper.updateUserInfo(user);
     }
 
-    public void updateUserImage(Integer snsId, MultipartFile file) {
+    public void updateUserImage(String snsId, MultipartFile file) {
         try {
             if (file != null) {
                 // 파일 저장
