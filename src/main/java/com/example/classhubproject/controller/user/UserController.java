@@ -98,16 +98,16 @@ public class UserController {
         userService.updateUserInfo(user);
     }
 
-//    @Operation(summary = "회원 이미지 프로플 수정",
-//            description = "회원 이미지를 수정 할 수 있습니다.",
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "회원 이미지 수정 성공", content = @Content(schema = @Schema(implementation = UserResponseDTO.class))),
-//                    @ApiResponse(responseCode = "400", description = "회원 이미지 수정 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-//            }
-//    )
-//    @PostMapping(value = "updateUserImage/{snsId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public void updateUserImage(@PathVariable("snsId") String snsId,
-//                                @RequestPart("multipartFile") MultipartFile file) {
-//        userService.updateUserImage(snsId, file);
-//    }
+    @Operation(summary = "회원 이미지 프로필 수정",
+            description = "회원 이미지를 수정 할 수 있습니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "회원 이미지 수정 성공", content = @Content(schema = @Schema(implementation = UserResponseDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "회원 이미지 수정 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping(value = "updateUserImage/{snsId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void updateUserImage(@PathVariable("snsId") String snsId,
+                                @RequestPart("multipartFile") MultipartFile file) {
+        userService.updateUserImage(snsId, file);
+    }
 }
