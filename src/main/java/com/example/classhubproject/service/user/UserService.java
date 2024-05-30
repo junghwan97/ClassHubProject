@@ -3,6 +3,7 @@ package com.example.classhubproject.service.user;
 import com.example.classhubproject.data.user.UserResponseDTO;
 import com.example.classhubproject.mapper.user.UserMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
@@ -27,6 +28,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     public UserService(Environment env) {
@@ -55,6 +59,7 @@ public class UserService {
         Map<Integer, UserResponseDTO> user = new HashMap<>();
 
         if (check == 1) {
+            request.getSession().setAttribute("userId", userId);
             user.put(1, userResponseDTO);
             return user;
         } else {
