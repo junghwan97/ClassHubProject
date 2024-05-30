@@ -42,6 +42,9 @@ public class UserResponseDTO {
     @Schema(description = "회원 탈퇴일자", format = "date-time")
     private Date exitDate;
 
+    @Schema(description = "회원 권한", defaultValue = "1", allowableValues = {"1", "2"})
+    private String role;
+
     public UserResponseDTO(String snsId, String accessToken, String name, String nickname, String email, String profilePicture) {
 
         this.snsId = snsId;

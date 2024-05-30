@@ -73,4 +73,12 @@ public interface CommunityMapper {
     Integer updateImage(@Param("imageId") int imageId, @Param("fileName") String originalFilename);
 
     void removeImagePath(Integer removeImageId);
+
+    List<CommunityResponseDTO> selectCommunityForMainpage();
+
+    List<CommunityResponseDTO> selectQuestionForMypage(Integer userId);
+
+    List<CommunityResponseDTO> selectStudyForMypage(Integer userId);
+
+    List<CommunityResponseDTO> selectCommunityForMyPage(Integer userId);
 }

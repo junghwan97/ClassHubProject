@@ -219,18 +219,51 @@ public class CommunityController {
         communityService.deleteFiles(removeFileId);
     }
 
-//    @Operation(summary = "게시글 이미지 재등록",
-//            description = "게시글 이미지를 다시 등록할 수 있습니다.",
+    @Operation(summary = "메인 페이지 커뮤니티 조회",
+            description = "메인페이지에서 커뮤니티 글을 조회할 수 있습니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "메인페이지에 게시글 조회 성공", content = @Content(schema = @Schema(implementation = CommunityRequestDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "메인페이지에 게시글 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("mainpage")
+    public List<CommunityResponseDTO> mainpageCommunity() {
+        return communityService.selectCommunityForMainpage();
+    }
+
+//    @Operation(summary = "마이 페이지에서 내가 쓴 커뮤니티 질문 답변 게시글 조회",
+//            description = "마이 페이지에서 내가 쓴 커뮤니티 글을 조회할 수 있습니다.",
 //            responses = {
-//                    @ApiResponse(responseCode = "200", description = "게시글 이미지 재등록 성공", content = @Content(schema = @Schema(implementation = CommunityRequestDTO.class))),
-//                    @ApiResponse(responseCode = "400", description = "게시글 이미지 재등록 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+//                    @ApiResponse(responseCode = "200", description = "질문게시글 조회 성공", content = @Content(schema = @Schema(implementation = CommunityRequestDTO.class))),
+//                    @ApiResponse(responseCode = "400", description = "질문게시글 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 //            }
 //    )
-//    @PostMapping(value = "modify/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<ResponseData<Void>> modifyImage(@RequestParam("communityImageId") List<Integer> communityImageId,
-//                                                          @RequestPart("multipartFiles") List<MultipartFile> files) {
-//
-//        int cnt = communityService.modifyFiles(communityImageId, files);
-//        return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.POST_COMMUNITY_IMAGE_SUCCESS));
+//    @GetMapping("question/mypage")
+//    public List<CommunityResponseDTO> mypageQuestionCommunity(@RequestParam(value = "userId") Integer userId) {
+//        return communityService.selectQuestionForMypage(userId);
 //    }
+//
+//    @Operation(summary = "마이 페이지에서 내가 쓴 커뮤니티 스터디 게시글 조회",
+//            description = "마이 페이지에서 내가 쓴 커뮤니티 글을 조회할 수 있습니다.",
+//            responses = {
+//                    @ApiResponse(responseCode = "200", description = "게시글 조회 성공", content = @Content(schema = @Schema(implementation = CommunityRequestDTO.class))),
+//                    @ApiResponse(responseCode = "400", description = "게시글 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+//            }
+//    )
+//    @GetMapping("study/mypage")
+//    public List<CommunityResponseDTO> mypageStudyCommunity(@RequestParam(value = "userId") Integer userId) {
+//        return communityService.selectStduyForMypage(userId);
+//    }
+
+    @Operation(summary = "마이 페이지 커뮤니티글 조회",
+            description = "마이 페이지에서 내가 쓴 커뮤니티 글을 조회할 수 있습니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "게시글 조회 성공", content = @Content(schema = @Schema(implementation = CommunityRequestDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "게시글 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("mypage")
+    public List<CommunityResponseDTO> selectMypageCommunity(@RequestParam(value = "userId") Integer userId) {
+        return communityService.selectMyCommunityByUserId(userId);
+    }
 }

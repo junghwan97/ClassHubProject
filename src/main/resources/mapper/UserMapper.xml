@@ -8,8 +8,8 @@
     </insert>
 
     <insert id="join" parameterType="user">
-        INSERT INTO User(sns_id, access_token, name, nickname, email, profile_picture, platform_type)
-        VALUES (#{snsId}, #{accessToken}, #{name}, #{nickname}, #{email}, #{profilePicture}, "Google");
+        INSERT INTO User(sns_id, access_token, name, nickname, email, profile_picture, platform_type, role)
+        VALUES (#{snsId}, #{accessToken}, #{name}, #{nickname}, #{email}, #{profilePicture}, "Google", 1);
     </insert>
 
     <select id="selectUserIDBySnsId" resultType="Integer">
@@ -25,7 +25,18 @@
     </select>
 
     <select id="selectUserBySnsId" resultType="user">
-        SELECT *
+        SELECT
+            user_id,
+            sns_id,
+            access_token,
+            name,
+            nickname,
+            email,
+            profile_picture,
+            introduce,
+            regdate,
+            exit_date,
+            role
         FROM User
         WHERE sns_id = #{snsId}
     </select>
@@ -34,7 +45,8 @@
         UPDATE User
         SET    name = #{name},
                nickname = #{nickname},
-               email = #{email}
+               email = #{email},
+               introduce = #{introduce}
         WHERE sns_id = #{snsId}
     </update>
 

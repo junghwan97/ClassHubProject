@@ -11,6 +11,7 @@ CREATE TABLE `User`
     `profile_picture` VARCHAR(100) DEFAULT NULL COMMENT '허용 프로필 이미지',
     `platform_type`   VARCHAR(20)  DEFAULT NULL COMMENT 'sns 타입',
     `introduce`       VARCHAR(300) DEFAULT NULL COMMENT '자기 소개글',
+    `role`            CHAR(1) DEFAULT 1 COMMENT '권한',
     `regdate`         DATE         DEFAULT CURRENT_TIMESTAMP COMMENT '가입일',
     `exit_date`       DATE         DEFAULT NULL COMMENT '회원탈퇴 일자(여부)',
     PRIMARY KEY (`user_id`)
@@ -119,13 +120,13 @@ CREATE TABLE Enrollment_Info
 
 
 -- 강의 학습 데이터 테이블 생성
-CREATE TABLE Learning_data
+CREATE TABLE Learning_Data
 (
     learning_id       INT AUTO_INCREMENT PRIMARY KEY COMMENT '강의 학습 데이터 ID',
     user_id           INT COMMENT '회원 ID',
     class_detail_id   INT COMMENT '강의 상세정보 ID',
     video_end_time    TIME COMMENT '영상 종료 시간(=마지막 강의 시청 지점)',
-    progress_rate     INT     DEFAULT 0 COMMENT '한 강의에 대한 진도율',
+    progress_rate     INT DEFAULT 0 COMMENT '한 강의에 대한 진도율',
     completion_status CHAR(1) DEFAULT '2' COMMENT '학습 완료 여부(Y/N)',
     start_date        DATETIME COMMENT '학습 시작 일자',
     end_date          DATETIME COMMENT '학습 종료 일자',

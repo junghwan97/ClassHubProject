@@ -3,6 +3,7 @@ package com.example.classhubproject.service.user;
 import com.example.classhubproject.data.user.UserResponseDTO;
 import com.example.classhubproject.mapper.user.UserMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
@@ -27,6 +28,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     public UserService(Environment env) {
@@ -55,6 +59,7 @@ public class UserService {
         Map<Integer, UserResponseDTO> user = new HashMap<>();
 
         if (check == 1) {
+            request.getSession().setAttribute("userId", userId);
             user.put(1, userResponseDTO);
             return user;
         } else {
@@ -120,19 +125,18 @@ public class UserService {
         return userMapper.selectUserBySnsId(snsId);
     }
 
-    public Integer updateUserInfo(UserResponseDTO user) {
-        int cnt = userMapper.updateUserInfo(user);
-        return cnt;
+    public void updateUserInfo(UserResponseDTO user) {
+        userMapper.updateUserInfo(user);
     }
 
-    public void updateUserImage(Integer snsId, MultipartFile file) {
+    public void updateUserImage(String snsId, MultipartFile file) {
         try {
             if (file != null) {
                 // 파일 저장
                 // ubuntu에 이미지 저장
                 String originalFilename = file.getOriginalFilename();
                 String newFileName = generateUniqueFileName(originalFilename);
-                String folder = "/home/ubuntu/images";
+                String folder = "/home/ubuntu/contents/images";
                 file.transferTo(new File(folder + "/" + newFileName));
 
                 //db에 관련 정보 저장

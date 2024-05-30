@@ -1,13 +1,14 @@
 package com.example.classhubproject.service.payment;
 
-import com.example.classhubproject.data.lecture.LearningDataDTO;
 import com.example.classhubproject.data.payment.*;
+import com.example.classhubproject.exception.ClassHubErrorCode;
+import com.example.classhubproject.exception.ClassHubException;
 import com.example.classhubproject.mapper.cart.CartMapper;
 import com.example.classhubproject.mapper.enrollmentinfo.EnrollmentInfoMapper;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.example.classhubproject.mapper.order.OrderMapper;
 import com.example.classhubproject.mapper.payment.PaymentMapper;
-import com.example.classhubproject.service.lecture.LectureService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import com.siot.IamportRestClient.request.*;
 import com.siot.IamportRestClient.response.*;
@@ -29,7 +30,7 @@ public class PaymentService {
     private final CartMapper cartMapper;
     private final EnrollmentInfoMapper enrollmentInfoMapper;
     private final LectureMapper lectureMapper;
-    private final LectureService lectureService;
+    private final HttpServletRequest request;
 
     // PaymentPrepareResponseDTO 객체로 변환
     public PaymentPrepareResponseDTO convertToResponseDTO(IamportResponse<Prepare> paymentInfo) {
@@ -64,23 +65,71 @@ public class PaymentService {
         // 포트원 결제 정보 가져오기
         IamportResponse<Payment> paymentResponse = iamportService.paymentByImpUid(impUid);
 
-        // 결제된 금액
-        BigDecimal paymentAmount = paymentResponse.getResponse().getAmount();
+        // 결제된 금액과 주문 총 금액 비교
+        validatePayment(paymentResponse);
 
-        int userId = getUserId();
+        // 결제 정보 생성
+        insertPaymentInfo(paymentResponse);
+
+        // 장바구니 주문 상태 업데이트
+        updateCartStatus();
+
+        // 최종 주문 상태 업데이트
+        completedOrder();
+
+        // 수강 신청 정보 생성
+        insertEnrollmentInfo();
+
+    }
+
+
+    // 결제 취소 시 payment_status & cancelled_at 업데이트
+    public void cancelPayment(CancelDataRequestDTO request) {
+        String impUid = request.getImpUid();
+        CancelData cancelData = new CancelData(impUid, true);
+
+        // 포트원 결제 취소 정보 가져오기
+        Payment payment = iamportService.cancelPaymentByImpUid(cancelData);
+
+        // 결제 취소 정보 업데이트
+        updatePayment(payment);
+
+        // 취소 주문 ID 조회
+        int ordersId = getOrdersId(impUid);
+
+        // 최종 주문 상태 업데이트
+        updateOrderCanceled(ordersId);
+    }
+
+    // 세션에서 user_id 가져오기
+    private int getUserId() {
+        return (int) request.getSession().getAttribute("userId");
+    }
+
+    // 특정 회원의 가장 최근에 생성된 주문ID 조회
+    private int getOrdersIdByUserId(int userId) {
+        return orderMapper.getOrdersIdByUserId(userId);
+    }
+
+    // 결제 정보 확인
+    private void validatePayment(IamportResponse<Payment> paymentResponse) {
+        // 포트원 사전 결제 금액과 DB 결제 금액 비교
+        BigDecimal receivedPaymentAmount = paymentResponse.getResponse().getAmount();
 
         // 최근 주문 ID 가져오기
-        int ordersId = orderMapper.getOrdersIdByUserId(userId);
+        int ordersId = getOrdersIdByUserId(getUserId());
+        BigDecimal expectedOrderTotal = new BigDecimal(orderMapper.getTotalPriceByOrdersId(ordersId));
 
-        // 주문 총 금액 가져오기 (BigDecimal로 형변환)
-        BigDecimal totalOrderAmount = new BigDecimal(orderMapper.getTotalPriceByOrdersId(ordersId));
-
-        // 결제 금액이 맞지 않으면 실패 !
-        if (paymentAmount.compareTo(totalOrderAmount) != 0) {
-            throw new RuntimeException("결제 금액 비일치");
+        if (receivedPaymentAmount.compareTo(expectedOrderTotal) != 0) {
+            throw new ClassHubException(ClassHubErrorCode.HAS_PAYMENT_AMOUNT_MISMATCH);
         }
+    }
 
-        // 결제된 금액과 주문 총 금액 비교
+
+    // 결제 정보 생성
+    private void insertPaymentInfo(IamportResponse<Payment> paymentResponse) {
+        int ordersId = getOrdersIdByUserId(getUserId());
+
         Payment payment = paymentResponse.getResponse();
         PaymentRequestDTO paymentInfo = PaymentRequestDTO.builder()
                 .ordersId(ordersId)
@@ -93,95 +142,74 @@ public class PaymentService {
                 .paidAt(payment.getPaidAt())
                 .build();
 
-        log.info("확인용: paymentInfo: {}", paymentInfo);
         paymentMapper.insertPayment(paymentInfo);
-
-        // 장바구니 주문 상태 업데이트
-        updateCartStatus(ordersId);
-
-        // 최종 주문 상태 업데이트
-        orderMapper.completedOrder(ordersId);
-
-        // 수강 신청 정보 생성
-        insertEnrollmentInfo(ordersId);
-
     }
 
 
-    // 결제 취소 시 payment_status & cancelled_at 업데이트
-    public void cancelPayment(CancelDataRequestDTO request) {
-        String impUid = request.getImpUid();
-        CancelData cancelData = new CancelData(impUid, true);
+    // 결제 완료 시 장바구니 주문상태 변경
+    private void updateCartStatus() {
+        int userId = getUserId();
+        int ordersId = getOrdersIdByUserId(userId);
 
-        Payment payment = iamportService.cancelPaymentByImpUid(cancelData);
+        // 주문 상세의 강의 조회
+        List<Integer> classIds = getClassIds(ordersId);
 
+        classIds.stream()
+                .filter(classId -> cartMapper.hasClassInCart(classId, userId))
+                .map(classId -> cartMapper.getCartIdByClassId(classId, userId))
+                .forEach(cartMapper::updateOrderStatus);
+    }
+
+    // 최종 주문 상태 업데이트
+    private void completedOrder() {
+        int ordersId = getOrdersIdByUserId(getUserId());
+
+        orderMapper.completedOrder(ordersId);
+    }
+
+    // 수강 신청 정보 생성
+    private void insertEnrollmentInfo() {
+        int userId = getUserId();
+        int ordersId = getOrdersIdByUserId(userId);
+
+        // 주문 상세의 강의 조회
+        List<Integer> classIds = getClassIds(ordersId);
+
+        classIds.stream()
+                .forEach(classId ->
+                        enrollmentInfoMapper.insertEnrollmentInfo(userId, classId, getEnrollmentFee(classId)));
+    }
+
+    // 주문 상세의 강의 조회
+    private List<Integer> getClassIds(int ordersId) {
+        return orderMapper.getClassIdByOrdersId(ordersId);
+    }
+
+
+    // 결제 취소 후 결제 정보 변경
+    private void updatePayment(Payment payment) {
         PaymentRequestDTO paymentInfo = PaymentRequestDTO.builder()
                 .impUid(payment.getImpUid())
                 .paymentStatus(payment.getStatus())
                 .cancelledAt(payment.getCancelledAt())
                 .build();
 
-        // 결제 취소 정보 업데이트
         paymentMapper.cancelPayment(paymentInfo);
+    }
 
-        // 최종 주문 상태 업데이트
-        int ordersId = paymentMapper.getOrdersIdByImpUid(paymentInfo.getOrdersId());
-        log.info("주문번호 확인 : ordersId: {}", ordersId);
+    // 결제 취소 후 최종 주문 상태 변경
+    private void updateOrderCanceled(int ordersId) {
         orderMapper.cancelOrder(ordersId);
     }
 
-
-    /*
-        // 세션에서 user_id 가져오기
-        private int getUserId() {
-            return (int) request.getSession().getAttribute("userId");
-        }
-     */
-
-    //임시 하드코딩
-    private int getUserId() {
-        return 3;
+    // 결제 정보에서 주문 ID 조회
+    private int getOrdersId(String impUid) {
+        return paymentMapper.getOrdersIdByImpUid(impUid);
     }
 
-
-    // 결제 완료 시 장바구니 주문상태 변경
-    private void updateCartStatus(int ordersId) {
-        int userId = getUserId();
-
-        // 주문 상세의 class_id 조회
-        List<Integer> classIds = orderMapper.getClassIdByOrdersId(ordersId);
-
-        for (int classId : classIds) {
-            boolean cartExists = cartMapper.checkCartByClassId(classId, userId);
-
-            if (cartExists) { // 장바구니에 담겨있을 때만 작동
-                int cartId = cartMapper.getCartIdByClassId(classId, userId);
-                cartMapper.updateOrderStatus(cartId);
-            }
-        }
+    // 수강료 조회
+    private int getEnrollmentFee(int classId) {
+        return lectureMapper.getClassPrice(classId);
     }
-
-    // 수강 신청 정보 생성
-    private void insertEnrollmentInfo(int ordersId) {
-        int userId = getUserId();
-
-        // 주문 상세의 class_id 조회
-        List<Integer> classIds = orderMapper.getClassIdByOrdersId(ordersId);
-
-        for (int classId : classIds) {
-            // 강의 별 수강료 조회
-            int enrollmentFee = lectureMapper.getClassPrice(classId);
-
-            enrollmentInfoMapper.insertEnrollmentInfo(userId, classId, enrollmentFee);
-
-            //lokyyyi
-            List<Integer> classDetailIds = lectureMapper.getClassDetailIds(classId);
-            for (Integer classDetailId : classDetailIds) {
-                LearningDataDTO request = new LearningDataDTO(userId, classDetailId);
-                lectureService.learningPoint(request);
-            }
-        }
-    }
-
 
 }

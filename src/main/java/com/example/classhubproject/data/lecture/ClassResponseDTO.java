@@ -1,12 +1,14 @@
 package com.example.classhubproject.data.lecture;
 
+import com.example.classhubproject.data.category.CategoryResponseDTO;
+import com.example.classhubproject.data.instructor.InstructorsResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
 
 @Getter
 @NoArgsConstructor
-@Schema(description = "강의 DTO")
+@Schema(description = "강의 Response DTO")
 public class ClassResponseDTO {
 
     @Schema(description = "강의 고유 번호")
@@ -14,9 +16,6 @@ public class ClassResponseDTO {
 
     @Schema(description = "강사 ID")
     private int instructorsId;
-
-    @Schema(description = "강사 이름")
-    private String name;
 
     @Schema(description = "카테고리 ID")
     private int categoryId;
@@ -47,5 +46,11 @@ public class ClassResponseDTO {
 
     @Schema(description = "수정일자")
     private Date editDate;
+
+    @Schema(description = "카테고리 정보", implementation = CategoryResponseDTO.class)
+    private CategoryResponseDTO categoryResponseDTO;
+
+    @Schema(description = "강사 정보", implementation = CategoryResponseDTO.class)
+    private InstructorsResponseDTO instructorsResponseDTO;
 
 }
