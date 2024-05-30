@@ -7,6 +7,7 @@ import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.example.classhubproject.mapper.order.OrderMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +33,8 @@ public class OrderService {
 
     // 진행중인 주문의 강의 개별 삭제
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
-    public void deleteOrder(int classId) {
-        int userId = getUserId();
+    public void deleteOrder(int userId, int classId) {
+        //int userId = getUserId();
 
         // 주문에서 해당 강의 삭제
         deleteInProgressOrder(classId);
@@ -65,12 +66,12 @@ public class OrderService {
 
     // 주문하기
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
-    public boolean addOrder(List<Integer> classIds) {
+    public boolean addOrder(int userId, List<Integer> classIds) {
         // 세션에서 userId 조회
-        int userId = getUserId();
+        //int userId = getUserId();
 
         // 이미 보유한 강의인지 확인
-        verifyAlreadyOwnedClasses(classIds);
+        verifyAlreadyOwnedClasses(userId, classIds);
 
         // 총 주문 금액 계산
         int totalPrice = calculateTotalPrice(classIds);
@@ -79,18 +80,18 @@ public class OrderService {
         OrderRequestDTO orders = createOrder(userId, totalPrice);
 
         // 주문 추가
-        int ordersId = insertOrder(orders);
+        insertOrder(orders);
 
         // 주문 상세 추가
-        insertOrderDetails(classIds);
+        insertOrderDetails(userId, classIds);
 
         return true;
     }
 
     // 세션에서 userId 조회
-    private int getUserId() {
-        return (int) request.getSession().getAttribute("userId");
-    }
+//    private int getUserId() {
+//        return (int) request.getSession().getAttribute("userId");
+//    }
 
     // 특정 회원의 가장 최근에 생성된 주문ID 조회
     private int getOrdersIdByUserId(int userId) {
@@ -98,8 +99,8 @@ public class OrderService {
     }
 
     // 이미 보유한 강의인지 확인
-    private void verifyAlreadyOwnedClasses(List<Integer> classIds) {
-        int userId = getUserId();
+    private void verifyAlreadyOwnedClasses(int userId, List<Integer> classIds) {
+        //int userId = getUserId();
 
         boolean isAlreadyOwned = classIds.stream()
                 .anyMatch(classId -> orderMapper.hasAlreadyOwnedClasses(classId, userId));
@@ -149,9 +150,10 @@ public class OrderService {
     }
 
     // 주문 상세 추가
-    private void insertOrderDetails(List<Integer> classIds) {
+    private void insertOrderDetails(int userId, List<Integer> classIds) {
         // 세션에서 userId 조회
-        int userId = getUserId();
+        //int userId = getUserId();
+
         // 특정 회원의 가장 최근에 생성된 orders_id
         int ordersId = getOrdersIdByUserId(userId);
 
