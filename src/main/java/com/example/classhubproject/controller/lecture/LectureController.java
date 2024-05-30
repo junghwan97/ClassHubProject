@@ -256,14 +256,27 @@ public class LectureController {
         lectureService.learningPoint(request);
     }
 
-
+    // 수강 신청 정보 생성
+//    private void insertEnrollmentInfo(int ordersId) {
+//        int userId = getUserId();
 //
-//    @PostMapping("test")
-//    public String test(@RequestPart(name = "request")LectureClassUploadedRequest request,
-//			  @RequestPart(required = false, name = "videos") List<Object> videos) {
-//    	if(videos.isEmpty()) {
-//    		return "no";
-//    	}
-//    		return "yes";
-//    }
+//        // 주문 상세의 class_id 조회
+//        List<Integer> classIds = orderMapper.getClassIdByOrdersId(ordersId);
+//
+//        for (int classId : classIds) {
+//            // 강의 별 수강료 조회
+//            int enrollmentFee = lectureMapper.getClassPrice(classId);
+//
+//            enrollmentInfoMapper.insertEnrollmentInfo(userId, classId, enrollmentFee);
+//
+//            //lokyyyi
+//            List<Integer> classDetailIds = lectureMapper.getClassDetailIds(classId);
+//            for (Integer classDetailId : classDetailIds) {
+//                LearningDataDTO request = new LearningDataDTO(userId, classDetailId);
+//                lectureService.learningPoint(request);
+//            }
+//        }
+//  }
+
+
 }

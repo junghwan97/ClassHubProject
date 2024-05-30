@@ -1,11 +1,13 @@
 package com.example.classhubproject.service.payment;
 
+import com.example.classhubproject.data.lecture.LearningDataDTO;
 import com.example.classhubproject.data.payment.*;
 import com.example.classhubproject.mapper.cart.CartMapper;
 import com.example.classhubproject.mapper.enrollmentinfo.EnrollmentInfoMapper;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.example.classhubproject.mapper.order.OrderMapper;
 import com.example.classhubproject.mapper.payment.PaymentMapper;
+import com.example.classhubproject.service.lecture.LectureService;
 import lombok.RequiredArgsConstructor;
 import com.siot.IamportRestClient.request.*;
 import com.siot.IamportRestClient.response.*;
@@ -27,6 +29,7 @@ public class PaymentService {
     private final CartMapper cartMapper;
     private final EnrollmentInfoMapper enrollmentInfoMapper;
     private final LectureMapper lectureMapper;
+    private final LectureService lectureService;
 
     // PaymentPrepareResponseDTO 객체로 변환
     public PaymentPrepareResponseDTO convertToResponseDTO(IamportResponse<Prepare> paymentInfo) {
@@ -170,6 +173,13 @@ public class PaymentService {
             int enrollmentFee = lectureMapper.getClassPrice(classId);
 
             enrollmentInfoMapper.insertEnrollmentInfo(userId, classId, enrollmentFee);
+
+            //lokyyyi
+            List<Integer> classDetailIds = lectureMapper.getClassDetailIds(classId);
+            for (Integer classDetailId : classDetailIds) {
+                LearningDataDTO request = new LearningDataDTO(userId, classDetailId);
+                lectureService.learningPoint(request);
+            }
         }
     }
 

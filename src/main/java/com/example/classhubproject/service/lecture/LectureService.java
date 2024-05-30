@@ -78,6 +78,84 @@ public class LectureService {
 			return 0;
 		}
     }
+
+	/*
+
+    public int uploadAndSyncMaterials(Integer classId, List<MultipartFile> files) {
+        String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy";
+        File uploadPath = new File(uploadFolder, classId.toString());
+
+        if (!uploadPath.exists()) {
+            uploadPath.mkdir();
+        }
+
+        try {
+            // 데이터베이스에서 기존 파일 목록을 가져옴
+            List<LectureMaterialUploadedRequest> existingMaterials;
+            try {
+                existingMaterials = selectMaterial(classId);
+            } catch (NoDataFoundException e) {
+                // 데이터가 없을 때 빈 목록을 사용
+                existingMaterials = List.of();
+            }
+
+            Set<String> existingFileNames = existingMaterials.stream()
+                                                             .map(LectureMaterialUploadedRequest::getResource)
+                                                             .collect(Collectors.toSet());
+
+            // 새 파일 목록의 파일 이름을 Set으로 저장
+            Set<String> newFileNames = new HashSet<>();
+            for (MultipartFile file : files) {
+                newFileNames.add(file.getOriginalFilename());
+            }
+
+            // 로컬 파일을 순회하며, 새 파일 목록에 없는 파일을 삭제
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(uploadPath.toPath())) {
+                for (Path localFile : stream) {
+                    if (!newFileNames.contains(localFile.getFileName().toString())) {
+                        Files.delete(localFile);
+                        System.out.println("파일 삭제: " + localFile);
+                    }
+                }
+            }
+
+            // 새 파일을 업로드하거나 업데이트
+            for (MultipartFile f : files) {
+                String fileName = f.getOriginalFilename();
+                if (!existingFileNames.contains(fileName)) {
+                    // 데이터베이스에 새 파일 정보 삽입
+                    LectureMaterialUploadedRequest request = new LectureMaterialUploadedRequest();
+                    request.setClassId(classId);
+                    request.setResource(fileName);
+                    lectureMapper.uploadMaterial(request);
+                }
+
+                // 파일을 로컬에 저장
+                File saveFile = new File(uploadPath, fileName);
+                try {
+                    f.transferTo(saveFile);
+                    System.out.println("파일 업로드/업데이트: " + saveFile);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+            }
+            return 1;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public List<LectureMaterialUploadedRequest> selectMaterial(Integer classId) {
+        List<LectureMaterialUploadedRequest> res = lectureMapper.selectMaterial(classId);
+        if (res.isEmpty()) {
+            throw new NoDataFoundException("조회 데이터 없음");
+        }
+        return res;
+    }
+}
+
+	*/
     
 
     public LectureMaterialEditedResponse editMaterial(LectureMaterialEditedRequest request) {
@@ -280,7 +358,14 @@ public class LectureService {
 	}
 
 	public void learningPoint(LearningDataDTO request) {
-		lectureMapper.learningPoint(request);
+		int userId = getUserId();
+
+		if(request.getVideoEndTime() == null){							//러닝데이터 초기 등록
+			lectureMapper.insertLearningPoint(request);
+		}else{															//러닝데이터 종료시간 수정 및 진도율 계산
+			//넘겨줄때 총 시간 같이 넘겨줄수있는지
+			lectureMapper.updateLearningPoint(request);
+		}
 	}
 
 	public Map<String, Object> selectById(Integer classId) {
