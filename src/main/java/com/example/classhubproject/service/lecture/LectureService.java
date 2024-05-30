@@ -1,7 +1,8 @@
 package com.example.classhubproject.service.lecture;
 
 import com.example.classhubproject.data.lecture.*;
-import com.example.classhubproject.exception.NoDataFoundException;
+import com.example.classhubproject.exception.ClassHubErrorCode;
+import com.example.classhubproject.exception.ClassHubException;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -194,7 +195,7 @@ public class LectureService {
     	List<LectureMaterialUploadedRequest> res = lectureMapper.selectMaterial(classId);
 
     	if(res.isEmpty()) {
-    		throw new NoDataFoundException("조회 데이터 없음");
+    		throw new ClassHubException(ClassHubErrorCode.NO_DATA_FOUND);
     	}
 			return res;		
     }

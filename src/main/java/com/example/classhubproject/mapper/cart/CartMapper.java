@@ -10,7 +10,7 @@ public interface CartMapper {
 
     void addCart(CartRequestDTO cartRequestDTO);
 
-    boolean checkDuplicate(int userId, int classId);
+    boolean isAlreadyCart(int userId, int classId);
 
     List<CartResponseDTO> getCartList(int userId);
 
@@ -20,7 +20,7 @@ public interface CartMapper {
 
     void updateOrderStatus(int cartId);
 
-    boolean checkCartByClassId(int classId, int userId);
+    boolean hasClassInCart(int classId, int userId);
 
     int getCartIdByClassId(int classId, int userId);
 

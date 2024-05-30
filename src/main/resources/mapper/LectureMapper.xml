@@ -17,9 +17,9 @@
         INSERT INTO Resource(class_id, resource)
         VALUES (#{classId}, #{resource});
     </insert>
-    
+
     <select id="selectMaterial" resultType="com.example.classhubproject.data.lecture.LectureMaterialUploadedRequest">
-    	SELECT * FROM Resource WHERE class_id = #{classId}
+        SELECT * FROM Resource WHERE class_id = #{classId}
     </select>
 
     <update id="editMaterial" parameterType="com.example.classhubproject.data.lecture.LectureMaterialEditedRequest">
@@ -28,17 +28,17 @@
         WHERE resource_id=#{resource_id};
     </update>
 
-   <insert id="uploadClass" parameterType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest" useGeneratedKeys="true" keyProperty="classId">
-		INSERT INTO Class
-		(instructors_id, category_id, class_name, description, summary, price, thumnail, total_video_length, regdate)
-		VALUES(#{instructorsId}, #{categoryId}, #{className}, #{description}, #{summary}, #{price}, #{thumnail}, #{totalVideoLength}, NOW());
-   </insert>
+    <insert id="uploadClass" parameterType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest" useGeneratedKeys="true" keyProperty="classId">
+        INSERT INTO Class
+        (instructors_id, category_id, class_name, description, summary, price, thumnail, total_video_length, regdate)
+        VALUES(#{instructorsId}, #{categoryId}, #{className}, #{description}, #{summary}, #{price}, #{thumnail}, #{totalVideoLength}, NOW());
+    </insert>
 
-<!--    <insert id="editClass" parameterType="com.example.classhubproject.data.lecture.LectureClassEditedRequest">-->
-<!--        UPDATE Class-->
-<!--        SET instructors_id=#{instructors_id}, category_id=#{category_id}, class_name=#{class_name}, description=#{description}, summary=#{summary}, price=#{price}, video=#{video}, total_video_length=#{total_video_length}, edit_date=CURRENT_TIMESTAMP-->
-<!--        WHERE class_id=#{class_id};-->
-<!--    </insert>-->
+    <!--    <insert id="editClass" parameterType="com.example.classhubproject.data.lecture.LectureClassEditedRequest">-->
+    <!--        UPDATE Class-->
+    <!--        SET instructors_id=#{instructors_id}, category_id=#{category_id}, class_name=#{class_name}, description=#{description}, summary=#{summary}, price=#{price}, video=#{video}, total_video_length=#{total_video_length}, edit_date=CURRENT_TIMESTAMP-->
+    <!--        WHERE class_id=#{class_id};-->
+    <!--    </insert>-->
 
     <!-- class_id로 가격조회 -->
     <select id="getClassPrice" resultType="int">
@@ -49,44 +49,44 @@
 
     <!-- 영상 등록 -->
     <insert id="addClassVideo" parameterType="com.example.classhubproject.data.lecture.LectureClassDetailDTO">
-    	INSERT INTO Class_Detail (class_id, title, section_title, video, video_length, regdate)
-    	VALUES(#{classId}, #{title}, #{sectionTitle}, #{video}, #{videoLength}, NOW());
+        INSERT INTO Class_Detail (class_id, title, section_title, video, video_length, regdate)
+        VALUES(#{classId}, #{title}, #{sectionTitle}, #{video}, #{videoLength}, NOW());
     </insert>
 
     <!-- 강의 전체 조회 -->
     <select id="selectAll" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
         SELECT c.*, i.name, r.review_score FROM Class c JOIN Instructors i ON c.instructors_id = i.instructors_id
-        LEFT JOIN (SELECT class_id, ROUND(AVG(review_score), 1) AS review_score FROM Class_Review GROUP BY class_id) r ON r.class_id = c.class_id;
+                                                        LEFT JOIN (SELECT class_id, ROUND(AVG(review_score), 1) AS review_score FROM Class_Review GROUP BY class_id) r ON r.class_id = c.class_id;
     </select>
 
     <!-- 강의 키워드 조회 -->
     <select id="selectByKeyword" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
-    	SELECT c.*, COUNT(fc.favorite_class_id) favorite_count
+        SELECT c.*, COUNT(fc.favorite_class_id) favorite_count
 
-    	FROM Class c
+        FROM Class c
 
-    	LEFT JOIN Favorite_Class fc ON c.class_id = fc.class_id
-    	JOIN Instructors i ON c.instructors_id = i.instructors_id
+                 LEFT JOIN Favorite_Class fc ON c.class_id = fc.class_id
+                 JOIN Instructors i ON c.instructors_id = i.instructors_id
 
-		WHERE name LIKE CONCAT('%', #{keyword}, '%')
-        OR class_name LIKE CONCAT('%', #{keyword}, '%')
-        OR description LIKE CONCAT('%', #{keyword}, '%')
-        OR summary LIKE CONCAT('%', #{keyword}, '%')
+        WHERE name LIKE CONCAT('%', #{keyword}, '%')
+           OR class_name LIKE CONCAT('%', #{keyword}, '%')
+           OR description LIKE CONCAT('%', #{keyword}, '%')
+           OR summary LIKE CONCAT('%', #{keyword}, '%')
 
-		GROUP BY c.class_id
-		ORDER BY favorite_count DESC, c.regdate DESC;
+        GROUP BY c.class_id
+        ORDER BY favorite_count DESC, c.regdate DESC;
     </select>
 
     <!-- 강의 1개 조회 -->
     <select id="selectById" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
         SELECT c.*, i.name, r.review_score FROM Class c JOIN Instructors i ON c.instructors_id = i.instructors_id
-        LEFT JOIN (SELECT class_id, ROUND(AVG(review_score), 1) AS review_score FROM Class_Review GROUP BY class_id) r ON r.class_id = c.class_id
+                                                        LEFT JOIN (SELECT class_id, ROUND(AVG(review_score), 1) AS review_score FROM Class_Review GROUP BY class_id) r ON r.class_id = c.class_id
         WHERE c.class_id = #{classId};
     </select>
 
     <!-- 강의 카테고리별 조회 -->
     <select id="selectByCategory" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
-    	SELECT * FROM Class WHERE category_id = #{categoryId};
+        SELECT * FROM Class WHERE category_id = #{categoryId};
     </select>
 
     <!-- 강의 정보 조회 -->
@@ -121,7 +121,7 @@
 
     <select id="selectAllLearningData" resultType="com.example.classhubproject.data.lecture.LearningDataDTO">
         SELECT ld.* FROM Learning_Data ld
-        JOIN (SELECT * FROM Class_Detail WHERE class_id = #{classId}) cd ON ld.class_detail_id = cd.class_detail_id
+                             JOIN (SELECT * FROM Class_Detail WHERE class_id = #{classId}) cd ON ld.class_detail_id = cd.class_detail_id
         WHERE user_id = #{userId};
     </select>
 
