@@ -2,6 +2,8 @@ package com.example.classhubproject.service.community;
 
 
 import com.example.classhubproject.data.community.*;
+import com.example.classhubproject.exception.ClassHubErrorCode;
+import com.example.classhubproject.exception.ClassHubException;
 import com.example.classhubproject.mapper.community.CommunityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,14 +37,12 @@ public class CommunityService {
             if (imageIds != null) {
                 for (Integer imageId : imageIds) {
                     CommunityImageUploadRequestDTO communityImageUploadRequestDTO = new CommunityImageUploadRequestDTO(communityId, imageId);
-//                Integer result1 = communityMapper.insertCommunityToImage(communityImageUploadRequestDTO);
                     communityMapper.insertCommunityToImage(communityImageUploadRequestDTO);
                 }
             }
         } else {
-            throw new RuntimeException("게시글 등록 중 문제가 발생했습니다");
+            throw new ClassHubException(ClassHubErrorCode.POST_COMMUNITY_ERROR);
         }
-//        return communityId;
     }
 
     public List<Integer> postingImage(List<MultipartFile> files) {
@@ -322,7 +322,7 @@ public class CommunityService {
                 }
             }
         } else {
-            throw new RuntimeException("게시글 수정 중 문제가 발생했습니다");
+            throw new ClassHubException(ClassHubErrorCode.MODIFY_COMMUNITY_ERROR);
         }
     }
 
