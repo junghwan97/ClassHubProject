@@ -1,6 +1,9 @@
 package com.example.classhubproject.service.payment;
 
-import com.example.classhubproject.data.payment.*;
+import com.example.classhubproject.data.lecture.LearningDataDTO;
+import com.example.classhubproject.data.payment.CancelDataRequestDTO;
+import com.example.classhubproject.data.payment.PaymentPrepareResponseDTO;
+import com.example.classhubproject.data.payment.PaymentRequestDTO;
 import com.example.classhubproject.exception.ClassHubErrorCode;
 import com.example.classhubproject.exception.ClassHubException;
 import com.example.classhubproject.mapper.cart.CartMapper;
@@ -8,10 +11,13 @@ import com.example.classhubproject.mapper.enrollmentinfo.EnrollmentInfoMapper;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
 import com.example.classhubproject.mapper.order.OrderMapper;
 import com.example.classhubproject.mapper.payment.PaymentMapper;
+import com.example.classhubproject.service.lecture.LectureService;
+import com.siot.IamportRestClient.request.CancelData;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
+import com.siot.IamportRestClient.response.Prepare;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import com.siot.IamportRestClient.request.*;
-import com.siot.IamportRestClient.response.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +37,7 @@ public class PaymentService {
     private final EnrollmentInfoMapper enrollmentInfoMapper;
     private final LectureMapper lectureMapper;
     private final HttpServletRequest request;
+    private final LectureService lectureService;
 
     // PaymentPrepareResponseDTO 객체로 변환
     public PaymentPrepareResponseDTO convertToResponseDTO(IamportResponse<Prepare> paymentInfo) {
@@ -175,10 +182,25 @@ public class PaymentService {
         // 주문 상세의 강의 조회
         List<Integer> classIds = getClassIds(ordersId);
 
-        classIds.stream()
-                .forEach(classId ->
-                        enrollmentInfoMapper.insertEnrollmentInfo(userId, classId, getEnrollmentFee(classId)));
+        for (int classId : classIds) {
+            // 강의 별 수강료 조회
+            int enrollmentFee = lectureMapper.getClassPrice(classId);
+
+            enrollmentInfoMapper.insertEnrollmentInfo(userId, classId, enrollmentFee);
+
+            //lokyyyi
+            List<Integer> classDetailIds = lectureMapper.getClassDetailIds(classId);
+            for (Integer classDetailId : classDetailIds) {
+                LearningDataDTO request = new LearningDataDTO(userId, classDetailId);
+                lectureService.learningPoint(request);
+            }
+        }
+
+//        classIds.stream()
+//                .forEach(classId ->
+//                        enrollmentInfoMapper.insertEnrollmentInfo(userId, classId, getEnrollmentFee(classId)));
     }
+
 
     // 주문 상세의 강의 조회
     private List<Integer> getClassIds(int ordersId) {
@@ -211,5 +233,6 @@ public class PaymentService {
     private int getEnrollmentFee(int classId) {
         return lectureMapper.getClassPrice(classId);
     }
+
 
 }

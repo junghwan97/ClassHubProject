@@ -2,6 +2,7 @@ package com.example.classhubproject.mapper.lecture;
 
 import com.example.classhubproject.data.lecture.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public interface LectureMapper {
 
     int clearFavoriteLecture(Integer classId, int userId);
 
-    List<LectureClassDetailDTO> selectClassDetail(Integer classId);
+    List<LectureClassDetailDTO> selectClassDetail(@Param("classId") Integer classId);
 
     ClassResponseDTO selectById(Integer classId);
 
@@ -62,4 +63,10 @@ public interface LectureMapper {
     int deleteMaterial(Integer classId, String resource);
 
     List<String> selectSectionTitle(Integer classId);
+
+    void deleteClassDetail(@Param("classId") Integer classId, @Param("video") String string);
+
+    void updateClass(LectureClassUploadedRequest request);
+
+    LectureClassUploadedRequest selectByIdForUpdate(Integer classId);
 }

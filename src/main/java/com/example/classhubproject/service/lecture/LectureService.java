@@ -4,8 +4,6 @@ import com.example.classhubproject.data.lecture.*;
 import com.example.classhubproject.exception.ClassHubErrorCode;
 import com.example.classhubproject.exception.ClassHubException;
 import com.example.classhubproject.mapper.lecture.LectureMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.models.GroupedOpenApi;
@@ -181,6 +179,116 @@ public class LectureService {
     }
 
     // 강의 추가/ 수정
+	public int uploadAndSyncClass(LectureClassUploadedRequest request, String sectionsJson, List<MultipartFile> videos) throws IOException {
+		ObjectMapper obm = new ObjectMapper();
+
+		Integer length = 0;
+		ClassDetailResponseDTO dto = obm.readValue(sectionsJson, ClassDetailResponseDTO.class);
+		System.out.println(dto.toString());
+
+		for(SectionDTO sections : dto.getSections()){
+			for(LectureClassDetailDTO video : sections.getVideos()){
+				length = length + video.getVideoLength();
+			}
+			request.setClassName(dto.getTitle());
+			request.setTotalVideoLength(length);
+		}
+		System.out.println(request.toString());
+
+		try {
+			// 해당 클래스 아이디로 강의가 이미 존재하는지 확인
+			LectureClassUploadedRequest existingClass = lectureMapper.selectByIdForUpdate(request.getClassId());
+
+			if(existingClass != null) {
+				// 이미 존재하는 경우, 강의 정보를 업데이트
+				lectureMapper.updateClass(request);
+			} else {
+				// 존재하지 않는 경우, 새로운 강의로 등록
+				lectureMapper.uploadClass(request);
+			}
+		} catch (Exception e) {
+			log.info("gggg" + e.getMessage());
+			throw new RuntimeException(e);
+		}
+
+		String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy\\videos";
+		SimpleDateFormat save = new SimpleDateFormat("yyyyMMddHHmmss");
+
+		Date date = new Date();
+		String str = String.valueOf(request.getClassId());
+		String random = save.format(date);
+
+		File uploadPath = new File(uploadFolder, str);
+
+		if(uploadPath.exists() == false) {
+			boolean isCreated = uploadPath.mkdirs();
+			if (!isCreated) {
+				log.error("Failed to create directory: " + uploadPath);
+			}
+		}
+
+		log.info("1번");
+
+		// 기존 파일 목록을 가져옴
+		List<LectureClassDetailDTO> existingVideos;
+		try {
+			existingVideos = lectureMapper.selectClassDetail(request.getClassId());
+		} catch (Exception e) {
+			existingVideos = List.of();
+		}
+
+		Set<String> existingFileNames = existingVideos.stream()
+				.map(LectureClassDetailDTO::getVideo)
+				.collect(Collectors.toSet());
+
+		Set<String> newFileNames = new HashSet<>();
+		for (SectionDTO sections : dto.getSections()) {
+			for (LectureClassDetailDTO video : sections.getVideos()) {
+				newFileNames.add(random + "_" + video.getVideo());
+			}
+		}
+
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(uploadPath.toPath())) {
+			for (Path localFile : stream) {
+				if (!newFileNames.contains(localFile.getFileName().toString())) {
+					Files.delete(localFile);
+					// localFile.getFileName().toString()은 이미 앞에 random 값과 "_"가 포함되어 있음
+					lectureMapper.deleteClassDetail(request.getClassId(), localFile.getFileName().toString());
+					System.out.println("파일 삭제: " + localFile);
+				}
+			}
+		}
+
+		for (SectionDTO sections : dto.getSections()) {
+			for (LectureClassDetailDTO video : sections.getVideos()) {
+				video.setClassId(request.getClassId());
+				video.setSectionTitle(sections.getSectionTitle());
+				video.setVideo(random + "_" + video.getVideo());
+				if (!existingFileNames.contains(video.getVideo())) {
+					lectureMapper.addClassVideo(video);
+				}
+			}
+		}
+
+		log.info("2번");
+
+		for(MultipartFile file : videos) {
+			String temp = random + "_" + file.getOriginalFilename();
+			File saveFile = new File(uploadPath, temp);
+
+			try {
+				file.transferTo(saveFile);
+			}catch(Exception e) {
+				log.error(e.getMessage());
+			}
+		}
+
+		log.info("3번");
+		return request.getClassId();
+	}
+
+
+	/*
     public int uploadClass(LectureClassUploadedRequest request, String sectionsJson, List<MultipartFile> videos) throws JsonMappingException, JsonProcessingException {
     	
     	ObjectMapper obm = new ObjectMapper();
@@ -213,7 +321,6 @@ public class LectureService {
 		// /home/ubuntu/contents/videos
 		//"C:\\Users\\USER\\Desktop\\dummy\\videos"
 
-    	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     	SimpleDateFormat save = new SimpleDateFormat("yyyyMMddHHmmss");
 
     	Date date = new Date();
@@ -254,12 +361,9 @@ public class LectureService {
     		}
     	}
 		log.info("3번");
-    	return upload;
+    	return request.getClassId();
     }
-////////////////
-	public int uploadAndSyncVideos(Integer classId, List<MultipartFile> videos) throws JsonMappingException, JsonProcessingException {
-		return 0;
-	}
+*/
 
     public LectureClassEditedResponse editClass(LectureClassEditedRequest request) {
 
@@ -421,13 +525,9 @@ public class LectureService {
 	}
 
 	public ClassDetailResponseDTO responseForUpdateVideo(Integer classId){
-		System.out.println("시작ㅈㅅ시작싲가");
 		List<String> sectionTitles = lectureMapper.selectSectionTitle(classId);
-		System.out.println("시작ㅈㅅ시작싲가");
 		List<LectureClassDetailDTO> classDetails = lectureMapper.selectClassDetail(classId);
-		System.out.println("시작ㅈㅅ시작싲가");
 		String className = lectureMapper.getClassInfoByClassId(classId).getClassName();
-		log.info(className);
 
 		ClassDetailResponseDTO response = new ClassDetailResponseDTO();
 		List<SectionDTO> sectionDtos = new ArrayList<>();
@@ -450,5 +550,6 @@ public class LectureService {
 
 		return response;
 	}
+
 }
 

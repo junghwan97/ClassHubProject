@@ -34,11 +34,13 @@
         VALUES(#{instructorsId}, #{categoryId}, #{className}, #{description}, #{summary}, #{price}, #{thumnail}, #{totalVideoLength}, NOW());
     </insert>
 
-    <!--    <insert id="editClass" parameterType="com.example.classhubproject.data.lecture.LectureClassEditedRequest">-->
-    <!--        UPDATE Class-->
-    <!--        SET instructors_id=#{instructors_id}, category_id=#{category_id}, class_name=#{class_name}, description=#{description}, summary=#{summary}, price=#{price}, video=#{video}, total_video_length=#{total_video_length}, edit_date=CURRENT_TIMESTAMP-->
-    <!--        WHERE class_id=#{class_id};-->
-    <!--    </insert>-->
+    <!-- 강의 수정 -->
+    <update id="updateClass" parameterType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest">
+        UPDATE  Class SET category_id = #{categoryId}, class_name = #{className}, description = #{description},
+        summary = #{summary}, price = #{price}, thumnail = #{thumnail}, total_video_length = #{totalVideoLength}, edit_date = NOW()
+        WHERE class_id = #{classId};
+    </update>
+
 
     <!-- class_id로 가격조회 -->
     <select id="getClassPrice" resultType="int">
@@ -84,6 +86,11 @@
         WHERE c.class_id = #{classId};
     </select>
 
+    <!-- 수정용 강의 1개조회 -->
+    <select id="selectByIdForUpdate" resultType="com.example.classhubproject.data.lecture.LectureClassUploadedRequest">
+        SELECT * FROM Class WHERE class_id = #{classId};
+    </select>
+
     <!-- 강의 카테고리별 조회 -->
     <select id="selectByCategory" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
         SELECT * FROM Class WHERE category_id = #{categoryId};
@@ -107,7 +114,7 @@
 
     <!-- 강의상세정보 목록 -->
     <select id="selectClassDetail" resultType="com.example.classhubproject.data.lecture.LectureClassDetailDTO">
-        SELECT * FROM Class_Detail WHERE class_id = #{clssId};
+        SELECT * FROM Class_Detail WHERE class_id = #{classId};
     </select>
 
     <!-- 강의 진행률 정보 불러오기 -->
@@ -147,5 +154,12 @@
     <select id="selectSectionTitle">
         SELECT section_title FROM Class_Detail WHERE class_id = #{classId} GROUP BY section_title;
     </select>
+
+    <!-- 강의 영상 삭제 -->
+    <delete id="deleteClassDetail">
+        DELETE FROM Class_Detail WHERE Class_id = #{classId} AND video = #{video};
+    </delete>
+
+
 
 </mapper>
