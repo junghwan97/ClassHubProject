@@ -58,4 +58,8 @@ public interface LectureMapper {
     void insertLearningPoint(LearningDataDTO request);
 
     void updateLearningPoint(LearningDataDTO request);
+
+    int deleteMaterial(Integer classId, String resource);
+
+    List<String> selectSectionTitle(Integer classId);
 }

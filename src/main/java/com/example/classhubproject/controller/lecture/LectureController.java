@@ -97,10 +97,10 @@ public class LectureController {
                     @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
-    @PostMapping("uploadMaterial")
-    public void uploadMaterial(@RequestPart(name = "id") Integer id, @RequestPart(name = "files")List<MultipartFile> files) {
+    @PostMapping("uploadAndSyncMaterials")
+    public void uploadAndSyncMaterials(@RequestPart(name = "id") Integer id, @RequestPart(name = "files", required = false)List<MultipartFile> files) {
         
-    	lectureService.uploadMaterial(id, files);
+    	lectureService.uploadAndSyncMaterials(id, files);
     }
 
     // 강의 자료 조회
@@ -114,7 +114,7 @@ public class LectureController {
     public List<LectureMaterialUploadedRequest> uploadMaterial(@RequestParam("classId")Integer classId) {
 
     	List<LectureMaterialUploadedRequest> res = lectureService.selectMaterial(classId);
-    	
+
     	return res;
     }
     
@@ -255,6 +255,19 @@ public class LectureController {
     public void learningPoint(@RequestBody LearningDataDTO request){
         lectureService.learningPoint(request);
     }
+
+    @Operation(summary = "강의 업데이트용 조회", description = "강의 업데이트용 조회.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("responseForUpdateVideo/{classId}")
+    public ClassDetailResponseDTO responseForUpdateVideo(@PathVariable("classId") Integer classId){
+        log.info("ddfadfadf");
+        return lectureService.responseForUpdateVideo(classId);
+    }
+
 
     // 수강 신청 정보 생성
 //    private void insertEnrollmentInfo(int ordersId) {

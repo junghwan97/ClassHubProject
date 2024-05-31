@@ -134,8 +134,18 @@
     </update>
 
     <!-- 강의 상세 id 받아오기 -->
-    <select id="getClassDetailIds" resultType="List">
+    <select id="getClassDetailIds">
         SELECT class_detail_id FROM Class_Detail WHERE class_id = #{classId};
+    </select>
+
+    <!-- 강의 자료 삭제 -->
+    <delete id="deleteMaterial">
+        DELETE FROM Resource WHERE class_id = #{classId} AND resource = #{resource};
+    </delete>
+
+    <!-- 섹션타이틀 조회 -->
+    <select id="selectSectionTitle">
+        SELECT section_title FROM Class_Detail WHERE class_id = #{classId} GROUP BY section_title;
     </select>
 
 </mapper>
