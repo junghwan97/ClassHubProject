@@ -97,10 +97,10 @@ public class LectureController {
                     @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
-    @PostMapping("uploadMaterial")
-    public void uploadMaterial(@RequestPart(name = "id") Integer id, @RequestPart(name = "files")List<MultipartFile> files) {
+    @PostMapping("uploadAndSyncMaterials")
+    public void uploadAndSyncMaterials(@RequestPart(name = "id") Integer id, @RequestPart(name = "files", required = false)List<MultipartFile> files) {
         
-    	lectureService.uploadMaterial(id, files);
+    	lectureService.uploadAndSyncMaterials(id, files);
     }
 
     // 강의 자료 조회
@@ -114,7 +114,7 @@ public class LectureController {
     public List<LectureMaterialUploadedRequest> uploadMaterial(@RequestParam("classId")Integer classId) {
 
     	List<LectureMaterialUploadedRequest> res = lectureService.selectMaterial(classId);
-    	
+
     	return res;
     }
     
@@ -256,14 +256,40 @@ public class LectureController {
         lectureService.learningPoint(request);
     }
 
+    @Operation(summary = "강의 업데이트용 조회", description = "강의 업데이트용 조회.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("responseForUpdateVideo/{classId}")
+    public ClassDetailResponseDTO responseForUpdateVideo(@PathVariable("classId") Integer classId){
+        log.info("ddfadfadf");
+        return lectureService.responseForUpdateVideo(classId);
+    }
 
+
+    // 수강 신청 정보 생성
+//    private void insertEnrollmentInfo(int ordersId) {
+//        int userId = getUserId();
 //
-//    @PostMapping("test")
-//    public String test(@RequestPart(name = "request")LectureClassUploadedRequest request,
-//			  @RequestPart(required = false, name = "videos") List<Object> videos) {
-//    	if(videos.isEmpty()) {
-//    		return "no";
-//    	}
-//    		return "yes";
-//    }
+//        // 주문 상세의 class_id 조회
+//        List<Integer> classIds = orderMapper.getClassIdByOrdersId(ordersId);
+//
+//        for (int classId : classIds) {
+//            // 강의 별 수강료 조회
+//            int enrollmentFee = lectureMapper.getClassPrice(classId);
+//
+//            enrollmentInfoMapper.insertEnrollmentInfo(userId, classId, enrollmentFee);
+//
+//            //lokyyyi
+//            List<Integer> classDetailIds = lectureMapper.getClassDetailIds(classId);
+//            for (Integer classDetailId : classDetailIds) {
+//                LearningDataDTO request = new LearningDataDTO(userId, classDetailId);
+//                lectureService.learningPoint(request);
+//            }
+//        }
+//  }
+
+
 }

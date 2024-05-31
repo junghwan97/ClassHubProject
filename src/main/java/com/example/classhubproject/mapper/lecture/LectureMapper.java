@@ -47,11 +47,19 @@ public interface LectureMapper {
 
     List<LectureClassDetailDTO> selectClassDetail(Integer classId);
 
-    void learningPoint(LearningDataDTO request);
-
     ClassResponseDTO selectById(Integer classId);
 
     LearningDataDTO selectLearningData(Integer classDetailId, int userId);
 
     List<LearningDataDTO> selectAllLearningData(Integer classId, int userId);
+
+    List<Integer> getClassDetailIds(int classId);
+
+    void insertLearningPoint(LearningDataDTO request);
+
+    void updateLearningPoint(LearningDataDTO request);
+
+    int deleteMaterial(Integer classId, String resource);
+
+    List<String> selectSectionTitle(Integer classId);
 }

@@ -16,6 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -79,9 +83,94 @@ public class LectureService {
 			return 0;
 		}
     }
-    
 
-    public LectureMaterialEditedResponse editMaterial(LectureMaterialEditedRequest request) {
+    public int uploadAndSyncMaterials(Integer classId, List<MultipartFile> files) {
+        String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy\\material";
+
+		// /home/ubuntu/contents/material
+		//"C:\\Users\\USER\\Desktop\\dummy\\material"
+        File uploadPath = new File(uploadFolder, classId.toString());
+
+        if (!uploadPath.exists()) {
+			boolean isCreated = uploadPath.mkdirs();  // mkdirs() 사용하여 전체 경로 생성 시도
+			if (!isCreated) {
+				log.info("Failed to create directory: " + uploadPath);
+			}
+		}
+
+        try {
+            // 데이터베이스에서 기존 파일 목록을 가져옴
+            List<LectureMaterialUploadedRequest> existingMaterials;
+            try {
+                existingMaterials = selectMaterial(classId);
+            } catch (Exception e) {
+                // 데이터가 없을 때 빈 목록을 사용
+				existingMaterials = List.of();
+            }
+
+            Set<String> existingFileNames = existingMaterials.stream()
+                                                             .map(LectureMaterialUploadedRequest::getResource)
+                                                             .collect(Collectors.toSet());
+
+            // 새 파일 목록의 파일 이름을 Set으로 저장
+            Set<String> newFileNames = new HashSet<>();
+            for (MultipartFile file : files) {
+                newFileNames.add(file.getOriginalFilename());
+            }
+
+            // 로컬 파일을 순회하며, 새 파일 목록에 없는 파일을 삭제
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(uploadPath.toPath())) {
+                for (Path localFile : stream) {
+                    if (!newFileNames.contains(localFile.getFileName().toString())) {
+                        Files.delete(localFile);
+						lectureMapper.deleteMaterial(classId, localFile.getFileName().toString());
+                        System.out.println("파일 삭제: " + localFile);
+                    }
+                }
+            }
+
+            // 새 파일을 업로드하거나 업데이트
+            for (MultipartFile f : files) {
+                String fileName = f.getOriginalFilename();
+                if (!existingFileNames.contains(fileName)) {
+                    // 데이터베이스에 새 파일 정보 삽입
+                    LectureMaterialUploadedRequest request = new LectureMaterialUploadedRequest();
+                    request.setClassId(classId);
+                    request.setResource(fileName);
+                    lectureMapper.uploadMaterial(request);
+                }
+
+                // 파일을 로컬에 저장
+                File saveFile = new File(uploadPath, fileName);
+                try {
+                    f.transferTo(saveFile);
+                    System.out.println("파일 업로드/업데이트: " + saveFile);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+            }
+            return 1;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+
+	public List<LectureMaterialUploadedRequest> selectMaterial(Integer classId){
+
+		List<LectureMaterialUploadedRequest> res = lectureMapper.selectMaterial(classId);
+
+		if(res.isEmpty()) {
+			throw new ClassHubException(ClassHubErrorCode.NO_DATA_FOUND);
+		}
+		return res;
+	}
+
+
+
+
+	public LectureMaterialEditedResponse editMaterial(LectureMaterialEditedRequest request) {
 
         int edited = lectureMapper.editMaterial(request);
 
@@ -119,10 +208,10 @@ public class LectureService {
 		log.info("ddddd");
     	//폴더 생성 및 업로드 Date정보로 머릿글 생성
 
-    	String uploadFolder = "/home/ubuntu/contents/videos";
+    	String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy\\videos";
 
 		// /home/ubuntu/contents/videos
-		//"C:\\Users\\USER\\Desktop\\dummy"
+		//"C:\\Users\\USER\\Desktop\\dummy\\videos"
 
     	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     	SimpleDateFormat save = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -136,8 +225,11 @@ public class LectureService {
     	File uploadPath = new File(uploadFolder, str);
 
     	if(uploadPath.exists() == false) {
-    		uploadPath.mkdir();
-    	}
+			boolean isCreated = uploadPath.mkdirs();  // mkdirs() 사용하여 전체 경로 생성 시도
+			if (!isCreated) {
+				log.error("Failed to create directory: " + uploadPath);
+			}
+		}
     	log.info("1번");
     	//파일 정보 DB업로드
 		for(SectionDTO sections : dto.getSections()){
@@ -164,6 +256,10 @@ public class LectureService {
 		log.info("3번");
     	return upload;
     }
+////////////////
+	public int uploadAndSyncVideos(Integer classId, List<MultipartFile> videos) throws JsonMappingException, JsonProcessingException {
+		return 0;
+	}
 
     public LectureClassEditedResponse editClass(LectureClassEditedRequest request) {
 
@@ -189,16 +285,6 @@ public class LectureService {
     	
     	return lectureMapper.selectByCategory(categoryId);
     } 
-    
-    public List<LectureMaterialUploadedRequest> selectMaterial(Integer classId){
-    	
-    	List<LectureMaterialUploadedRequest> res = lectureMapper.selectMaterial(classId);
-
-    	if(res.isEmpty()) {
-    		throw new ClassHubException(ClassHubErrorCode.NO_DATA_FOUND);
-    	}
-			return res;		
-    }
 
 	public int favoriteLecture(Integer classId) {
 		int userId = getUserId();
@@ -281,7 +367,14 @@ public class LectureService {
 	}
 
 	public void learningPoint(LearningDataDTO request) {
-		lectureMapper.learningPoint(request);
+		int userId = getUserId();
+
+		if(request.getVideoEndTime() == null){							//러닝데이터 초기 등록
+			lectureMapper.insertLearningPoint(request);
+		}else{															//러닝데이터 종료시간 수정 및 진도율 계산
+			//넘겨줄때 총 시간 같이 넘겨줄수있는지
+			lectureMapper.updateLearningPoint(request);
+		}
 	}
 
 	public Map<String, Object> selectById(Integer classId) {
@@ -326,4 +419,36 @@ public class LectureService {
 		int userId = getUserId();
 		return lectureMapper.selectAllLearningData(classId, userId);
 	}
+
+	public ClassDetailResponseDTO responseForUpdateVideo(Integer classId){
+		System.out.println("시작ㅈㅅ시작싲가");
+		List<String> sectionTitles = lectureMapper.selectSectionTitle(classId);
+		System.out.println("시작ㅈㅅ시작싲가");
+		List<LectureClassDetailDTO> classDetails = lectureMapper.selectClassDetail(classId);
+		System.out.println("시작ㅈㅅ시작싲가");
+		String className = lectureMapper.getClassInfoByClassId(classId).getClassName();
+		log.info(className);
+
+		ClassDetailResponseDTO response = new ClassDetailResponseDTO();
+		List<SectionDTO> sectionDtos = new ArrayList<>();
+		response.setTitle(className);
+
+		for(String sectionTitle : sectionTitles){
+			SectionDTO dto = new SectionDTO();
+			dto.setSectionTitle(sectionTitle);
+			List<LectureClassDetailDTO> sectionDetails = new ArrayList<>();
+
+			for(LectureClassDetailDTO classDetail : classDetails){
+				if(classDetail.getSectionTitle().equals(sectionTitle)){
+					sectionDetails.add(classDetail);
+				}
+			}
+			dto.setVideos(sectionDetails);
+			sectionDtos.add(dto);
+		}
+		response.setSections(sectionDtos);
+
+		return response;
+	}
 }
+

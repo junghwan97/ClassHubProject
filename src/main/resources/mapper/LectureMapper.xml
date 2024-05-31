@@ -110,10 +110,6 @@
         SELECT * FROM Class_Detail WHERE class_id = #{clssId};
     </select>
 
-    <update id="learningPoint" parameterType="com.example.classhubproject.data.lecture.LearningDataDTO">
-        UPDATE Learning_Data SET video_end_time = #{videoEndTime} WHERE user_id = #{userId} AND class_detail_id = #{classDeTailId};
-    </update>
-
     <!-- 강의 진행률 정보 불러오기 -->
     <select id="selectLearningData"  resultType="com.example.classhubproject.data.lecture.LearningDataDTO">
         SELECT * FROM Learning_Data WHERE user_id = #{userId} AND class_detail_id = #{classDetailId};
@@ -123,6 +119,33 @@
         SELECT ld.* FROM Learning_Data ld
                              JOIN (SELECT * FROM Class_Detail WHERE class_id = #{classId}) cd ON ld.class_detail_id = cd.class_detail_id
         WHERE user_id = #{userId};
+    </select>
+
+    <!-- 러닝 데이터 초기 등록 -->
+    <insert id="insertLearningPoint" parameterType="com.example.classhubproject.data.lecture.LearningDataDTO">
+        INSERT INTO Learning_Data (user_id, class_detail_id)
+        VALUES (#{userId}, #{classDetailId});
+    </insert>
+
+    <!-- 러닝 데이터 업데이트 -->
+    <update id="updateLearningPoint" parameterType="com.example.classhubproject.data.lecture.LearningDataDTO">
+        UPDATE Learning_Data SET video_end_time = #{videoEndTime}, progress_rate = #{progressRate}
+        WHERE user_id = #{userId} AND class_detail_id = #{classDetailId};
+    </update>
+
+    <!-- 강의 상세 id 받아오기 -->
+    <select id="getClassDetailIds">
+        SELECT class_detail_id FROM Class_Detail WHERE class_id = #{classId};
+    </select>
+
+    <!-- 강의 자료 삭제 -->
+    <delete id="deleteMaterial">
+        DELETE FROM Resource WHERE class_id = #{classId} AND resource = #{resource};
+    </delete>
+
+    <!-- 섹션타이틀 조회 -->
+    <select id="selectSectionTitle">
+        SELECT section_title FROM Class_Detail WHERE class_id = #{classId} GROUP BY section_title;
     </select>
 
 </mapper>

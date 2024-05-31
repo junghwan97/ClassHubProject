@@ -15,4 +15,9 @@ public class LearningDataDTO {
     private char completionStatus;
     private Date startDate;
     private Date endDate;
+
+    public LearningDataDTO(Integer userId, Integer classDetailId){
+        this.userId = userId;
+        this.classDetailId = classDetailId;
+    }
 }

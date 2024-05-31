@@ -11,4 +11,6 @@ public class LectureInstructorAddedRequest {
     String      text;
     String   userType;
     String   requestStatus;
+
+
 }
