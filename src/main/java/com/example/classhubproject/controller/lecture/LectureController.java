@@ -2,8 +2,6 @@ package com.example.classhubproject.controller.lecture;
 
 import com.example.classhubproject.data.lecture.*;
 import com.example.classhubproject.service.lecture.LectureService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +13,7 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +89,7 @@ public class LectureController {
         return lectureService.selectById(classId);
     }
 
-    // 강의 자료 업로드 / 수정 이것도 파일 업로드로 바꿔야함
+    // 강의 자료 업로드 / 수정
     @Operation(summary = "강의 자료 업로드", description = "강의자료를 업로드.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureMaterialUploadedResponse.class))),
@@ -117,18 +116,7 @@ public class LectureController {
 
     	return res;
     }
-    
-    //강의 자료 수정
-//    @Operation(summary = "강의 자료 수정", description = "강의 자료 수정.",
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorAddedResponse.class))),
-//                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-//            }
-//    )
-//    @PostMapping("editMaterial")
-//    public LectureMaterialEditedResponse editMaterial(@RequestBody LectureMaterialEditedRequest request) {
-//        return lectureService.editMaterial(request);
-//    }
+
 
      //강의 업로드 / 수정
     @Operation(summary = "강의 업로드", description = "강의 업로드.",
@@ -141,21 +129,10 @@ public class LectureController {
     @PostMapping("uploadClass")
     public void uploadClass(@RequestPart(name = "request") LectureClassUploadedRequest request,
     													  @RequestPart(name = "sections") String sectionsJson,
-    													  @RequestPart(required = false, name = "videos") List<MultipartFile> videos) throws JsonMappingException, JsonProcessingException {
-        lectureService.uploadClass(request,sectionsJson, videos);
+    													  @RequestPart(required = false, name = "videos") List<MultipartFile> videos) throws IOException {
+        lectureService.uploadAndSyncClass(request,sectionsJson, videos);
 
     }
-
-//    @Operation(summary = "강의 수정", description = "강의 수정.",
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureClassEditedResponse.class))),
-//                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-//            }
-//    )
-//    @PostMapping("editClass")
-//    public LectureClassEditedResponse editClass(@RequestBody LectureClassEditedRequest request) {
-//        return lectureService.editClass(request);
-//    }
 
     // 카테고리 별 조회
     @Operation(summary = "강의 카테고리별 조회", description = "강의 카테고리별 조회.",
@@ -269,27 +246,6 @@ public class LectureController {
     }
 
 
-    // 수강 신청 정보 생성
-//    private void insertEnrollmentInfo(int ordersId) {
-//        int userId = getUserId();
-//
-//        // 주문 상세의 class_id 조회
-//        List<Integer> classIds = orderMapper.getClassIdByOrdersId(ordersId);
-//
-//        for (int classId : classIds) {
-//            // 강의 별 수강료 조회
-//            int enrollmentFee = lectureMapper.getClassPrice(classId);
-//
-//            enrollmentInfoMapper.insertEnrollmentInfo(userId, classId, enrollmentFee);
-//
-//            //lokyyyi
-//            List<Integer> classDetailIds = lectureMapper.getClassDetailIds(classId);
-//            for (Integer classDetailId : classDetailIds) {
-//                LearningDataDTO request = new LearningDataDTO(userId, classDetailId);
-//                lectureService.learningPoint(request);
-//            }
-//        }
-//  }
 
 
 }
