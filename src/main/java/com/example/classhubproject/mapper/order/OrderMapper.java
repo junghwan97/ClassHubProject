@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface OrderMapper {
 
-    List<OrderResponseDTO> getOrderList(int userId);
+    List<CompletedOrderResponseDTO> getOrderList(int userId);
 
     int getOrderedClassQuantityByOrderId(int ordersId);
 

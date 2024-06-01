@@ -51,8 +51,8 @@ public class OrderService {
     }
 
     // 특정 사용자의 전체 주문 목록
-    public List<OrderResponseDTO> getOrderList(int userId) {
-        List<OrderResponseDTO> orderList = orderMapper.getOrderList(userId);
+    public List<CompletedOrderResponseDTO> getOrderList(int userId) {
+        List<CompletedOrderResponseDTO> orderList = orderMapper.getOrderList(userId);
 
         return orderList.stream()
                 .map(this::updateOrderWithOrderName)
@@ -192,17 +192,18 @@ public class OrderService {
     }
 
     // 주문명 포함한 주문 정보 생성
-    private OrderResponseDTO updateOrderWithOrderName(OrderResponseDTO order) {
+    private CompletedOrderResponseDTO updateOrderWithOrderName(CompletedOrderResponseDTO order) {
         int ordersId = order.getOrdersId();
         String orderName = createOrderName(ordersId);
 
-        return OrderResponseDTO.builder()
+        return CompletedOrderResponseDTO.builder()
                 .ordersId(order.getOrdersId())
                 .userId(order.getUserId())
                 .orderName(orderName)
                 .totalPrice(order.getTotalPrice())
                 .finalOrderStatus(order.getFinalOrderStatus())
                 .regdate(order.getRegdate())
+                .impUid(order.getImpUid())
                 .build();
     }
 
