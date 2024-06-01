@@ -19,7 +19,6 @@ import java.util.*;
 public class OrderController {
 
     private final OrderService orderService;
-    private final GroupedOpenApi order;
 
     // 주문
     @Operation(
@@ -70,7 +69,7 @@ public class OrderController {
             }
     )
     @GetMapping("/list/{userId}")
-    public List<OrderResponseDTO> orderList(@PathVariable("userId") Integer userId) {
+    public List<CompletedOrderResponseDTO> orderList(@PathVariable("userId") Integer userId) {
         return orderService.getOrderList(userId);
     }
 
