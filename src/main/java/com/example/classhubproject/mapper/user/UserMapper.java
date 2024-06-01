@@ -1,5 +1,6 @@
 package com.example.classhubproject.mapper.user;
 
+import com.example.classhubproject.data.user.UserRequestDTO;
 import com.example.classhubproject.data.user.UserResponseDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -7,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface UserMapper {
 
-    Integer joinByGoogle(UserResponseDTO userResponseDTO);
+    Integer joinByGoogle(UserRequestDTO userRequestDTO);
 
     Integer selectUserIDBySnsId(String snsId);
 
@@ -20,4 +21,8 @@ public interface UserMapper {
     void updateUserInfo(UserResponseDTO user);
 
     void updateUserImage(@Param("snsId") String snsId, @Param("file") String file);
+
+    UserResponseDTO selectUserByUsername(String username);
+
+    void updateGoogleAccount(UserResponseDTO existData);
 }

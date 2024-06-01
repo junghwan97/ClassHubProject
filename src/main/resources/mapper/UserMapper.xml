@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.classhubproject.mapper.user.UserMapper">
 
-    <insert id="joinByGoogle" parameterType="user">
-        INSERT INTO User(sns_id, access_token, name, nickname, email, profile_picture, platform_type)
-        VALUES (#{snsId}, #{accessToken}, #{name}, #{nickname}, #{email}, #{profilePicture}, "Google");
+    <insert id="joinByGoogle" parameterType="userRequest">
+        INSERT INTO User(sns_id, name, nickname, email, platform_type)
+        VALUES (#{snsId}, #{name}, #{nickname}, #{email}, "Google");
     </insert>
 
-    <insert id="join" parameterType="user">
+    <insert id="join" parameterType="userResponse">
         INSERT INTO User(sns_id, access_token, name, nickname, email, profile_picture, platform_type, role)
         VALUES (#{snsId}, #{accessToken}, #{name}, #{nickname}, #{email}, #{profilePicture}, "Google", 1);
     </insert>
@@ -24,35 +24,59 @@
         WHERE sns_id = #{snsId}
     </select>
 
-    <select id="selectUserBySnsId" resultType="user">
-        SELECT
-            user_id,
-            sns_id,
-            access_token,
-            name,
-            nickname,
-            email,
-            profile_picture,
-            introduce,
-            regdate,
-            exit_date,
-            role
+    <select id="selectUserBySnsId" resultType="userResponse">
+        SELECT user_id,
+               sns_id,
+               access_token,
+               name,
+               nickname,
+               email,
+               profile_picture,
+               introduce,
+               regdate,
+               exit_date,
+               role
         FROM User
         WHERE sns_id = #{snsId}
     </select>
 
-    <update id="updateUserInfo" parameterType="user">
+    <select id="selectUserByUsername" resultType="userResponse">
+        SELECT user_id,
+               sns_id,
+               access_token,
+               name,
+               nickname,
+               email,
+               profile_picture,
+               introduce,
+               regdate,
+               exit_date,
+               role
+        FROM User
+        WHERE sns_id = #{username}
+    </select>
+
+    <update id="updateUserInfo" parameterType="userResponse">
         UPDATE User
-        SET    name = #{name},
-               nickname = #{nickname},
-               email = #{email},
-               introduce = #{introduce}
+        SET name      = #{name},
+            nickname  = #{nickname},
+            email     = #{email},
+            introduce = #{introduce}
         WHERE sns_id = #{snsId}
     </update>
 
-    <update id="updateUserImage" parameterType="user">
+    <update id="updateUserImage" parameterType="userResponse">
         UPDATE User
-        SET    profile_picture = #{file}
+        SET profile_picture = #{file}
+        WHERE sns_id = #{snsId}
+    </update>
+
+    <update id="updateGoogleAccount" parameterType="userResponse">
+        UPDATE User
+        SET name = #{name},
+            nickname = #{nickname},
+            role = #{role},
+            email = #{email}
         WHERE sns_id = #{snsId}
     </update>
 

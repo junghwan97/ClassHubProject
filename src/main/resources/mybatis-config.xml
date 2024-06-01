@@ -14,7 +14,8 @@
     </settings>
 
     <typeAliases>
-        <typeAlias type="com.example.classhubproject.data.user.UserResponseDTO" alias="user"/>
+        <typeAlias type="com.example.classhubproject.data.user.UserResponseDTO" alias="userResponse"/>
+        <typeAlias type="com.example.classhubproject.data.user.UserRequestDTO" alias="userRequest"/>
         <typeAlias type="com.example.classhubproject.data.community.CommunityRequestDTO" alias="communityRequest"/>
         <typeAlias type="com.example.classhubproject.data.community.CommunityResponseDTO" alias="communityResponse"/>
         <typeAlias type="com.example.classhubproject.data.community.CommunityImageRequestDTO" alias="communityImageRequest"/>
