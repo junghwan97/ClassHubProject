@@ -65,7 +65,7 @@ public class OrderController {
             summary = "특정 사용자의 전체 주문 목록 조회",
             description = "특정 사용자의 전체 주문 목록(완료/취소)을 조회합니다.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "주문 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderResponseDTO.class)))
+                    @ApiResponse(responseCode = "200", description = "주문 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CompletedOrderResponseDTO.class)))
             }
     )
     @GetMapping("/list/{userId}")
