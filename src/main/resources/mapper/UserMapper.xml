@@ -3,32 +3,47 @@
 <mapper namespace="com.example.classhubproject.mapper.user.UserMapper">
 
     <insert id="joinByGoogle" parameterType="user">
-        INSERT INTO User(sns_id, access_token, name, nickname, email, profile_picture, platform_type)
-        VALUES (#{snsId}, #{accessToken}, #{name}, #{nickname}, #{email}, #{profilePicture}, "Google");
+        INSERT INTO User(user_name, name, nickname, email, profile_picture, platform_type)
+        VALUES (#{userName}, #{name}, #{nickname}, #{email}, #{profilePicture}, "Google");
     </insert>
+
+    <insert id="insertGoogle" parameterType="user">
+        INSERT INTO User(user_name, name, email, role, platform_type)
+        VALUES (#{userName}, #{name}, #{email}, #{temprole}, "Google");
+    </insert>
+
+    <update id="updateGoogle" parameterType="user">
+        UPDATE User SET email = #{email}, name = #{name} WHERE user_id = #{userId};
+    </update>
 
     <insert id="join" parameterType="user">
-        INSERT INTO User(sns_id, access_token, name, nickname, email, profile_picture, platform_type, role)
-        VALUES (#{snsId}, #{accessToken}, #{name}, #{nickname}, #{email}, #{profilePicture}, "Google", 1);
+        INSERT INTO User(user_name, name, nickname, email, profile_picture, platform_type, role)
+        VALUES (#{userName}, #{name}, #{nickname}, #{email}, #{profilePicture}, "Google", 1);
     </insert>
 
-    <select id="selectUserIDBySnsId" resultType="Integer">
+    <select id="selectUserIDByUsername" resultType="Integer">
         SELECT user_id
         FROM User
-        WHERE sns_id = #{snsId}
+        WHERE user_name = #{username}
     </select>
 
-    <select id="checkDuplicateBySnsId" resultType="Integer">
+    <select id="selectUserNameByUsername" resultType="Integer">
+        SELECT name
+        FROM User
+        WHERE user_name = #{username}
+    </select>
+
+
+    <select id="checkDuplicateByUsername" resultType="Integer">
         SELECT count(*)
         FROM User
-        WHERE sns_id = #{snsId}
+        WHERE user_name = #{username}
     </select>
 
-    <select id="selectUserBySnsId" resultType="user">
+    <select id="selectUserByUsername" resultType="user">
         SELECT
             user_id,
-            sns_id,
-            access_token,
+            user_name,
             name,
             nickname,
             email,
@@ -38,7 +53,7 @@
             exit_date,
             role
         FROM User
-        WHERE sns_id = #{snsId}
+        WHERE user_name = #{userName}
     </select>
 
     <update id="updateUserInfo" parameterType="user">
@@ -47,13 +62,17 @@
                nickname = #{nickname},
                email = #{email},
                introduce = #{introduce}
-        WHERE sns_id = #{snsId}
+        WHERE user_name = #{userName}
     </update>
 
     <update id="updateUserImage" parameterType="user">
         UPDATE User
         SET    profile_picture = #{file}
-        WHERE sns_id = #{snsId}
+        WHERE user_name = #{userName}
     </update>
+
+    <select id="getUserId" resultType="int">
+        SELECT user_id FROM User WHERE user_name = #{userName}
+    </select>
 
 </mapper>

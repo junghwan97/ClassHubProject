@@ -1,6 +1,10 @@
 package com.example.classhubproject.controller.lecture;
 
+import com.example.classhubproject.data.community.PagingDTO;
 import com.example.classhubproject.data.lecture.*;
+import com.example.classhubproject.data.oauth2.CustomOAuth2User;
+import com.example.classhubproject.jwt.JWTUtil;
+import com.example.classhubproject.mapper.user.UserMapper;
 import com.example.classhubproject.service.lecture.LectureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -8,6 +12,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +28,14 @@ import java.util.Map;
 @RequestMapping("lecture")
 public class LectureController {
     private final LectureService lectureService;
+    private final UserMapper userMapper;
+    private final JWTUtil jwtUtil;
 
     @Autowired
-    public LectureController(LectureService lectureService) {
+    public LectureController(LectureService lectureService, UserMapper userMapper, JWTUtil jwtUtil) {
         this.lectureService = lectureService;
+        this.userMapper = userMapper;
+        this.jwtUtil = jwtUtil;
     }
 
     // 강사 업로드
@@ -62,17 +72,11 @@ public class LectureController {
             }
     )
     @GetMapping("selectAll")
-    public List<ClassResponseDTO> selectAll(@RequestParam(required = false, name = "keyword")String keyword){
+    public PagingDTO<List<ClassResponseDTO>> selectAll(@RequestParam(required = false, name = "keyword")String keyword, @RequestParam(required = false, name ="page")Integer page){
     	if(StringUtils.hasText(keyword)) {
-    		List<ClassResponseDTO> res = lectureService.selectByKeyword(keyword);
-    		if(!res.isEmpty()) {
-    			return res;
-    		}
-    	}else {	
-    		List<ClassResponseDTO> res = lectureService.selectAll();
-	    	if(!res.isEmpty()) {
-	    		return res;
-	        }
+            PagingDTO<List<ClassResponseDTO>> res = lectureService.selectByKeyword(keyword, page);
+    	}else {
+            PagingDTO<List<ClassResponseDTO>> res = lectureService.selectAll(page);
     	}
         return null;
     }
@@ -127,10 +131,10 @@ public class LectureController {
     )
     
     @PostMapping("uploadClass")
-    public void uploadClass(@RequestPart(name = "request") LectureClassUploadedRequest request,
+    public int uploadClass(@RequestPart(name = "request") LectureClassUploadedRequest request,
     													  @RequestPart(name = "sections") String sectionsJson,
     													  @RequestPart(required = false, name = "videos") List<MultipartFile> videos) throws IOException {
-        lectureService.uploadAndSyncClass(request,sectionsJson, videos);
+        return lectureService.uploadAndSyncClass(request,sectionsJson, videos);
 
     }
 
@@ -142,25 +146,25 @@ public class LectureController {
             }
     )
     @GetMapping("selectByCategory")
-    public List<ClassResponseDTO> selectByCategory(@RequestParam("categoryId")Integer categoryId){
-    	List<ClassResponseDTO> res = lectureService.selectByCategory(categoryId);
+    public PagingDTO<List<ClassResponseDTO>> selectByCategory(@RequestParam("categoryId")Integer categoryId, @RequestParam(required = false, name ="page")Integer page){
+        PagingDTO<List<ClassResponseDTO>> res = lectureService.selectByCategory(categoryId, page);
 
         return res;
     }
     
     // 강의 추천 알고리즘
-    @Operation(summary = "강의 추천 알고리즘", description = "강의 추천 알고리즘.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
-                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-            }
-    )
-    @GetMapping("recommendLectures")
-    public List<ClassResponseDTO> recommendLectures(@RequestBody ClassResponseDTO request){
-    	List<ClassResponseDTO> res = lectureService.recommendLectures(request);
-    	
-    	return res;
-    }
+//    @Operation(summary = "강의 추천 알고리즘", description = "강의 추천 알고리즘.",
+//            responses = {
+//                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+//                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+//            }
+//    )
+//    @GetMapping("recommendLectures")
+//    public List<ClassResponseDTO> recommendLectures(@RequestBody ClassResponseDTO request){
+//    	List<ClassResponseDTO> res = lectureService.recommendLectures(request);
+//
+//    	return res;
+//    }
 
     // 관심 강의 등록
     @Operation(summary = "관심 강의 등록", description = "관심 강의 등록.",
@@ -245,7 +249,35 @@ public class LectureController {
         return lectureService.responseForUpdateVideo(classId);
     }
 
+    @Operation(summary = "강의 업데이트용 조회", description = "강의 업데이트용 조회.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("getsession")
+    public String getsession() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
+        return "ㅎㅇㅎㅇㅎ" + customOAuth2User.getUsername();
+        //return userDTO.getUsername();
+    }
+
+//        Cookie[] cookies = request.getCookies();
+//        String jwtToken = null;
+//        for (Cookie cookie : cookies) {
+//            if ("Authorization".equals(cookie.getName())) {
+//                jwtToken = cookie.getValue();
+//                break;
+//            }
+//        }
+//        if (jwtToken != null) {
+//            System.out.println("되라도릳리ㅏㄷ");
+//            return userMapper.selectUserBySnsId(jwtUtil.getUsername(jwtToken));
+//        }
+//        return null;
+//    }
 
 }

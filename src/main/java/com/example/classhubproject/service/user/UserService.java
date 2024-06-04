@@ -37,99 +37,101 @@ public class UserService {
         this.env = env;
     }
 
-//    public Map<Integer, UserResponseDTO> socialLogin(String code, String registrationId) {
-//        String accessToken = getAccessToken(code, registrationId);
-//        JsonNode userResourceNode = getUserResource(accessToken, registrationId);
-//
-//        String snsId = userResourceNode.get("id").asText();
-//        String email = userResourceNode.get("email").asText();
-//        String name = userResourceNode.get("name").asText();
-//        String nickname = userResourceNode.get("name").asText();
-//        String picture = userResourceNode.get("picture").asText();
-//
-//        int check = userMapper.checkDuplicateBySnsId(snsId);
-//        if (check != 1) {
-//            UserResponseDTO userDTO = new UserResponseDTO(snsId, accessToken, name, nickname, email, picture);
-//            check = userMapper.joinByGoogle(userDTO);
-//        }
-//
-//        Integer userId = userMapper.selectUserIDBySnsId(snsId);
-//        UserResponseDTO userResponseDTO = new UserResponseDTO(userId, snsId, accessToken, name, nickname, email, picture);
-//
-//        Map<Integer, UserResponseDTO> user = new HashMap<>();
-//
-//        if (check == 1) {
-//            request.getSession().setAttribute("userId", userId);
-//            user.put(1, userResponseDTO);
-//            return user;
-//        } else {
-//            user.put(2, new UserResponseDTO());
-//            return user;
-//        }
-//    }
-//
-//    private String getAccessToken(String authorizationCode, String registrationId) {
-//        String clientId = env.getProperty("oauth2." + registrationId + ".client-id");
-//        String clientSecret = env.getProperty("oauth2." + registrationId + ".client-secret");
-//        String redirectUri = env.getProperty("oauth2." + registrationId + ".redirect-uri");
-//        String tokenUri = env.getProperty("oauth2." + registrationId + ".token-uri");
-//
-//        // 환경 변수 값 로그 출력
-//        System.out.println("Client ID: " + clientId);
-//        System.out.println("Client Secret: " + clientSecret);
-//        System.out.println("Redirect URI: " + redirectUri);
-//        System.out.println("Token URI: " + tokenUri);
-//
-//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-//        params.add("code", authorizationCode);
-//        params.add("client_id", clientId);
-//        params.add("client_secret", clientSecret);
-//        params.add("redirect_uri", redirectUri);
-//        params.add("grant_type", "authorization_code");
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//
-//        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
-//
-//        try {
-//            ResponseEntity<JsonNode> responseNode = restTemplate.exchange(tokenUri, HttpMethod.POST, entity, JsonNode.class);
-//            JsonNode accessTokenNode = responseNode.getBody();
-//            return accessTokenNode.get("access_token").asText();
-//        } catch (HttpClientErrorException e) {
-//            System.err.println("HTTP Status Code: " + e.getStatusCode());
-//            System.err.println("Response Body: " + e.getResponseBodyAsString());
-//            throw new RuntimeException("Failed to get access token", e);
-//        }
-//    }
-//
-//    private JsonNode getUserResource(String accessToken, String registrationId) {
-//        String resourceUri = env.getProperty("oauth2." + registrationId + ".resource-uri");
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.set("Authorization", "Bearer " + accessToken);
-//        HttpEntity entity = new HttpEntity(headers);
-//        return restTemplate.exchange(resourceUri, HttpMethod.GET, entity, JsonNode.class).getBody();
-//    }
+
+    public Map<Integer, UserResponseDTO> socialLogin(String code, String registrationId) {
+        String accessToken = getAccessToken(code, registrationId);
+        JsonNode userResourceNode = getUserResource(accessToken, registrationId);
+
+        String userName = userResourceNode.get("id").asText();
+        String email = userResourceNode.get("email").asText();
+        String name = userResourceNode.get("name").asText();
+        String nickname = userResourceNode.get("name").asText();
+        String picture = userResourceNode.get("picture").asText();
+
+        int check = userMapper.checkDuplicateByUsername(userName);
+        if (check != 1) {
+            UserResponseDTO userDTO = new UserResponseDTO(userName, name, nickname, email, picture);
+            check = userMapper.joinByGoogle(userDTO);
+        }
+
+        Integer userId = userMapper.selectUserIDByUsername(userName);
+        UserResponseDTO userResponseDTO = new UserResponseDTO(userId, userName, name, nickname, email, picture);
+
+        Map<Integer, UserResponseDTO> user = new HashMap<>();
+
+        if (check == 1) {
+            request.getSession().setAttribute("userId", userId);
+            user.put(1, userResponseDTO);
+            return user;
+        } else {
+            user.put(2, new UserResponseDTO());
+            return user;
+        }
+    }
+
+    private String getAccessToken(String authorizationCode, String registrationId) {
+        String clientId = env.getProperty("oauth2." + registrationId + ".client-id");
+        String clientSecret = env.getProperty("oauth2." + registrationId + ".client-secret");
+        String redirectUri = env.getProperty("oauth2." + registrationId + ".redirect-uri");
+        String tokenUri = env.getProperty("oauth2." + registrationId + ".token-uri");
+
+        // 환경 변수 값 로그 출력
+        System.out.println("Client ID: " + clientId);
+        System.out.println("Client Secret: " + clientSecret);
+        System.out.println("Redirect URI: " + redirectUri);
+        System.out.println("Token URI: " + tokenUri);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("code", authorizationCode);
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+        params.add("redirect_uri", redirectUri);
+        params.add("grant_type", "authorization_code");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
+
+        try {
+            ResponseEntity<JsonNode> responseNode = restTemplate.exchange(tokenUri, HttpMethod.POST, entity, JsonNode.class);
+            JsonNode accessTokenNode = responseNode.getBody();
+            return accessTokenNode.get("access_token").asText();
+        } catch (HttpClientErrorException e) {
+            System.err.println("HTTP Status Code: " + e.getStatusCode());
+            System.err.println("Response Body: " + e.getResponseBodyAsString());
+            throw new RuntimeException("Failed to get access token", e);
+        }
+    }
+
+    private JsonNode getUserResource(String accessToken, String registrationId) {
+        String resourceUri = env.getProperty("oauth2." + registrationId + ".resource-uri");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity entity = new HttpEntity(headers);
+        return restTemplate.exchange(resourceUri, HttpMethod.GET, entity, JsonNode.class).getBody();
+    }
+
 
     public Integer join(UserResponseDTO userDTO) {
         int cnt = 0;
-        int check = userMapper.checkDuplicateBySnsId(userDTO.getSnsId());
+        int check = userMapper.checkDuplicateByUsername(userDTO.getUserName());
         if (check < 1) {
             cnt = userMapper.join(userDTO);
         }
         return cnt;
     }
 
-    public UserResponseDTO selectUserBySnsId(String snsId) {
-        return userMapper.selectUserBySnsId(snsId);
+    public UserResponseDTO selectUserByUsername(String username) {
+        return userMapper.selectUserByUsername(username);
     }
 
     public void updateUserInfo(UserResponseDTO user) {
         userMapper.updateUserInfo(user);
     }
 
-    public void updateUserImage(String snsId, MultipartFile file) {
+    public void updateUserImage(String username, MultipartFile file) {
         try {
             if (file != null) {
                 // 파일 저장
@@ -140,6 +142,7 @@ public class UserService {
                 file.transferTo(new File(folder + "/" + newFileName));
 
                 //db에 관련 정보 저장
+
                 userMapper.updateUserImage(snsId, "https://devproject.store" + folder + "/" + newFileName);
             }
         } catch (Exception e) {
@@ -156,4 +159,9 @@ public class UserService {
         String timeStamp = dateFormat.format(new Date());
         return timeStamp + randomNumber + originalFileName;
     }
+
+    public Integer getUserId(String userName){
+        return userMapper.getUserId(userName);
+    }
+
 }

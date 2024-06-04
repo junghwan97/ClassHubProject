@@ -81,8 +81,8 @@ public class UserController {
             }
     )
     @GetMapping("selectUser")
-    public ResponseEntity<ResponseData<UserResponseDTO>> selectUser(@RequestParam("snsId") String snsId) {
-        UserResponseDTO user = userService.selectUserBySnsId(snsId);
+    public ResponseEntity<ResponseData<UserResponseDTO>> selectUser(@RequestParam("username") String username) {
+        UserResponseDTO user = userService.selectUserByUsername(username);
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.SELECT_USER, user));
     }
 

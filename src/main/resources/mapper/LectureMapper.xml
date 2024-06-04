@@ -58,7 +58,8 @@
     <!-- 강의 전체 조회 -->
     <select id="selectAll" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
         SELECT c.*, i.name, r.review_score FROM Class c JOIN Instructors i ON c.instructors_id = i.instructors_id
-                                                        LEFT JOIN (SELECT class_id, ROUND(AVG(review_score), 1) AS review_score FROM Class_Review GROUP BY class_id) r ON r.class_id = c.class_id;
+        LEFT JOIN (SELECT class_id, ROUND(AVG(review_score), 1) AS review_score FROM Class_Review GROUP BY class_id) r ON r.class_id = c.class_id
+        LIMIT #{startIndex}, #{rowPerPage};
     </select>
 
     <!-- 강의 키워드 조회 -->
@@ -76,7 +77,8 @@
            OR summary LIKE CONCAT('%', #{keyword}, '%')
 
         GROUP BY c.class_id
-        ORDER BY favorite_count DESC, c.regdate DESC;
+        ORDER BY favorite_count DESC, c.regdate DESC
+        LIMIT #{startIndex}, #{rowPerPage};
     </select>
 
     <!-- 강의 1개 조회 -->
@@ -93,7 +95,8 @@
 
     <!-- 강의 카테고리별 조회 -->
     <select id="selectByCategory" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
-        SELECT * FROM Class WHERE category_id = #{categoryId};
+        SELECT * FROM Class WHERE category_id = #{categoryId}
+        LIMIT #{startIndex}, #{rowPerPage};
     </select>
 
     <!-- 강의 정보 조회 -->

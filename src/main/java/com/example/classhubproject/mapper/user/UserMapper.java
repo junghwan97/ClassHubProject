@@ -9,15 +9,23 @@ public interface UserMapper {
 
     Integer joinByGoogle(UserResponseDTO userResponseDTO);
 
-    Integer selectUserIDBySnsId(String snsId);
+    Integer selectUserIDByUsername(String username);
 
-    Integer checkDuplicateBySnsId(String snsId);
+    Integer checkDuplicateByUsername(String username);
 
     Integer join(UserResponseDTO userDTO);
 
-    UserResponseDTO selectUserBySnsId(String snsId);
+    UserResponseDTO selectUserByUsername(String username);
 
     void updateUserInfo(UserResponseDTO user);
 
-    void updateUserImage(@Param("snsId") String snsId, @Param("file") String file);
+    void updateUserImage(@Param("username") String snsId, @Param("file") String file);
+
+    Integer insertGoogle(UserResponseDTO userDTO);
+
+    Integer updateGoogle(UserResponseDTO userDTO);
+
+    int getUserId(String userName);
+
+    String selectUserNameByUsername(String username);
 }

@@ -1,5 +1,6 @@
 package com.example.classhubproject.service.lecture;
 
+import com.example.classhubproject.data.community.PagingDTO;
 import com.example.classhubproject.data.lecture.*;
 import com.example.classhubproject.exception.ClassHubErrorCode;
 import com.example.classhubproject.exception.ClassHubException;
@@ -47,39 +48,6 @@ public class LectureService {
         int edited = lectureMapper.editInstructor(request);
 
         return edited;
-    }
-
-    public int uploadMaterial(Integer id, List<MultipartFile> files) {
-
-		String uploadFolder = "/home/ubuntu/contents/videos";
-    	
-    	File uploadPath = new File(uploadFolder, id.toString());
-    	
-    	if(uploadPath.exists() == false) {
-    		uploadPath.mkdir();
-    	}
-    	
-    	try {
-			for(MultipartFile f : files) {
-				LectureMaterialUploadedRequest request = new LectureMaterialUploadedRequest();
-				request.setClassId(id);
-				request.setResource(f.getOriginalFilename());
-				
-				lectureMapper.uploadMaterial(request);
-				
-				File saveFile = new File(uploadPath, f.getOriginalFilename());
-				
-				try {
-					f.transferTo(saveFile);
-				}catch(Exception e) {
-					log.error(e.getMessage());
-				}
-			}
-			return 1;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return 0;
-		}
     }
 
     public int uploadAndSyncMaterials(Integer classId, List<MultipartFile> files) {
@@ -287,84 +255,6 @@ public class LectureService {
 		return request.getClassId();
 	}
 
-
-	/*
-    public int uploadClass(LectureClassUploadedRequest request, String sectionsJson, List<MultipartFile> videos) throws JsonMappingException, JsonProcessingException {
-    	
-    	ObjectMapper obm = new ObjectMapper();
-
-		Integer length = 0;
-		ClassDetailResponseDTO dto = obm.readValue(sectionsJson, ClassDetailResponseDTO.class);
-		System.out.println(dto.toString());
-
-		for(SectionDTO sections : dto.getSections()){
-			for(LectureClassDetailDTO video : sections.getVideos()){
-				length = length + video.getVideoLength();
-			}
-			request.setClassName(dto.getTitle());
-			request.setTotalVideoLength(length);
-		}
-		System.out.println(request.toString());
-		log.info("111111");
-		int upload = 0;
-		try {
-			upload = lectureMapper.uploadClass(request);
-		} catch (Exception e) {
-			log.info("gggg" + e.getMessage());
-			throw new RuntimeException(e);
-		}
-		log.info("ddddd");
-    	//폴더 생성 및 업로드 Date정보로 머릿글 생성
-
-    	String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy\\videos";
-
-		// /home/ubuntu/contents/videos
-		//"C:\\Users\\USER\\Desktop\\dummy\\videos"
-
-    	SimpleDateFormat save = new SimpleDateFormat("yyyyMMddHHmmss");
-
-    	Date date = new Date();
-
-    	String str = String.valueOf(request.getClassId());
-
-    	String random = save.format(date);
-
-    	File uploadPath = new File(uploadFolder, str);
-
-    	if(uploadPath.exists() == false) {
-			boolean isCreated = uploadPath.mkdirs();  // mkdirs() 사용하여 전체 경로 생성 시도
-			if (!isCreated) {
-				log.error("Failed to create directory: " + uploadPath);
-			}
-		}
-    	log.info("1번");
-    	//파일 정보 DB업로드
-		for(SectionDTO sections : dto.getSections()){
-    		for(LectureClassDetailDTO video : sections.getVideos()) {
-
-				video.setClassId(request.getClassId());
-				video.setSectionTitle(sections.getSectionTitle());
-				video.setVideo(random + "_" + video.getVideo());
-				lectureMapper.addClassVideo(video);
-			}
-    	}
-    	log.info("2번");
-    	//파일 업로드
-    	for(MultipartFile file : videos) {
-    		String temp = random + "_" + file.getOriginalFilename();
-    		File saveFile = new File(uploadPath, temp);
-    		
-    		try {
-    			file.transferTo(saveFile);
-    		}catch(Exception e) {
-    			log.error(e.getMessage());
-    		}
-    	}
-		log.info("3번");
-    	return request.getClassId();
-    }
-*/
-
     public LectureClassEditedResponse editClass(LectureClassEditedRequest request) {
 
         int edited = lectureMapper.editClass(request);
@@ -374,21 +264,71 @@ public class LectureService {
 
         return response;
     }
-    
-    public List<ClassResponseDTO> selectAll(){
-    	
-    	return lectureMapper.selectAll();
+
+	public PagingDTO<List<ClassResponseDTO>> selectAll(Integer page){
+		int rowPerPage = 5;
+
+		// 쿼리 LIMIT절에 사용할 시작 인덱스
+		int startIndex = (page - 1) * rowPerPage;
+
+		List<ClassResponseDTO> list = lectureMapper.selectAll(startIndex, rowPerPage);
+		int numOfRecord = list.size();
+		PagingDTO pgList = createPaging(page, numOfRecord, list);
+
+
+    	return pgList;
+    }
+
+	public PagingDTO<List<ClassResponseDTO>> selectByKeyword(String keyword, Integer page){
+
+		int rowPerPage = 5;
+
+		// 쿼리 LIMIT절에 사용할 시작 인덱스
+		int startIndex = (page - 1) * rowPerPage;
+
+		List<ClassResponseDTO> list = lectureMapper.selectByKeyword(keyword, startIndex, rowPerPage);
+		int numOfRecord = list.size();
+		PagingDTO pgList = createPaging(page, numOfRecord, list);
+
+		return pgList;
+
     }
     
-    public List<ClassResponseDTO> selectByKeyword(String keyword){
-    	
-    	return lectureMapper.selectByKeyword(keyword);
+    public PagingDTO<List<ClassResponseDTO>> selectByCategory(Integer categoryId, Integer page){
+		int rowPerPage = 5;
+
+		// 쿼리 LIMIT절에 사용할 시작 인덱스
+		int startIndex = (page - 1) * rowPerPage;
+
+		List<ClassResponseDTO> list = lectureMapper.selectByCategory(categoryId, startIndex, rowPerPage);
+		int numOfRecord = list.size();
+		PagingDTO pgList = createPaging(page, numOfRecord, list);
+
+		return pgList;
     }
-    
-    public List<ClassResponseDTO> selectByCategory(Integer categoryId){
-    	
-    	return lectureMapper.selectByCategory(categoryId);
-    } 
+
+	public PagingDTO createPaging(Integer page, Integer numOfRecords, List<ClassResponseDTO> list) {
+		// 한페이지 당 게시물 수
+		Integer rowPerPage = 5;
+
+		// 쿼리 LIMIT절에 사용할 시작 인덱스
+		int startIndex = (page - 1) * rowPerPage;
+
+		// 페이지네이션에 필요한 정보
+		// 마지막 페이지 번호
+		int totalNum = (numOfRecords - 1) / rowPerPage + 1;
+		//페이지네이션 왼쪽 번호
+		int leftEndNum = page - 5;
+		leftEndNum = Math.max(leftEndNum, 1);
+		//페이지네이션 오른쪽 번호
+		int rightEndNum = leftEndNum + 9;
+		rightEndNum = Math.min(rightEndNum, totalNum);
+		int currentPageNum = page;
+
+		PagingDTO pagingList = new PagingDTO(list, currentPageNum, totalNum, leftEndNum, rightEndNum);
+		return pagingList;
+	}
+
 
 	public int favoriteLecture(Integer classId) {
 		int userId = getUserId();
@@ -405,47 +345,47 @@ public class LectureService {
 		return 1;
 	}
     
-    public List<ClassResponseDTO> recommendLectures(ClassResponseDTO request){
-    	List<ClassResponseDTO> lectures = lectureMapper.selectAll();
-    	
-    	Map<ClassResponseDTO, Double> similarityScores = new HashMap<>();
-    	
-    	for(ClassResponseDTO dto : lectures) {
-    		if(!dto.getClassName().equalsIgnoreCase(request.getClassName())) {
-    			double similarity = calculateCosineSimilarity(request.getClassName(), dto.getClassName());
-    			similarityScores.put(dto, similarity);
-    		}
-    	}
-    	
-    	return similarityScores.entrySet().stream()
-    			.sorted(Map.Entry.<ClassResponseDTO, Double>comparingByValue().reversed())
-    			.limit(5)
-    			.map(entry -> entry.getKey())
-    			.collect(Collectors.toList());
-    }
-    
-    private double calculateCosineSimilarity(String text1, String text2) {
-        Map<String, Integer> wordFreq1 = getWordFrequency(text1);
-        Map<String, Integer> wordFreq2 = getWordFrequency(text2);
-
-        Set<String> allWords = new HashSet<>();
-        allWords.addAll(wordFreq1.keySet());
-        allWords.addAll(wordFreq2.keySet());
-
-        int dotProduct = 0;
-        int norm1 = 0;
-        int norm2 = 0;
-
-        for (String word : allWords) {
-            int freq1 = wordFreq1.getOrDefault(word, 0);
-            int freq2 = wordFreq2.getOrDefault(word, 0);
-            dotProduct += freq1 * freq2;
-            norm1 += freq1 * freq1;
-            norm2 += freq2 * freq2;
-        }
-
-        return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
-    }
+//    public List<ClassResponseDTO> recommendLectures(ClassResponseDTO request){
+//    	List<ClassResponseDTO> lectures = lectureMapper.selectAll();
+//
+//    	Map<ClassResponseDTO, Double> similarityScores = new HashMap<>();
+//
+//    	for(ClassResponseDTO dto : lectures) {
+//    		if(!dto.getClassName().equalsIgnoreCase(request.getClassName())) {
+//    			double similarity = calculateCosineSimilarity(request.getClassName(), dto.getClassName());
+//    			similarityScores.put(dto, similarity);
+//    		}
+//    	}
+//
+//    	return similarityScores.entrySet().stream()
+//    			.sorted(Map.Entry.<ClassResponseDTO, Double>comparingByValue().reversed())
+//    			.limit(5)
+//    			.map(entry -> entry.getKey())
+//    			.collect(Collectors.toList());
+//    }
+//
+//    private double calculateCosineSimilarity(String text1, String text2) {
+//        Map<String, Integer> wordFreq1 = getWordFrequency(text1);
+//        Map<String, Integer> wordFreq2 = getWordFrequency(text2);
+//
+//        Set<String> allWords = new HashSet<>();
+//        allWords.addAll(wordFreq1.keySet());
+//        allWords.addAll(wordFreq2.keySet());
+//
+//        int dotProduct = 0;
+//        int norm1 = 0;
+//        int norm2 = 0;
+//
+//        for (String word : allWords) {
+//            int freq1 = wordFreq1.getOrDefault(word, 0);
+//            int freq2 = wordFreq2.getOrDefault(word, 0);
+//            dotProduct += freq1 * freq2;
+//            norm1 += freq1 * freq1;
+//            norm2 += freq2 * freq2;
+//        }
+//
+//        return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
+//    }
 
     private Map<String, Integer> getWordFrequency(String text) {
         Map<String, Integer> wordFreq = new HashMap<>();
@@ -550,6 +490,7 @@ public class LectureService {
 
 		return response;
 	}
+
 
 }
 
