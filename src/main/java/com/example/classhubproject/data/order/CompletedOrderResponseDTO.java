@@ -1,17 +1,21 @@
 package com.example.classhubproject.data.order;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.util.*;
+import java.util.Date;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "주문 Response DTO")
-public class OrderResponseDTO {
-    
+@Schema(description = "주문완료 Response DTO")
+public class CompletedOrderResponseDTO {
+
+
     @Schema(description = "주문 ID")
     private int ordersId;
 
@@ -30,4 +34,6 @@ public class OrderResponseDTO {
     @Schema(description = "주문 일자")
     private Date regdate;
 
+    @Schema(description = "아임포트 식별자")
+    private String impUid;
 }

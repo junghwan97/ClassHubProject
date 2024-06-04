@@ -37,6 +37,7 @@ public class UserService {
         this.env = env;
     }
 
+
     public Map<Integer, UserResponseDTO> socialLogin(String code, String registrationId) {
         String accessToken = getAccessToken(code, registrationId);
         JsonNode userResourceNode = getUserResource(accessToken, registrationId);
@@ -112,6 +113,7 @@ public class UserService {
         return restTemplate.exchange(resourceUri, HttpMethod.GET, entity, JsonNode.class).getBody();
     }
 
+
     public Integer join(UserResponseDTO userDTO) {
         int cnt = 0;
         int check = userMapper.checkDuplicateByUsername(userDTO.getUserName());
@@ -140,7 +142,8 @@ public class UserService {
                 file.transferTo(new File(folder + "/" + newFileName));
 
                 //db에 관련 정보 저장
-                userMapper.updateUserImage(username, "https://devproject.store" + folder + newFileName);
+
+                userMapper.updateUserImage(snsId, "https://devproject.store" + folder + "/" + newFileName);
             }
         } catch (Exception e) {
             e.printStackTrace();
