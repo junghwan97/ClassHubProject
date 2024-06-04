@@ -24,5 +24,5 @@ public interface UserMapper {
 
     UserResponseDTO selectUserByUsername(String username);
 
-    void updateGoogleAccount(UserResponseDTO existData);
+    void updateGoogleAccount(UserResponseDTO updatedData);
 }

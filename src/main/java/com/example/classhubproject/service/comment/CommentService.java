@@ -32,9 +32,9 @@ public class CommentService {
         return commentMapper.commentDelete(commentId);
     }
 
-    public CommentResponseDTO getComment(int commentId) {
-        return commentMapper.getCommentById(commentId);
-    }
+//    public CommentResponseDTO getComment(int commentId) {
+//        return commentMapper.getCommentById(commentId);
+//    }
 
     public Integer commentModify(int commentId, CommentRequestDTO commentRequestDTO) {
         return commentMapper.commentModify(commentId, commentRequestDTO);

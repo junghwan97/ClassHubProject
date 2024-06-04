@@ -54,13 +54,21 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             return new CustomOAuth2User(userDTO);
         } else {
-            existData.builder()
-                    .email(oAuth2Response.getEmail())
-                    .name(oAuth2Response.getName())
+//            existData.builder()
+//                    .email(oAuth2Response.getEmail())
+//                    .name(oAuth2Response.getName())
+//                    .nickname(oAuth2Response.getName())
+//                    .build();
+
+            UserResponseDTO updatedData = UserResponseDTO.builder()
+                    .snsId(existData.getSnsId()) // 기존 데이터 복사
+                    .name(oAuth2Response.getName()) // 업데이트할 필드
                     .nickname(oAuth2Response.getName())
+                    .email(oAuth2Response.getEmail())
+                    .role(existData.getRole()) // 기존 데이터 복사
                     .build();
 
-            userMapper.updateGoogleAccount(existData);
+            userMapper.updateGoogleAccount(updatedData);
 
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(existData.getName());

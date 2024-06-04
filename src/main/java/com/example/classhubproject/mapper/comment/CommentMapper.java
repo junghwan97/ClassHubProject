@@ -15,7 +15,9 @@ public interface CommentMapper {
 
     Integer commentDelete(int commentId);
 
-    CommentResponseDTO getCommentById(int commentId);
+    CommentResponseDTO selectById(int commentId);
 
     Integer commentModify(@Param("commentId") int commentId, @Param("commentModify") CommentRequestDTO commentRequestDTO);
+
+//    CommentResponseDTO selectById(Integer commentId);
 }

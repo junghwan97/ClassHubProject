@@ -30,14 +30,14 @@
     </delete>
 
     <select id="getCommentById" resultType="commentResponse">
-        select comment_id,
-               user_id,
-               community_id,
-               text,
-               regdate,
-               edit_date,
-               (SELECT COUNT(*) FROM Favorite_Community WHERE favorite_type_id = comment_id) AS favoriteCount
-        from Comment
+        select c.comment_id,
+               c.user_id,
+               c.community_id,
+               c.text,
+               c.regdate,
+               c.edit_date,
+               (SELECT nickname FROM User WHERE user_id = c.user_id) AS nickname,
+        from Comment c
         where comment_id = #{commentId};
     </select>
 
