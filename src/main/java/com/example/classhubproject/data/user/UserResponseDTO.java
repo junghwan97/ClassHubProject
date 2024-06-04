@@ -15,11 +15,8 @@ public class UserResponseDTO {
     @Schema(description = "회원 식별 ID")
     private int userId;
 
-    @Schema(description = "회원 ID")
-    private String snsId;
-
-    @Schema(description = "액세스 토큰")
-    private String accessToken;
+    @Schema(description = "토큰 식별자")
+    private String userName;
 
     @Schema(description = "회원 이름")
     private String name;
@@ -42,25 +39,38 @@ public class UserResponseDTO {
     @Schema(description = "회원 탈퇴일자", format = "date-time")
     private Date exitDate;
 
-    @Schema(description = "회원 권한", defaultValue = "1", allowableValues = {"1", "2"})
+    @Schema(description = "회원 권한")
     private String role;
 
-    public UserResponseDTO(String snsId, String accessToken, String name, String nickname, String email, String profilePicture) {
+    public UserResponseDTO(String snsId, String name, String nickname, String email, String profilePicture) {
 
-        this.snsId = snsId;
-        this.accessToken = accessToken;
+        this.userName = snsId;
         this.name = name;
         this.nickname = nickname;
         this.email = email;
         this.profilePicture = profilePicture;
     }
-    public UserResponseDTO(Integer userId, String snsId, String accessToken, String name, String nickname, String email, String profilePicture) {
+    public UserResponseDTO(Integer userId, String userName, String name, String nickname, String email, String profilePicture) {
         this.userId = userId;
-        this.snsId = snsId;
-        this.accessToken = accessToken;
+        this.userName = userName;
         this.name = name;
         this.nickname = nickname;
         this.email = email;
         this.profilePicture = profilePicture;
     }
+    public UserResponseDTO(String userName, String email, String name, String role){
+        this.userName = userName;
+        this.email = email;
+        this.name = name;
+        this.role = role;
+    }
+
+    public UserResponseDTO(int userId, String userName, String email, String name, String role){
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
+        this.name = name;
+        this.role = role;
+    }
+
 }

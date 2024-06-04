@@ -41,20 +41,20 @@ public class UserService {
         String accessToken = getAccessToken(code, registrationId);
         JsonNode userResourceNode = getUserResource(accessToken, registrationId);
 
-        String snsId = userResourceNode.get("id").asText();
+        String userName = userResourceNode.get("id").asText();
         String email = userResourceNode.get("email").asText();
         String name = userResourceNode.get("name").asText();
         String nickname = userResourceNode.get("name").asText();
         String picture = userResourceNode.get("picture").asText();
 
-        int check = userMapper.checkDuplicateBySnsId(snsId);
+        int check = userMapper.checkDuplicateByUsername(userName);
         if (check != 1) {
-            UserResponseDTO userDTO = new UserResponseDTO(snsId, accessToken, name, nickname, email, picture);
+            UserResponseDTO userDTO = new UserResponseDTO(userName, name, nickname, email, picture);
             check = userMapper.joinByGoogle(userDTO);
         }
 
-        Integer userId = userMapper.selectUserIDBySnsId(snsId);
-        UserResponseDTO userResponseDTO = new UserResponseDTO(userId, snsId, accessToken, name, nickname, email, picture);
+        Integer userId = userMapper.selectUserIDByUsername(userName);
+        UserResponseDTO userResponseDTO = new UserResponseDTO(userId, userName, name, nickname, email, picture);
 
         Map<Integer, UserResponseDTO> user = new HashMap<>();
 
@@ -114,22 +114,22 @@ public class UserService {
 
     public Integer join(UserResponseDTO userDTO) {
         int cnt = 0;
-        int check = userMapper.checkDuplicateBySnsId(userDTO.getSnsId());
+        int check = userMapper.checkDuplicateByUsername(userDTO.getUserName());
         if (check < 1) {
             cnt = userMapper.join(userDTO);
         }
         return cnt;
     }
 
-    public UserResponseDTO selectUserBySnsId(String snsId) {
-        return userMapper.selectUserBySnsId(snsId);
+    public UserResponseDTO selectUserByUsername(String username) {
+        return userMapper.selectUserByUsername(username);
     }
 
     public void updateUserInfo(UserResponseDTO user) {
         userMapper.updateUserInfo(user);
     }
 
-    public void updateUserImage(String snsId, MultipartFile file) {
+    public void updateUserImage(String username, MultipartFile file) {
         try {
             if (file != null) {
                 // 파일 저장
@@ -140,7 +140,7 @@ public class UserService {
                 file.transferTo(new File(folder + "/" + newFileName));
 
                 //db에 관련 정보 저장
-                userMapper.updateUserImage(snsId, "https://devproject.store" + folder + newFileName);
+                userMapper.updateUserImage(username, "https://devproject.store" + folder + newFileName);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,4 +156,9 @@ public class UserService {
         String timeStamp = dateFormat.format(new Date());
         return timeStamp + randomNumber + originalFileName;
     }
+
+    public Integer getUserId(String userName){
+        return userMapper.getUserId(userName);
+    }
+
 }

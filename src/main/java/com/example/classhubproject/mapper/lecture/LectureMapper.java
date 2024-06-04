@@ -32,13 +32,13 @@ public interface LectureMapper {
     int addClassVideo(LectureClassDetailDTO dto);
 
     //강의 전체조회
-    List<ClassResponseDTO> selectAll();
+    List<ClassResponseDTO> selectAll(int startIndex, int rowPerPage);
 
     //강의 키워드 조회
-    List<ClassResponseDTO> selectByKeyword(String keyword);
+    List<ClassResponseDTO> selectByKeyword(String keyword, int startIndex, int rowPerPage);
 
     //카데고리 조회
-    List<ClassResponseDTO> selectByCategory(Integer categoryId);
+    List<ClassResponseDTO> selectByCategory(Integer categoryId, int startIndex, int rowPerPage);
 
     ClassResponseDTO getClassInfoByClassId(int classId);
 
