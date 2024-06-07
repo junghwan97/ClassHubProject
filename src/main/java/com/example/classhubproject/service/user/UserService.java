@@ -4,7 +4,9 @@ import com.example.classhubproject.data.user.UserResponseDTO;
 import com.example.classhubproject.mapper.user.UserMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -143,7 +145,7 @@ public class UserService {
 
                 //db에 관련 정보 저장
 
-                userMapper.updateUserImage(snsId, "https://devproject.store" + folder + "/" + newFileName);
+                userMapper.updateUserImage(username, "https://api.devproject.store" + folder + "/" + newFileName);
             }
         } catch (Exception e) {
             e.printStackTrace();

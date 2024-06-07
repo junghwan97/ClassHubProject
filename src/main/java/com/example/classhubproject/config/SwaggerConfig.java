@@ -12,7 +12,7 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    Server server = new Server().url("https://devproject.store");
+    Server server = new Server().url("https://api.devproject.store");
 
     @Bean
     public OpenAPI openAPI() {

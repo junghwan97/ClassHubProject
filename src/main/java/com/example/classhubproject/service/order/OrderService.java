@@ -89,9 +89,6 @@ public class OrderService {
     }
 
     // 세션에서 userId 조회
-//    private int getUserId() {
-//        return (int) request.getSession().getAttribute("userId");
-//    }
 
     // 특정 회원의 가장 최근에 생성된 주문ID 조회
     private int getOrdersIdByUserId(int userId) {
