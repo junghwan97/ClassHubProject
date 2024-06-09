@@ -402,7 +402,7 @@ public class LectureService {
 		Map<String, List<LectureClassDetailDTO>> group = new LinkedHashMap<>();
 
 		for(LectureClassDetailDTO dto : list){
-			dto.setVideo("https://devproject.store/home/ubunt/contents/videos/" + classId + "/" + dto.getVideo());
+			dto.setVideo("https://api.devproject.store/home/ubunt/contents/videos/" + classId + "/" + dto.getVideo());
 
 			group.computeIfAbsent(dto.getSectionTitle(), k -> new ArrayList<>()).add(dto);
 		}

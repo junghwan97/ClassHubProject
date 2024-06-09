@@ -2,6 +2,7 @@ package com.example.classhubproject.controller.user;
 
 import com.example.classhubproject.data.common.ResponseData;
 import com.example.classhubproject.data.common.ResponseMessage;
+import com.example.classhubproject.data.oauth2.CustomOAuth2User;
 import com.example.classhubproject.data.user.UserResponseDTO;
 import com.example.classhubproject.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,8 +84,11 @@ public class UserController {
             }
     )
     @GetMapping("selectUser")
-    public ResponseEntity<ResponseData<UserResponseDTO>> selectUser(@RequestParam("username") String username) {
-        UserResponseDTO user = userService.selectUserByUsername(username);
+    public ResponseEntity<ResponseData<UserResponseDTO>> selectUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+
+        UserResponseDTO user = userService.selectUserByUsername(customOAuth2User.getUsername());
         return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.SELECT_USER, user));
     }
 

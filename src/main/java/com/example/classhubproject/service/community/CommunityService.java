@@ -235,7 +235,7 @@ public class CommunityService {
         List<String> images = test.getImage();
         List<String> imageForFront = new ArrayList<>();
         for (String image : images) {
-            String imagePath = "https://devproject.store" + image;
+            String imagePath = "https://api.devproject.store" + image;
             imageForFront.add(imagePath);
         }
         CommunityResponseDTO result = CommunityResponseDTO.builder()
@@ -262,7 +262,7 @@ public class CommunityService {
         List<String> images = test.getImage();
         List<String> imageForFront = new ArrayList<>();
         for (String image : images) {
-            String imagePath = "https://devproject.store" + image;
+            String imagePath = "https://api.devproject.store" + image;
             imageForFront.add(imagePath);
         }
         CommunityResponseDTO result = CommunityResponseDTO.builder()

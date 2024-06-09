@@ -9,7 +9,7 @@
 
     <insert id="insertGoogle" parameterType="user">
         INSERT INTO User(user_name, name, email, role, platform_type)
-        VALUES (#{userName}, #{name}, #{email}, #{temprole}, "Google");
+        VALUES (#{userName}, #{name}, #{email}, #{role}, "Google");
     </insert>
 
     <update id="updateGoogle" parameterType="user">
