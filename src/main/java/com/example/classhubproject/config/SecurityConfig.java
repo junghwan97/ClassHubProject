@@ -17,6 +17,12 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Collections;
 
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.filter.CharacterEncodingFilter;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -24,6 +30,23 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final JWTUtil jwtUtil;
+
+    private static final String[] AUTH_WHITELIST = {
+            "/swagger-ui/**",
+            "/docs/**",
+            "/v3/**",
+            "/community/questions/**",
+            "/community/studies/**",
+            "/community/question/**",
+            "/community/study/**",
+            "/community/mainpage",
+            "/lecture/selectMaterial/**",
+            "/lecture/selectclassDetail/**",
+            "/lecture/selectById/**",
+            "/lecture/selectByCategory/**",
+            "/lecture/selectAll/**"
+    };
+
 
     public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler, JWTUtil jwtUtil) {
 
@@ -43,7 +66,7 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedOrigins(Collections.singletonList("https://devproject.store"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -55,7 +78,6 @@ public class SecurityConfig {
                         return configuration;
                     }
                 }));
-
 
         //csrf disable
         http
@@ -84,9 +106,12 @@ public class SecurityConfig {
 
         //경로별 인가 작업
         http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/").permitAll()
-                        .anyRequest().authenticated());
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorizeHttpRequestsCustomizer -> authorizeHttpRequestsCustomizer
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .anyRequest().authenticated()
+                )
+        ;
 
         //세션 설정 : STATELESS
         http
