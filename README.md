@@ -7,7 +7,8 @@ https://api.devproject.store/swagger-ui/index.html
 https://www.figma.com/design/jEXIuj53g2LvNUfl0jxQjh/wireframe?node-id=0-1
 
 ## ERD 다이어그램
-![erd다이어그램2](https://api.devproject.store/home/ubuntu/contents/images/20240531064602999314451ClassHub_ERD.png)
+![ClassHub_ERD](https://github.com/junghwan97/ClassHubProject/assets/123052062/b4489296-e2ac-4cb7-ae3b-6730d2c7a815)
+
 
 ## 서비스 소개
 > 클래스허브는 온라인 학습 시스템으로, 언제 어디서나 학습에 접근할 수 있는 편리한 플랫폼을 제공합니다. <br>
