@@ -10,4 +10,5 @@ public class UserDTO {
     private String name;
     @JsonProperty("username")
     private String username;
+    private String picture;
 }
