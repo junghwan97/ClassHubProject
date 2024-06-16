@@ -30,43 +30,43 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (registrationId.equals("naver")) {
 
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
-        }
-        else if (registrationId.equals("google")) {
+        } else if (registrationId.equals("google")) {
 
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
-        }
-        else {
+        } else {
 
             return null;
         }
 
         //리소스 서버에서 발급 받은 정보로 사용자를 특정할 아이디값을 만듬
-        String username = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
+        String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
         UserResponseDTO existUser = userMapper.selectUserByUsername(username);
 
         String RoleUser = "ROLE_USER";
+        String profileImage = oAuth2User.getAttribute("picture");
 
-        if(existUser == null) {
-            UserResponseDTO user = new UserResponseDTO(username, oAuth2Response.getEmail(), oAuth2Response.getName(), RoleUser);
+        if (existUser == null) {
+//            UserResponseDTO user = new UserResponseDTO(username, oAuth2Response.getEmail(), oAuth2Response.getName(), RoleUser);
+            UserResponseDTO user = new UserResponseDTO(username, oAuth2Response.getEmail(), oAuth2Response.getName(), RoleUser, profileImage);
             userMapper.insertGoogle(user);
 
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(username);
             userDTO.setName(oAuth2Response.getName());
             userDTO.setRole("ROLE_USER");
+            userDTO.setPicture(profileImage);
 
             return new CustomOAuth2User(userDTO);
         }
-            UserResponseDTO user = new UserResponseDTO(existUser.getUserId(), existUser.getUserName(), oAuth2Response.getEmail(), oAuth2Response.getName(), existUser.getRole());
+        UserResponseDTO user = new UserResponseDTO(existUser.getUserId(), existUser.getUserName(), oAuth2Response.getName(), oAuth2Response.getName(), oAuth2Response.getEmail(), profileImage);
 
-            userMapper.updateGoogle(user);
+        userMapper.updateGoogle(user);
 
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUsername(existUser.getUserName());
-            userDTO.setName(oAuth2Response.getName());
-            userDTO.setRole(existUser.getUserName());
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername(existUser.getUserName());
+        userDTO.setName(oAuth2Response.getName());
 
-            return new CustomOAuth2User(userDTO);
+        return new CustomOAuth2User(userDTO);
     }
 
 }

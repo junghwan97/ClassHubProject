@@ -42,14 +42,14 @@ public class UserResponseDTO {
     @Schema(description = "회원 권한")
     private String role;
 
-    public UserResponseDTO(String snsId, String name, String nickname, String email, String profilePicture) {
-
-        this.userName = snsId;
-        this.name = name;
-        this.nickname = nickname;
-        this.email = email;
-        this.profilePicture = profilePicture;
-    }
+//    public UserResponseDTO(String snsId, String name, String nickname, String email, String profilePicture) {
+//
+//        this.userName = snsId;
+//        this.name = name;
+//        this.nickname = nickname;
+//        this.email = email;
+//        this.profilePicture = profilePicture;
+//    }
     public UserResponseDTO(Integer userId, String userName, String name, String nickname, String email, String profilePicture) {
         this.userId = userId;
         this.userName = userName;
@@ -63,6 +63,14 @@ public class UserResponseDTO {
         this.email = email;
         this.name = name;
         this.role = role;
+    }
+
+    public UserResponseDTO(String userName, String email, String name, String role, String profilePicture){
+        this.userName = userName;
+        this.email = email;
+        this.name = name;
+        this.role = role;
+        this.profilePicture = profilePicture;
     }
 
     public UserResponseDTO(int userId, String userName, String email, String name, String role){
