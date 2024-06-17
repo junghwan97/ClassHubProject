@@ -67,25 +67,25 @@ public class PaymentService {
     }
 
     // 결제 정보 저장
-    public void addPayment(String impUid) {
+    public void addPayment(int userId, String impUid) {
 
         // 포트원 결제 정보 가져오기
         IamportResponse<Payment> paymentResponse = iamportService.paymentByImpUid(impUid);
 
         // 결제된 금액과 주문 총 금액 비교
-        validatePayment(paymentResponse);
+        validatePayment(userId, paymentResponse);
 
         // 결제 정보 생성
-        insertPaymentInfo(paymentResponse);
+        insertPaymentInfo(userId, paymentResponse);
 
         // 장바구니 주문 상태 업데이트
-        updateCartStatus();
+        updateCartStatus(userId);
 
         // 최종 주문 상태 업데이트
-        completedOrder();
+        completedOrder(userId);
 
         // 수강 신청 정보 생성
-        insertEnrollmentInfo();
+        insertEnrollmentInfo(userId);
 
     }
 
@@ -109,9 +109,9 @@ public class PaymentService {
     }
 
     // 세션에서 user_id 가져오기
-    private int getUserId() {
-        return (int) request.getSession().getAttribute("userId");
-    }
+//    private int getUserId() {
+//        return (int) request.getSession().getAttribute("userId");
+//    }
 
     // 특정 회원의 가장 최근에 생성된 주문ID 조회
     private int getOrdersIdByUserId(int userId) {
@@ -119,12 +119,12 @@ public class PaymentService {
     }
 
     // 결제 정보 확인
-    private void validatePayment(IamportResponse<Payment> paymentResponse) {
+    private void validatePayment(int userId, IamportResponse<Payment> paymentResponse) {
         // 포트원 사전 결제 금액과 DB 결제 금액 비교
         BigDecimal receivedPaymentAmount = paymentResponse.getResponse().getAmount();
 
         // 최근 주문 ID 가져오기
-        int ordersId = getOrdersIdByUserId(getUserId());
+        int ordersId = getOrdersIdByUserId(userId);
         BigDecimal expectedOrderTotal = new BigDecimal(orderMapper.getTotalPriceByOrdersId(ordersId));
 
         if (receivedPaymentAmount.compareTo(expectedOrderTotal) != 0) {
@@ -134,8 +134,8 @@ public class PaymentService {
 
 
     // 결제 정보 생성
-    private void insertPaymentInfo(IamportResponse<Payment> paymentResponse) {
-        int ordersId = getOrdersIdByUserId(getUserId());
+    private void insertPaymentInfo(int userId, IamportResponse<Payment> paymentResponse) {
+        int ordersId = getOrdersIdByUserId(userId);
 
         Payment payment = paymentResponse.getResponse();
         PaymentRequestDTO paymentInfo = PaymentRequestDTO.builder()
@@ -154,8 +154,8 @@ public class PaymentService {
 
 
     // 결제 완료 시 장바구니 주문상태 변경
-    private void updateCartStatus() {
-        int userId = getUserId();
+    private void updateCartStatus(int userId) {
+        //int userId = getUserId();
         int ordersId = getOrdersIdByUserId(userId);
 
         // 주문 상세의 강의 조회
@@ -168,15 +168,15 @@ public class PaymentService {
     }
 
     // 최종 주문 상태 업데이트
-    private void completedOrder() {
-        int ordersId = getOrdersIdByUserId(getUserId());
+    private void completedOrder(int userId) {
+        int ordersId = getOrdersIdByUserId(userId);
 
         orderMapper.completedOrder(ordersId);
     }
 
     // 수강 신청 정보 생성
-    private void insertEnrollmentInfo() {
-        int userId = getUserId();
+    private void insertEnrollmentInfo(int userId) {
+        //int userId = getUserId();
         int ordersId = getOrdersIdByUserId(userId);
 
         // 주문 상세의 강의 조회

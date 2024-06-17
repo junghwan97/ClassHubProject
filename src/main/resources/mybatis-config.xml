@@ -33,6 +33,7 @@
         <typeAlias type="com.example.classhubproject.data.enrollmentInfo.EnrollmentInfoRequestDTO" alias="enrollmentInfoRequest"/>
         <typeAlias type="com.example.classhubproject.data.category.CategoryResponseDTO" alias="categoryResponse"/>
         <typeAlias type="com.example.classhubproject.data.instructor.InstructorsResponseDTO" alias="instructorResponse"/>
+        <typeAlias type="com.example.classhubproject.data.order.CompletedOrderResponseDTO" alias="completeOrderResponse"/>
     </typeAliases>
 
 </configuration>

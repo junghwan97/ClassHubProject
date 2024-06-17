@@ -1,13 +1,13 @@
 package com.example.classhubproject.controller.order;
 
 import com.example.classhubproject.data.order.*;
-import com.example.classhubproject.service.lecture.LectureService;
 import com.example.classhubproject.service.order.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -19,7 +19,6 @@ import java.util.*;
 public class OrderController {
 
     private final OrderService orderService;
-    private final LectureService lectureService;
 
     // 주문
     @Operation(
@@ -31,8 +30,8 @@ public class OrderController {
             }
     )
     @PostMapping("/add")
-    public void addOrder(@RequestBody @Schema(description = "강의 ID", example = "[classId: integer]") List<Integer> classIds) {
-        orderService.addOrder(classIds);
+    public void addOrder(@RequestBody @Schema(description = "회원 및 강의 ID 배열", required = true, example = "{\"userId\": 1, \"classIds\": 1}") InProgressRequestDTO inProgressRequestDTO) {
+        orderService.addOrder(inProgressRequestDTO.getUserId(), inProgressRequestDTO.getClassIds());
     }
 
     // 주문 진행 목록 조회
@@ -57,8 +56,8 @@ public class OrderController {
             }
     )
     @PostMapping("/delete")
-    public void deleteOrder(@RequestBody @Schema(description = "강의 ID", example = "{\"classId\": 1}") OrderRequestDTO orderRequestDTO) {
-        orderService.deleteOrder(orderRequestDTO.getClassId());
+    public void deleteOrder(@RequestBody @Schema(description = "회원 및 강의 ID", example = "{\"userId\": 1, \"classId\": 1}") OrderRequestDTO orderRequestDTO) {
+        orderService.deleteOrder(orderRequestDTO.getUserId(), orderRequestDTO.getClassId());
     }
 
     // 주문 내역
@@ -66,11 +65,11 @@ public class OrderController {
             summary = "특정 사용자의 전체 주문 목록 조회",
             description = "특정 사용자의 전체 주문 목록(완료/취소)을 조회합니다.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "주문 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderResponseDTO.class)))
+                    @ApiResponse(responseCode = "200", description = "주문 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CompletedOrderResponseDTO.class)))
             }
     )
     @GetMapping("/list/{userId}")
-    public List<OrderResponseDTO> orderList(@PathVariable("userId") Integer userId) {
+    public List<CompletedOrderResponseDTO> orderList(@PathVariable("userId") Integer userId) {
         return orderService.getOrderList(userId);
     }
 

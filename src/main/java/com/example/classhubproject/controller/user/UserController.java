@@ -38,26 +38,26 @@ public class UserController {
     }
 
 
-    @Operation(summary = "구글 로그인으로 회원가입",
-            description = "구글 로그인을 통해 회원가입 할 수 있습니다.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "구글 로그인으로 회원가입 성공", content = @Content(schema = @Schema(implementation = UserResponseDTO.class))),
-                    @ApiResponse(responseCode = "400", description = "구글 로그인으로 회원가입 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-            }
-    )
-    @GetMapping(value = "/login/oauth2/code/{registrationId}", produces = "application/json")
-    public ResponseEntity<ResponseData<UserResponseDTO>> googleLogin(@RequestParam("code") String code, @PathVariable(value = "registrationId") String registrationId) {
-        Map<Integer, UserResponseDTO> user = userService.socialLogin(code, registrationId);
-        Set<Integer> key = user.keySet();
-        UserResponseDTO result = user.get(1);
-
-        if (key.contains(1)) {
-            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.JOIN_SUCCESS, result));
-
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseData.res(HttpStatus.CONFLICT.value(), ResponseMessage.JOIN_ERROR));
-        }
-    }
+//    @Operation(summary = "구글 로그인으로 회원가입",
+//            description = "구글 로그인을 통해 회원가입 할 수 있습니다.",
+//            responses = {
+//                    @ApiResponse(responseCode = "200", description = "구글 로그인으로 회원가입 성공", content = @Content(schema = @Schema(implementation = UserResponseDTO.class))),
+//                    @ApiResponse(responseCode = "400", description = "구글 로그인으로 회원가입 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+//            }
+//    )
+//    @GetMapping(value = "/login/oauth2/code/{registrationId}", produces = "application/json")
+//    public ResponseEntity<ResponseData<UserResponseDTO>> googleLogin(@RequestParam("code") String code, @PathVariable(value = "registrationId") String registrationId) {
+//        Map<Integer, UserResponseDTO> user = userService.socialLogin(code, registrationId);
+//        Set<Integer> key = user.keySet();
+//        UserResponseDTO result = user.get(1);
+//
+//        if (key.contains(1)) {
+//            return ResponseEntity.ok(ResponseData.res(HttpStatus.OK.value(), ResponseMessage.JOIN_SUCCESS, result));
+//
+//        } else {
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseData.res(HttpStatus.CONFLICT.value(), ResponseMessage.JOIN_ERROR));
+//        }
+//    }
 
     @Operation(summary = "구글 로그인후 db에 저장",
             description = "구글 로그인을 통해 나온 값을 db에 저장할 수 있습니다.",
