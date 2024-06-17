@@ -85,7 +85,7 @@ public class UserController {
     )
     @GetMapping("selectUser")
     public ResponseEntity<ResponseData<UserResponseDTO>> selectUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
         UserResponseDTO user = userService.selectUserByUsername(customOAuth2User.getUsername());
