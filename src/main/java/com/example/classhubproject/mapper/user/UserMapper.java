@@ -19,7 +19,7 @@ public interface UserMapper {
 
     void updateUserInfo(UserResponseDTO user);
 
-    void updateUserImage(@Param("username") String snsId, @Param("file") String file);
+    void updateUserImage(@Param("username") String userName, @Param("file") String file);
 
     Integer insertGoogle(UserResponseDTO userDTO);
 
