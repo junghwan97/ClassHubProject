@@ -111,9 +111,9 @@ public class UserController {
                     @ApiResponse(responseCode = "400", description = "회원 이미지 수정 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
-    @PostMapping(value = "updateUserImage/{snsId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void updateUserImage(@PathVariable("snsId") String snsId,
+    @PostMapping(value = "updateUserImage/{userName}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void updateUserImage(@PathVariable("userName") String userName,
                                 @RequestPart("multipartFile") MultipartFile file) {
-        userService.updateUserImage(snsId, file);
+        userService.updateUserImage(userName, file);
     }
 }
