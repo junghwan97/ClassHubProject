@@ -75,10 +75,11 @@ public class LectureController {
     public PagingDTO<List<ClassResponseDTO>> selectAll(@RequestParam(required = false, name = "keyword")String keyword, @RequestParam(required = false, name ="page")Integer page){
     	if(StringUtils.hasText(keyword)) {
             PagingDTO<List<ClassResponseDTO>> res = lectureService.selectByKeyword(keyword, page);
+            return res;
     	}else {
             PagingDTO<List<ClassResponseDTO>> res = lectureService.selectAll(page);
-    	}
-        return null;
+            return res;
+        }
     }
 
     // 강의 1개 조회
