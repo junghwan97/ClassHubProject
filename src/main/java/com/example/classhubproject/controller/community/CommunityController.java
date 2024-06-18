@@ -22,6 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("community")
+//@CrossOrigin(origins = "https://devproject.store")
 public class CommunityController {
 
     private final CommunityService communityService;
@@ -34,7 +35,7 @@ public class CommunityController {
             }
     )
     @PostMapping("postBoard")
-
+    @CrossOrigin(origins = "https://devproject.store")
     public void communityPost(@RequestBody CommunityRequestDTO communityRequestDTO) {
         communityService.posting(communityRequestDTO);
     }
@@ -47,6 +48,7 @@ public class CommunityController {
             }
     )
     @PostMapping(value = "postImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "https://devproject.store")
     public List<Integer> communityImagePost(@RequestPart("multipartFiles") List<MultipartFile> files) {
         //게시글 이미지 등록
         List<Integer> imageIds = communityService.postingImage(files);
@@ -202,6 +204,7 @@ public class CommunityController {
             }
     )
     @PostMapping("modify/board/{communityId}")
+    @CrossOrigin(origins = "https://devproject.store")
     public void modifyBoard(@PathVariable("communityId") Integer communityId,
                             @RequestBody CommunityRequestDTO communityRequestDTO) {
         communityService.modifyBoard(communityId, communityRequestDTO);
@@ -215,6 +218,7 @@ public class CommunityController {
             }
     )
     @PostMapping("delete/image")
+    @CrossOrigin(origins = "https://devproject.store")
     public void deleteImage(@RequestParam(value = "removeFileId", required = false) List<Integer> removeFileId) {
         communityService.deleteFiles(removeFileId);
     }

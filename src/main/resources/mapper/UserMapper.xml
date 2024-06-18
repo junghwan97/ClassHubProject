@@ -8,12 +8,14 @@
     </insert>
 
     <insert id="insertGoogle" parameterType="user">
-        INSERT INTO User(user_name, name, email, role, platform_type)
-        VALUES (#{userName}, #{name}, #{email}, #{role}, "Google");
+
+        INSERT INTO User(user_name, name, email, role, platform_type, profile_picture)
+        VALUES (#{userName}, #{name}, #{email}, #{role}, "Google", #{profilePicture});
+
     </insert>
 
     <update id="updateGoogle" parameterType="user">
-        UPDATE User SET email = #{email}, name = #{name} WHERE user_id = #{userId};
+        UPDATE User SET email = #{email}, name = #{name}, profile_picture = #{profilePicture} WHERE user_id = #{userId};
     </update>
 
     <insert id="join" parameterType="user">

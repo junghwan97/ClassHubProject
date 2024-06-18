@@ -1,6 +1,7 @@
 package com.example.classhubproject.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -39,4 +40,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:///home/ubuntu/contents/"); //--2
     }
 
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+//                .allowedOrigins("https://devproject.store", "http://localhost:3000");
+                .allowedOrigins("https://devproject.store");
+    }
 }

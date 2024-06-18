@@ -143,7 +143,7 @@ public class UserService {
 
                 //db에 관련 정보 저장
 
-                userMapper.updateUserImage(username, "https://devproject.store" + folder + "/" + newFileName);
+                userMapper.updateUserImage(username, "https://api.devproject.store" + folder + "/" + newFileName);
             }
         } catch (Exception e) {
             e.printStackTrace();

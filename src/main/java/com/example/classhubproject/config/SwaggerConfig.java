@@ -6,23 +6,54 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springframework.http.HttpHeaders;
 
 import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
 
-    Server server = new Server().url("https://devproject.store");
+    Server server = new Server().url("https://api.devproject.store");
+
+
 
     @Bean
     public OpenAPI openAPI() {
+
+        Info info = new Info()
+                .version("v1.0.0")
+                .title("LMS API")
+                .description("LMS 프로젝트 샘플입니다.");
+
+        SecurityScheme securityScheme = new SecurityScheme()
+                .name(HttpHeaders.AUTHORIZATION)
+                .type(SecurityScheme.Type.HTTP)
+                .in(SecurityScheme.In.HEADER)
+                .bearerFormat("JWT")
+                .scheme("bearer");
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList("JWT");
+
         return new OpenAPI()
                 .servers(List.of(server))
-                .info(new Info()
-                        .title("LMS API")
-                        .description("LMS 프로젝트 샘플입니다.")
-                        .version("1.0"));
+                .info(info)
+                .addSecurityItem(securityRequirement)
+                .components(new Components().addSecuritySchemes("JWT", securityScheme));
     }
+
+
+
+    // @Bean
+    // public OpenAPI openAPI() {
+    //     return new OpenAPI()
+    //             .servers(List.of(server))
+    //             .info(new Info()
+    //                     .title("LMS API")
+    //                     .description("LMS 프로젝트 샘플입니다.")
+    //                     .version("1.0"));
+    // }
 
   
     @Bean
@@ -107,3 +138,4 @@ public class SwaggerConfig {
     }
 
 }
+
