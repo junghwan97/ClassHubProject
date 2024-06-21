@@ -73,6 +73,15 @@ public class UserResponseDTO {
         this.profilePicture = profilePicture;
     }
 
+    public UserResponseDTO(String userName, String email, String name, String nickname, String role, String profilePicture){
+        this.userName = userName;
+        this.email = email;
+        this.name = name;
+        this.nickname = nickname;
+        this.role = role;
+        this.profilePicture = profilePicture;
+    }
+
     public UserResponseDTO(int userId, String userName, String email, String name, String role){
         this.userId = userId;
         this.userName = userName;
