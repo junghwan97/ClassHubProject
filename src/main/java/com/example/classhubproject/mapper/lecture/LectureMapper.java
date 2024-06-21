@@ -13,6 +13,8 @@ public interface LectureMapper {
 
     int editInstructor(LectureInstructorEditedRequest request);
 
+    int addUserRole(int userId);
+
     // 강의 자료 추가/수정
     int uploadMaterial(LectureMaterialUploadedRequest request);
 

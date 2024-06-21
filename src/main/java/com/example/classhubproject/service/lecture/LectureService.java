@@ -39,6 +39,7 @@ public class LectureService {
     public int addInstructor(LectureInstructorAddedRequest request) {
 
         int upload = lectureMapper.addInstructor(request);
+		lectureMapper.addUserRole(request.getUserId());
      
         return upload;
     }
