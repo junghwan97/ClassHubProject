@@ -5,17 +5,21 @@ import com.example.classhubproject.jwt.CustomSuccessHandler;
 import com.example.classhubproject.jwt.JWTFilter;
 import com.example.classhubproject.jwt.JWTUtil;
 import com.example.classhubproject.service.oauth2.CustomOAuth2UserService;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -29,6 +33,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.CharacterEncodingFilter;
+
 
 @Configuration
 @EnableWebSecurity
@@ -53,6 +58,7 @@ public class SecurityConfig {
             "/lecture/selectById/**",
             "/lecture/selectByCategory/**",
             "/lecture/selectAll/**",
+            "/lecture/**",
             "/comment/list",
             "/home/ubuntu/**"
     };

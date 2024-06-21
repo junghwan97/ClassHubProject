@@ -21,9 +21,6 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
-import java.util.Set;
-
 @Tag(name = "회원 기능 모음", description = "회원 관련 기능을 처리")
 @RestController
 @Slf4j

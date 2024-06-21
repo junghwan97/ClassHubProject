@@ -7,6 +7,12 @@
         VALUES (#{userId}, #{name}, #{field},  #{text},  #{userType},  #{requestStatus}, NOW());
     </insert>
 
+    <update id="addUserRole">
+        UPDATE User
+        SET role = 'INSTRUCTOR'
+        WHERE user_id = #{userId};
+    </update>
+
     <insert id="editInstructor" parameterType="com.example.classhubproject.data.lecture.LectureInstructorEditedRequest">
         UPDATE Instructors
         SET user_id=#{userId}, name=#{name}, field=#{field}, `text`=#{text}, user_type=#{userType}, request_status=#{requestStatus}

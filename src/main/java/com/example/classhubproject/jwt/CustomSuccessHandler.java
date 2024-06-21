@@ -41,6 +41,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtUtil.createJwt(username, role, 60 * 60 * 1000L * 7 * 24);
 
         response.addCookie(createCookie("Authorization", token));
+        System.out.println(token);
 
 //        System.out.println(((CustomOAuth2User) authentication.getPrincipal()).getUserDTO().getUsername());
         System.out.println("username : " + username + "===========================================");
