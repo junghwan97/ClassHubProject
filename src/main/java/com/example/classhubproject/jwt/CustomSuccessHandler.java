@@ -48,7 +48,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         System.out.println("role : " + role + "===========================================");
 
 //        response.sendRedirect("https://devproject.store/");
-        response.sendRedirect("http://localhost:3000");
+        response.sendRedirect("http://local.devproject.store:3000");
     }
 
     private Cookie createCookie(String key, String value) {

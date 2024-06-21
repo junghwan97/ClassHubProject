@@ -47,7 +47,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (existUser == null) {
 //            UserResponseDTO user = new UserResponseDTO(username, oAuth2Response.getEmail(), oAuth2Response.getName(), RoleUser);
-            UserResponseDTO user = new UserResponseDTO(username, oAuth2Response.getEmail(), oAuth2Response.getName(), RoleUser, profileImage);
+            UserResponseDTO user = new UserResponseDTO(username, oAuth2Response.getEmail(), oAuth2Response.getName(), oAuth2Response.getName(), RoleUser, profileImage);
             userMapper.insertGoogle(user);
 
             UserDTO userDTO = new UserDTO();
