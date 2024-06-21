@@ -308,7 +308,7 @@
                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
                  LEFT JOIN Community_Image ci ON c.community_id = ci.community_id
                  LEFT JOIN Community_Image_Path cip ON cip.community_image_id = ci.community_image_id
-        WHERE c.community_type = '2'
+        WHERE (c.community_type = '2' OR c.community_type = '3')
           AND c.community_id = #{id}
     </select>
 
