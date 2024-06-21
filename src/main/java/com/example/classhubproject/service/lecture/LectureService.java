@@ -36,6 +36,20 @@ public class LectureService {
 		this.lecture = lecture;
 	}
 
+	public String deleteInstructor(Integer userId){
+		if(lectureMapper.selectInstructor(userId) == 0){
+			return "등록되지 않은 강사입니다.";
+		}
+		try {
+			lectureMapper.deleteInstructor(userId);
+			lectureMapper.turnbackUser(userId);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return userId + "강사 삭제 되었습니다.";
+
+	}
+
     public int addInstructor(LectureInstructorAddedRequest request) {
 
         int upload = lectureMapper.addInstructor(request);
@@ -52,7 +66,7 @@ public class LectureService {
     }
 
     public int uploadAndSyncMaterials(Integer classId, List<MultipartFile> files) {
-        String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy\\material";
+        String uploadFolder = "/home/ubuntu/contents/material";
 
 		// /home/ubuntu/contents/material
 		//"C:\\Users\\USER\\Desktop\\dummy\\material"
@@ -180,7 +194,7 @@ public class LectureService {
 			throw new RuntimeException(e);
 		}
 
-		String uploadFolder = "C:\\Users\\USER\\Desktop\\dummy\\videos";
+		String uploadFolder = "/home/ubuntu/contents/videos";
 		SimpleDateFormat save = new SimpleDateFormat("yyyyMMddHHmmss");
 
 		Date date = new Date();
@@ -267,13 +281,14 @@ public class LectureService {
     }
 
 	public PagingDTO<List<ClassResponseDTO>> selectAll(Integer page){
-		int rowPerPage = 5;
+		int rowPerPage = 6;
 
 		// 쿼리 LIMIT절에 사용할 시작 인덱스
 		int startIndex = (page - 1) * rowPerPage;
 
 		List<ClassResponseDTO> list = lectureMapper.selectAll(startIndex, rowPerPage);
 		int numOfRecord = list.size();
+		System.out.println(numOfRecord + "adsfdsafdsafdasf");
 		PagingDTO pgList = createPaging(page, numOfRecord, list);
 
 
@@ -282,13 +297,14 @@ public class LectureService {
 
 	public PagingDTO<List<ClassResponseDTO>> selectByKeyword(String keyword, Integer page){
 
-		int rowPerPage = 5;
+		int rowPerPage = 6;
 
 		// 쿼리 LIMIT절에 사용할 시작 인덱스
 		int startIndex = (page - 1) * rowPerPage;
 
 		List<ClassResponseDTO> list = lectureMapper.selectByKeyword(keyword, startIndex, rowPerPage);
 		int numOfRecord = list.size();
+		System.out.println(numOfRecord + "adsfdsafdsafdasf");
 		PagingDTO pgList = createPaging(page, numOfRecord, list);
 
 		return pgList;
@@ -296,13 +312,14 @@ public class LectureService {
     }
     
     public PagingDTO<List<ClassResponseDTO>> selectByCategory(Integer categoryId, Integer page){
-		int rowPerPage = 5;
+		int rowPerPage = 6;
 
 		// 쿼리 LIMIT절에 사용할 시작 인덱스
 		int startIndex = (page - 1) * rowPerPage;
 
 		List<ClassResponseDTO> list = lectureMapper.selectByCategory(categoryId, startIndex, rowPerPage);
 		int numOfRecord = list.size();
+		System.out.println(numOfRecord + "adsfdsafdsafdasf");
 		PagingDTO pgList = createPaging(page, numOfRecord, list);
 
 		return pgList;
@@ -310,7 +327,7 @@ public class LectureService {
 
 	public PagingDTO createPaging(Integer page, Integer numOfRecords, List<ClassResponseDTO> list) {
 		// 한페이지 당 게시물 수
-		Integer rowPerPage = 5;
+		Integer rowPerPage = 6;
 
 		// 쿼리 LIMIT절에 사용할 시작 인덱스
 		int startIndex = (page - 1) * rowPerPage;
@@ -318,11 +335,14 @@ public class LectureService {
 		// 페이지네이션에 필요한 정보
 		// 마지막 페이지 번호
 		int totalNum = (numOfRecords - 1) / rowPerPage + 1;
+		System.out.println(totalNum);
 		//페이지네이션 왼쪽 번호
 		int leftEndNum = page - 5;
 		leftEndNum = Math.max(leftEndNum, 1);
+		System.out.println(leftEndNum);
 		//페이지네이션 오른쪽 번호
 		int rightEndNum = leftEndNum + 9;
+		System.out.println(rightEndNum);
 		rightEndNum = Math.min(rightEndNum, totalNum);
 		int currentPageNum = page;
 

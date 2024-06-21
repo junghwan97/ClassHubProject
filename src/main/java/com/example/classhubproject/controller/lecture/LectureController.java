@@ -51,6 +51,18 @@ public class LectureController {
 
     }
 
+    // 강사 삭제
+    @Operation(summary = "강사 삭제", description = "강사 삭제.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorAddedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @PostMapping("deleteInstructor")
+    public String addInstructor(@RequestParam Integer userId) {
+        return lectureService.deleteInstructor(userId);
+    }
+
     // 강사 수정
     @Operation(summary = "강사 수정", description = "강사 수정.",
             responses = {

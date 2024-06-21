@@ -7,6 +7,20 @@
         VALUES (#{userId}, #{name}, #{field},  #{text},  #{userType},  #{requestStatus}, NOW());
     </insert>
 
+    <select id="selectInstructor">
+        SELECT * FROM Instructors WHERE user_id = #{userId};
+    </select>
+
+    <delete id="deleteInstructor">
+        DELETE FROM Instructors WHERE user_id = #{userId};
+    </delete>
+    
+    <update id="turnbackUser">
+        UPDATE User
+        SET role = 'USER'
+        WHERE user_id = #{userId};
+    </update>
+
     <update id="addUserRole">
         UPDATE User
         SET role = 'INSTRUCTOR'
