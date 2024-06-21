@@ -24,6 +24,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         response.addCookie(cookie);
 
         // 로그아웃 후 리다이렉트
-        response.sendRedirect("http://local.devproject.store:3000");
+//        response.sendRedirect("http://local.devproject.store:3000");
+        response.sendRedirect("https://devproject.store");
     }
 }
