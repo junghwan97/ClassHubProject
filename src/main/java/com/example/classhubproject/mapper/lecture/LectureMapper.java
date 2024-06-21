@@ -15,6 +15,12 @@ public interface LectureMapper {
 
     int addUserRole(int userId);
 
+    int selectInstructor(int userId);
+
+    int deleteInstructor(int userId);
+
+    int turnbackUser(int userId);
+
     // 강의 자료 추가/수정
     int uploadMaterial(LectureMaterialUploadedRequest request);
 
