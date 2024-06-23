@@ -382,8 +382,8 @@
         WHERE community_type = '1'
         <if test="type != null">
             <if test="type == 'all'">
-                AND title LIKE CONCAT('%', #{search}, '%')
-                OR text LIKE CONCAT('%', #{search}, '%')
+                AND (title LIKE CONCAT('%', #{search}, '%')
+                OR text LIKE CONCAT('%', #{search}, '%'))
             </if>
             <if test="type == 'title'">
                 AND title LIKE CONCAT('%', #{search}, '%')
@@ -400,8 +400,8 @@
         WHERE (community_type = '2' OR community_type = '3')
         <if test="type != null">
             <if test="type == 'all'">
-                AND title LIKE CONCAT('%', #{search}, '%')
-                OR text LIKE CONCAT('%', #{search}, '%')
+                AND (title LIKE CONCAT('%', #{search}, '%')
+                OR text LIKE CONCAT('%', #{search}, '%'))
             </if>
             <if test="type == 'title'">
                 AND title LIKE CONCAT('%', #{search}, '%')
@@ -418,8 +418,8 @@
         WHERE community_type = #{status}
         <if test="type != null">
             <if test="type == 'all'">
-                AND title LIKE CONCAT('%', #{search}, '%')
-                OR text LIKE CONCAT('%', #{search}, '%')
+                AND (title LIKE CONCAT('%', #{search}, '%')
+                OR text LIKE CONCAT('%', #{search}, '%'))
             </if>
             <if test="type == 'title'">
                 AND title LIKE CONCAT('%', #{search}, '%')
