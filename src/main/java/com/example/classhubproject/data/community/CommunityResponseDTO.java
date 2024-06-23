@@ -19,6 +19,12 @@ public class CommunityResponseDTO {
     @Schema(description = "작성자")
     private String nickname;
 
+    @Schema(description = "작성자 권한")
+    private String role;
+
+    @Schema(description = "작성자 프로필 이미지")
+    private String profilePicture;
+
     @Schema(description = "게시물 ID")
     private Integer communityId;
 

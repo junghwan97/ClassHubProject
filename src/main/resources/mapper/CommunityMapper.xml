@@ -247,6 +247,8 @@
         <id column="community_id" property="communityId"/>
         <result column="user_id" property="userId"/>
         <result column="nickname" property="nickname"/>
+        <result column="role" property="role"/>
+        <result column="profile_picture" property="profilePicture"/>
         <result column="community_type" property="communityType"/>
         <result column="title" property="title"/>
         <result column="text" property="text"/>
@@ -270,6 +272,8 @@
         SELECT c.community_id,
                c.user_id,
                u.nickname,
+               u.role,
+               u.profile_picture,
                c.community_type,
                c.title,
                c.text,
@@ -294,6 +298,8 @@
         SELECT c.community_id,
                c.user_id,
                u.nickname,
+               u.role,
+               u.profile_picture,
                c.community_type,
                c.title,
                c.text,
