@@ -293,7 +293,7 @@
             resultMap="communityResultMap">
         SELECT c.community_id,
                c.user_id,
-               (SELECT nickname FROM User WHERE user_id = c.user_id)                             AS writer,
+               u.nickname,
                c.community_type,
                c.title,
                c.text,
@@ -308,6 +308,7 @@
                  LEFT JOIN Favorite_Community fc ON c.community_id = fc.favorite_type_id AND fc.favorite_type = '1'
                  LEFT JOIN Community_Image ci ON c.community_id = ci.community_id
                  LEFT JOIN Community_Image_Path cip ON cip.community_image_id = ci.community_image_id
+                 LEFT JOIN User u ON c.user_id = u.user_id
         WHERE (c.community_type = '2' OR c.community_type = '3')
           AND c.community_id = #{id}
     </select>
