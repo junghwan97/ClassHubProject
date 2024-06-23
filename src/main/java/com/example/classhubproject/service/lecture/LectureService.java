@@ -301,7 +301,7 @@ public class LectureService {
 
 		// 쿼리 LIMIT절에 사용할 시작 인덱스
 		int startIndex = (page - 1) * rowPerPage;
-		List<ClassResponseDTO> list1 = lectureMapper.selectAll(0, 10000);
+		List<ClassResponseDTO> list1 = lectureMapper.selectByKeyword(keyword, 0, 10000);
 		List<ClassResponseDTO> list = lectureMapper.selectByKeyword(keyword, startIndex, rowPerPage);
 		int numOfRecord = list1.size();
 		System.out.println(numOfRecord + "adsfdsafdsafdasf");
@@ -316,7 +316,7 @@ public class LectureService {
 
 		// 쿼리 LIMIT절에 사용할 시작 인덱스
 		int startIndex = (page - 1) * rowPerPage;
-		List<ClassResponseDTO> list1 = lectureMapper.selectAll(0, 10000);
+		List<ClassResponseDTO> list1 = lectureMapper.selectByCategory(categoryId, 0, 10000);
 		List<ClassResponseDTO> list = lectureMapper.selectByCategory(categoryId, startIndex, rowPerPage);
 		int numOfRecord = list1.size();
 		System.out.println(numOfRecord + "adsfdsafdsafdasf");
