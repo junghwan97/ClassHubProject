@@ -278,6 +278,17 @@ public class LectureController {
         //return userDTO.getUsername();
     }
 
+    @Operation(summary = "내가 등록한 강의", description = "내가 등록한 강의 조회.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("/findClassByUserId/{userId}")
+    public List<ClassResponseDTO> findClassByUserId(@PathVariable("userId") Integer userId){
+        return lectureService.findClassByUserId(userId);
+    }
+
 //        Cookie[] cookies = request.getCookies();
 //        String jwtToken = null;
 //        for (Cookie cookie : cookies) {

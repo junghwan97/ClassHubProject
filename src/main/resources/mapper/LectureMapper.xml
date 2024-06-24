@@ -183,6 +183,9 @@
         DELETE FROM Class_Detail WHERE Class_id = #{classId} AND video = #{video};
     </delete>
 
-
+    <!-- 강사별 강의 조회 -->
+    <select id="findClassByUserId" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
+        SELECT * FROM Class WHERE instructors_id = (SELECT instructors_id FROM Instructors WHERE user_id = #{userId})
+    </select>
 
 </mapper>
