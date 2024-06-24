@@ -193,4 +193,9 @@
         SELECT * FROM Class ta JOIN (SELECT class_id FROM Enrollment_Info WHERE user_id = #{userId}) tb ON ta.class_id = tb.class_id;
     </select>
 
+    <!-- 썸네일 등록 -->
+    <update id="updateThumnail">
+        UPDATE Class SET thumnail = #{thumnailPath} WHERE class_id = #{classId};
+    </update>
+
 </mapper>
