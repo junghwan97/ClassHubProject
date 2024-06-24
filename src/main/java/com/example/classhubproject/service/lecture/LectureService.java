@@ -329,6 +329,10 @@ public class LectureService {
 		return lectureMapper.findClassByUserId(userId);
 	}
 
+	public List<ClassResponseDTO> findOrderClassByUserId(Integer userId){
+		return lectureMapper.findOrderClassByUserId(userId);
+	}
+
 
 	public PagingDTO createPaging(Integer page, Integer numOfRecords, List<ClassResponseDTO> list) {
 		// 한페이지 당 게시물 수

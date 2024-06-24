@@ -289,6 +289,17 @@ public class LectureController {
         return lectureService.findClassByUserId(userId);
     }
 
+    @Operation(summary = "내가 결제한 강의", description = "내가 결제한 강의 조회.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureInstructorEditedResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            }
+    )
+    @GetMapping("/findOrderClassByUserId/{userId}")
+    public List<ClassResponseDTO> findOrderClassByUserId(@PathVariable("userId") Integer userId){
+        return lectureService.findOrderClassByUserId(userId);
+    }
+
 //        Cookie[] cookies = request.getCookies();
 //        String jwtToken = null;
 //        for (Cookie cookie : cookies) {
