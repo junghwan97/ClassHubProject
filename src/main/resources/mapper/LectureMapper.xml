@@ -188,4 +188,9 @@
         SELECT * FROM Class WHERE instructors_id = (SELECT instructors_id FROM Instructors WHERE user_id = #{userId})
     </select>
 
+    <!-- 구매한 강의 조회 -->
+    <select id="findOrderClassByUserId" resultType="com.example.classhubproject.data.lecture.ClassResponseDTO">
+        SELECT * FROM Class ta JOIN (SELECT class_id FROM Enrollment_Info WHERE user_id = #{userId}) tb ON ta.class_id = tb.class_id;
+    </select>
+
 </mapper>

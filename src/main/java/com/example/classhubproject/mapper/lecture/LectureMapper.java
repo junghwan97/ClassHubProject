@@ -79,4 +79,5 @@ public interface LectureMapper {
     LectureClassUploadedRequest selectByIdForUpdate(Integer classId);
 
     List<ClassResponseDTO> findClassByUserId(Integer userId);
+    List<ClassResponseDTO> findOrderClassByUserId(Integer userId);
 }
