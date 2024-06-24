@@ -325,6 +325,11 @@ public class LectureService {
 		return pgList;
     }
 
+	public List<ClassResponseDTO> findClassByUserId(Integer userId){
+		return lectureMapper.findClassByUserId(userId);
+	}
+
+
 	public PagingDTO createPaging(Integer page, Integer numOfRecords, List<ClassResponseDTO> list) {
 		// 한페이지 당 게시물 수
 		Integer rowPerPage = 6;
