@@ -107,16 +107,22 @@ public class LectureController {
     }
 
     // 강의 자료 업로드 / 수정
-    @Operation(summary = "강의 자료 업로드", description = "강의자료를 업로드.",
+    @Operation(summary = "강의 썸네일 업로드", description = "강의 썸네일 업로드.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = LectureMaterialUploadedResponse.class))),
                     @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
-    @PostMapping("uploadAndSyncMaterials")
-    public void uploadAndSyncMaterials(@RequestPart(name = "id") Integer id, @RequestPart(name = "files", required = false)List<MultipartFile> files) {
-        
-    	lectureService.uploadAndSyncMaterials(id, files);
+//    @PostMapping("uploadAndSyncMaterials")
+//    public void uploadAndSyncMaterials(@RequestPart(name = "id") Integer id, @RequestPart(name = "files", required = false)List<MultipartFile> files) {
+//
+//    	lectureService.uploadAndSyncMaterials(id, files);
+//    }
+
+    @PostMapping("uploadThumnail/{classId}")
+    public String uploadThumnail(@PathVariable("classId") Integer classId, @RequestPart(name = "thumnail", required = true)MultipartFile file) {
+        System.out.println(file.getOriginalFilename());
+        return lectureService.uploadThumnail(classId, file);
     }
 
     // 강의 자료 조회

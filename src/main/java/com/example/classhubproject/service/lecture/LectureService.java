@@ -149,8 +149,6 @@ public class LectureService {
 	}
 
 
-
-
 	public LectureMaterialEditedResponse editMaterial(LectureMaterialEditedRequest request) {
 
         int edited = lectureMapper.editMaterial(request);
@@ -160,6 +158,36 @@ public class LectureService {
 
         return response;
     }
+
+	//썸네일 추가
+	public String uploadThumnail(Integer classId, MultipartFile file) {
+		String uploadFolder = "/home/ubuntu/contents/thumnail";
+		//C:\\Users\\USER\\Desktop\\dummy\\thumnail
+		///home/ubuntu/contents/thumnail
+		File uploadPath = new File(uploadFolder, classId.toString());
+		if (!uploadPath.exists()) {
+			boolean isCreated = uploadPath.mkdirs();
+			if (!isCreated) {
+				log.info("Failed to create directory: " + uploadPath);
+			}
+		}
+		File saveFile = new File(uploadPath, file.getOriginalFilename());
+		try {
+			file.transferTo(saveFile);
+		}catch(Exception e) {
+			log.error(e.getMessage());
+		}
+
+		String thumnailPath = "https://api.devproject.store/home/ubunt/contents/thumnail/" + classId + "/" +file.getOriginalFilename();
+
+		try {
+			lectureMapper.updateThumnail(classId, thumnailPath);
+		} catch (Exception e) {
+			return "썸네일 등록실패";
+		}
+		return "썸네일 등록 성공";
+
+	}
 
     // 강의 추가/ 수정
 	public int uploadAndSyncClass(LectureClassUploadedRequest request, String sectionsJson, List<MultipartFile> videos) throws IOException {
@@ -209,6 +237,8 @@ public class LectureService {
 				log.error("Failed to create directory: " + uploadPath);
 			}
 		}
+
+
 
 		log.info("1번");
 

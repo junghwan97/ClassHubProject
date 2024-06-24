@@ -80,4 +80,6 @@ public interface LectureMapper {
 
     List<ClassResponseDTO> findClassByUserId(Integer userId);
     List<ClassResponseDTO> findOrderClassByUserId(Integer userId);
+
+    int updateThumnail(Integer classId, String thumnailPath);
 }
