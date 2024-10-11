@@ -66,9 +66,7 @@ https://www.figma.com/design/jEXIuj53g2LvNUfl0jxQjh/wireframe?node-id=0-1
 - Discord
 - ERDcloud
 
-## 구현 기능 및 개인 역할
-구현 기능
-
+## 구현 기능
 - 구글 소셜 로그인<br>
     >인증 : 구글 소셜 로그인(OAuth2) 후 JWT 발급<br>
     >인가 : JWT를 통한 경로별 접근 권한 부여<br>
